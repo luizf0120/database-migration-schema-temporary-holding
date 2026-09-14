@@ -1596,13 +1596,16 @@ Object.values(dados[d].agenda_menus).forEach(n => {
     });
   }
 
- window.toggle = function(btn) { 
+window.toggle = function(btn) { 
     btn.parentElement.classList.toggle('active'); 
     
-    // Se o nó foi aberto, aguarda a animação e centraliza na tela
+    // Se o nó abriu, localiza as opções filhas e centraliza nelas
     if (btn.parentElement.classList.contains('active')) {
       setTimeout(() => {
-        btn.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        const novasOpcoes = btn.parentElement.querySelector('.children');
+        if (novasOpcoes) {
+          novasOpcoes.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        }
       }, 150);
     }
   };
