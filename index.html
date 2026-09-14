@@ -342,6 +342,24 @@
       flex-direction: column;
       gap: 0;
     }
+    /* 8. Ajuste do recuo da árvore para não puxar a tela no celular */
+    .left-panel { 
+      overflow-x: hidden; 
+    }
+    .children { 
+      padding-left: 15px; 
+    }
+    .node.active > button::after { 
+      right: -15px; 
+      width: 15px; 
+    }
+    .children > .node::before { 
+      left: -15px; 
+      width: 15px; 
+    }
+    .children > .node::after { 
+      left: -15px; 
+    }
   }
 </style>
 </head>
