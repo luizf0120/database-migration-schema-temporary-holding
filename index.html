@@ -1596,7 +1596,16 @@ Object.values(dados[d].agenda_menus).forEach(n => {
     });
   }
 
-  window.toggle = function(btn) { btn.parentElement.classList.toggle('active'); };
+ window.toggle = function(btn) { 
+    btn.parentElement.classList.toggle('active'); 
+    
+    // Se o nó foi aberto, aguarda a animação e centraliza na tela
+    if (btn.parentElement.classList.contains('active')) {
+      setTimeout(() => {
+        btn.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }, 150);
+    }
+  };
   window.mostrarTooltipPreview = function(item, btn) {
     if (btn.parentElement.classList.contains('active')) return;
     const tooltip = document.getElementById('tooltip-preview'); let htmlContent = '<ul class="tooltip-list">';
