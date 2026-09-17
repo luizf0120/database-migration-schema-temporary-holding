@@ -690,6 +690,11 @@ const bottom15 = estatisticasCompletas.filter(s => s.caminho && s.caminho[0] !==
   }
 
 function verificarAlertasExpirados() {
+      // Bloqueio: Apenas este usuário específico recebe o questionamento de público
+      if (!auth.currentUser || auth.currentUser.email !== 'luiz.silva07@pm.pr.gov.br') {
+          return;
+      }
+
       const agoraStr = obterDataBrasiliaISO() + " " + obterHoraBrasilia();
       
       // 1. Varredura nos eventos por pasta (agenda)
@@ -705,6 +710,28 @@ function verificarAlertasExpirados() {
                       const quantidade = prompt(`[CONSOLIDAÇÃO DE INTELIGÊNCIA]\nO evento de "${nota.tituloOrigem}" já ocorreu.\n\nInsira o número estimado de MANIFESTANTES participantes:`);
                       if (quantidade !== null && quantidade.trim() !== "") {
                           set(ref(db, `monitoramentoDiario/${dataHojeISO}/agenda_menus/${safeKey}`), {
+                              ...nota,
+                              numeroManifestantes: quantidade.trim()
+                          });
+                      }
+                  }, 600);
+              }
+          }
+      });
+
+      // 2. Varredura nos agendamentos diretos do calendário
+      Object.keys(alertasCalendarioGlobais).forEach(keyId => {
+          const nota = alertasCalendarioGlobais[keyId];
+          if (nota && nota.dataAlerta && nota.horaAlerta) {
+              const alvoStr = nota.dataAlerta + " " + nota.horaAlerta;
+              
+              // Se o evento passou, não foi perguntado nesta sessão e ainda não tem o número salvo
+              if (alvoStr <= agoraStr && !alertasPromptadosSessao.includes(keyId) && !nota.numeroManifestantes) {
+                  alertasPromptadosSessao.push(keyId);
+                  setTimeout(() => {
+                      const quantidade = prompt(`[CONSOLIDAÇÃO DE INTELIGÊNCIA]\nO agendamento direto "${nota.tituloOrigem}" já ocorreu.\n\nInsira o número estimado de MANIFESTANTES participantes:`);
+                      if (quantidade !== null && quantidade.trim() !== "") {
+                          set(ref(db, `alertas_calendario/${keyId}`), {
                               ...nota,
                               numeroManifestantes: quantidade.trim()
                           });
