@@ -2539,6 +2539,95 @@ window.preverPublicoIndividualIA = async function(keyId, tipoEntrada) {
         btnGravar.onclick = function() { window.fecharModalNota(); };
     }
 };
+  window.abrirModalNovoNo = function(caminho) {
+    window.caminhoAtualAdicao = caminho;
+    document.getElementById('modal-novo-no').style.display = 'block';
+    document.getElementById('modal-overlay').style.display = 'block';
+    
+    document.getElementById('nn-nome').value = "";
+    document.getElementById('nn-url').value = "";
+    document.getElementById('nn-icone').value = "●";
+    window.mudarFormularioNovoNo();
+};
+
+window.mudarFormularioNovoNo = function() {
+    const tipo = document.getElementById('tipo-novo-no').value;
+    if(tipo === 'pasta') {
+        document.getElementById('form-novo-no-pasta').style.display = 'block';
+        document.getElementById('form-novo-no-link').style.display = 'none';
+    } else {
+        document.getElementById('form-novo-no-pasta').style.display = 'none';
+        document.getElementById('form-novo-no-link').style.display = 'block';
+    }
+};
+
+window.salvarNovoNoFirebase = function() {
+    const tipo = document.getElementById('tipo-novo-no').value;
+    
+    // Clonar árvore atual para manipular a memória e re-injetar
+    let arvoreModificada = JSON.parse(JSON.stringify(window.DADOS_TOTAIS));
+    let ptr = { filhos: arvoreModificada };
+    
+    // Navegar até o nó correto
+    for (let nome of window.caminhoAtualAdicao) {
+        if (!ptr.filhos) ptr.filhos = [];
+        ptr = ptr.filhos.find(n => n.nome === nome);
+    }
+
+    if (tipo === 'pasta') {
+        const nome = document.getElementById('nn-nome').value.trim();
+        const cor = document.getElementById('nn-cor').value;
+        let icone = document.getElementById('nn-icone').value.trim();
+        if(!icone) icone = "●";
+        if(!nome) return alert("Preencha o nome do perfil/pasta.");
+        
+        if (!ptr.filhos) ptr.filhos = [];
+        ptr.filhos.push({ nome: nome, cor: cor, icone: icone, filhos: [], links: [] });
+    } else {
+        const url = document.getElementById('nn-url').value.trim();
+        const tipoLink = document.getElementById('nn-tipo-link').value;
+        if(!url) return alert("Preencha a URL oficial.");
+        
+        if (!ptr.links) ptr.links = [];
+        let textoFormatado = url;
+        try {
+            if (url.includes('instagram.com/')) {
+                textoFormatado = url.split('instagram.com/')[1].split('/')[0] || "Instagram";
+            } else if (url.includes('facebook.com/')) {
+                textoFormatado = url.split('facebook.com/')[1].split('/')[0] || "Facebook";
+            } else {
+                let hostname = new URL(url).hostname;
+                textoFormatado = hostname.replace('www.', '');
+            }
+        } catch(e) { textoFormatado = "Acesso"; }
+        
+        ptr.links.push({ tipo: tipoLink, url: url, textoUrl: textoFormatado });
+    }
+
+    const btn = document.getElementById('btn-salvar-novo-no');
+    btn.innerText = "Salvando na Nuvem..."; btn.disabled = true;
+
+    set(ref(db, 'estrutura_arvore'), arvoreModificada).then(() => {
+        window.fecharModalNota();
+        btn.innerText = "Adicionar na Nuvem"; btn.disabled = false;
+        
+        get(ref(db, 'estrutura_arvore')).then(snap => {
+            if(snap.exists()) {
+                window.DADOS_TOTAIS = snap.val();
+                document.getElementById('raiz-arvore').innerHTML = "";
+                desenhavelArvore(window.DADOS_TOTAIS, document.getElementById('raiz-arvore'), []);
+            }
+        });
+        
+    }).catch(err => {
+        alert("Erro de salvamento: " + err.message);
+        btn.innerText = "Adicionar na Nuvem"; btn.disabled = false;
+    });
+};
+
+</script>
+</body>
+</html>
   
 </script>
 </body>
