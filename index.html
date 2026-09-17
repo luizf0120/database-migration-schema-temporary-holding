@@ -545,6 +545,54 @@
     </div>
 </div>
 
+  <div id="modal-novo-no">
+    <h4>➕ Adicionar Novo Item na Árvore</h4>
+    
+    <label style="font-size: 11px; color: #888; display: block; margin-bottom: 4px;">Tipo de Entrada:</label>
+    <select id="tipo-novo-no" style="width: 100%; background: #111; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 6px; margin-bottom: 15px; outline: none;" onchange="window.mudarFormularioNovoNo()">
+        <option value="pasta">📁 Nova Pasta / Perfil (Nó)</option>
+        <option value="link">🔗 Novo Link de Acesso (URL)</option>
+    </select>
+
+    <!-- Form Pasta -->
+    <div id="form-novo-no-pasta">
+        <label style="font-size: 11px; color: #888; display: block; margin-bottom: 4px;">Nome da Pasta/Perfil:</label>
+        <input type="text" id="nn-nome" placeholder="Ex: SINDICATOS" style="width: 100%; background: #111; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 6px; box-sizing: border-box; outline: none; font-size: 13px; margin-bottom: 15px;">
+        
+        <div class="input-linha-dupla">
+            <div>
+                <label>Cor do Ícone:</label>
+                <select id="nn-cor">
+                    <option value="white">Branco</option>
+                    <option value="red">Vermelho</option>
+                    <option value="blue">Azul</option>
+                </select>
+            </div>
+            <div>
+                <label>Ícone (Emoji ou Letra):</label>
+                <input type="text" id="nn-icone" placeholder="Ex: ☭ ou 👥" value="●">
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Link -->
+    <div id="form-novo-no-link" style="display: none;">
+        <label style="font-size: 11px; color: #888; display: block; margin-bottom: 4px;">Plataforma / Tipo:</label>
+        <select id="nn-tipo-link" style="width: 100%; background: #111; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 6px; margin-bottom: 15px; outline: none;">
+            <option value="insta">📸 Instagram</option>
+            <option value="link">🔗 Link de Site ou Outros</option>
+        </select>
+        
+        <label style="font-size: 11px; color: #888; display: block; margin-bottom: 4px;">URL Oficial:</label>
+        <input type="url" id="nn-url" placeholder="https://..." style="width: 100%; background: #111; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 6px; box-sizing: border-box; outline: none; font-size: 13px; margin-bottom: 15px;">
+    </div>
+
+    <div class="nota-actions">
+        <button class="btn-fechar-nota" onclick="window.fecharModalNota()">Cancelar</button>
+        <button id="btn-salvar-novo-no" class="btn-salvar-nota" style="background: var(--accent-green); color: #fff;" onclick="window.salvarNovoNoFirebase()">Adicionar na Nuvem</button>
+    </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
