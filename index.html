@@ -755,29 +755,52 @@ function verificarAlertasExpirados() {
           const emptyDiv = document.createElement('div'); emptyDiv.className = 'calendar-day empty'; gridDays.appendChild(emptyDiv);
       }
       
-      const hojeLocal = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"}));
-      for (let day = 1; day <= totalDiasMes; day++) {
-          const dateStr = `${currentCalYear}-${String(currentCalMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-          const dayDiv = document.createElement('div'); dayDiv.innerText = day;
-dayDiv.style.cssText = "background: #111; border: 1px solid #222; border-radius: 4px; padding: 8px 0; font-size: 14px; font-weight: bold; color: #ccc; transition: all 0.2s; user-select: none;";
-          
-          if (currentCalYear === hojeLocal.getFullYear() && currentCalMonth === hojeLocal.getMonth() && day === hojeLocal.getDate()) {
-              dayDiv.style.borderColor = "var(--accent-blue)"; dayDiv.style.color = "var(--accent-blue)";
-          }
+const hojeLocal = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"}));
+          for (let day = 1; day <= totalDiasMes; day++) {
+              const dateStr = `${currentCalYear}-${String(currentCalMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+              const dayDiv = document.createElement('div'); dayDiv.innerText = day;
+              
+              // Ajustado para border 2px e box-sizing para acomodar o contorno laranja
+              dayDiv.style.cssText = "background: #111; border: 2px solid #222; border-radius: 4px; padding: 8px 0; font-size: 14px; font-weight: bold; color: #ccc; transition: all 0.2s; user-select: none; box-sizing: border-box;";
+              
+              const isToday = (currentCalYear === hojeLocal.getFullYear() && currentCalMonth === hojeLocal.getMonth() && day === hojeLocal.getDate());
+              
+              // Se for o dia atual, preenche o meio de azul com números brancos
+              if (isToday) {
+                  dayDiv.style.background = "var(--accent-blue)";
+                  dayDiv.style.color = "#ffffff";
+                  dayDiv.style.borderColor = "var(--accent-blue)";
+              }
 
-          let temAlertaNoDia = false;
-          Object.keys(agendaMenusGlobais).forEach(key => { if (agendaMenusGlobais[key] && agendaMenusGlobais[key].dataAlerta === dateStr) temAlertaNoDia = true; });
-          Object.keys(alertasCalendarioGlobais).forEach(key => { if (alertasCalendarioGlobais[key] && alertasCalendarioGlobais[key].dataAlerta === dateStr) temAlertaNoDia = true; });
+              let temAlertaNoDia = false;
+              Object.keys(agendaMenusGlobais).forEach(key => { if (agendaMenusGlobais[key] && agendaMenusGlobais[key].dataAlerta === dateStr) temAlertaNoDia = true; });
+              Object.keys(alertasCalendarioGlobais).forEach(key => { if (alertasCalendarioGlobais[key] && alertasCalendarioGlobais[key].dataAlerta === dateStr) temAlertaNoDia = true; });
 
-          if (temAlertaNoDia) {
-              dayDiv.style.borderColor = "var(--accent-orange)"; dayDiv.style.background = "rgba(255, 140, 0, 0.15)";
-              dayDiv.style.color = "#fff"; dayDiv.style.fontWeight = "bold"; dayDiv.style.cursor = "pointer";
-              dayDiv.onclick = () => window.selecionarDiaCalendario(dateStr);
-              dayDiv.onmouseenter = function() { this.style.background = "rgba(255, 140, 0, 0.3)"; this.style.boxShadow = "0 0 8px var(--accent-orange)"; };
-              dayDiv.onmouseleave = function() { this.style.background = "rgba(255, 140, 0, 0.15)"; this.style.boxShadow = "none"; };
+              if (temAlertaNoDia) {
+                  // Aplica o contorno laranja independentemente de ser o dia atual ou não
+                  dayDiv.style.borderColor = "var(--accent-orange)";
+                  dayDiv.style.cursor = "pointer";
+                  
+                  // Aplica o fundo laranja claro apenas se NÃO for o dia atual
+                  if (!isToday) {
+                      dayDiv.style.background = "rgba(255, 140, 0, 0.15)";
+                      dayDiv.style.color = "#fff";
+                  }
+
+                  dayDiv.onclick = () => window.selecionarDiaCalendario(dateStr);
+                  
+                  // Mantém o hover preservando a cor do dia atual
+                  dayDiv.onmouseenter = function() { 
+                      this.style.boxShadow = "0 0 8px var(--accent-orange)"; 
+                      if (!isToday) this.style.background = "rgba(255, 140, 0, 0.3)"; 
+                  };
+                  dayDiv.onmouseleave = function() { 
+                      this.style.boxShadow = "none"; 
+                      if (!isToday) this.style.background = "rgba(255, 140, 0, 0.15)"; 
+                  };
+              }
+              gridDays.appendChild(dayDiv);
           }
-          gridDays.appendChild(dayDiv);
-      }
   };
 
 // Removemos a antiga e injetamos o novo sistema modular dinâmico
