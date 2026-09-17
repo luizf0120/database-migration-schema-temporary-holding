@@ -192,6 +192,28 @@
   .btn-salvar-nota:hover { background: #e0a800; }
   .btn-fechar-nota:hover { background: #333; color: #fff; }
 
+  /* ESTILO NÓ FANTASMA ADICIONAR */
+  .ghost-node > button {
+    border: 1px dashed #555 !important;
+    opacity: 0.5;
+    background: transparent !important;
+    color: #888 !important;
+  }
+  .ghost-node > button:hover {
+    opacity: 1;
+    border-color: var(--accent-green) !important;
+    color: var(--accent-green) !important;
+    background: #111 !important;
+  }
+
+  /* MODAL NOVO NÓ */
+  #modal-novo-no {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: var(--card-bg); border: 1px solid var(--accent-green); border-radius: 8px;
+    padding: 25px; z-index: 20000; width: 420px; max-width: 92%; box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+  }
+  #modal-novo-no h4 { margin: 0 0 15px 0; color: var(--accent-green); font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+
   /* =========================================
      ESTILO DO POP-UP DA IA
      ========================================= */
@@ -542,6 +564,7 @@
   const auth = getAuth(app);
   const db = getDatabase(app);
 
+  window.caminhoAtualAdicao = [];
   let vistosGlobais = [];
   let anotacoesGlobais = {}; 
   let agendaMenusGlobais = {}; 
@@ -1322,11 +1345,13 @@ window.abrirModalTatico = function(e, idUnico, titulo, tipo) {
       tooltip.style.left = (e.clientX + 15) + 'px'; tooltip.style.top = (e.clientY + 10) + 'px'; tooltip.classList.add('show');
   };
 
-  window.fecharModalNota = function() {
+window.fecharModalNota = function() {
       document.getElementById('modal-overlay').style.display = 'none';
       document.getElementById('nota-modal').style.display = 'none';
       document.getElementById('ia-input-modal').style.display = 'none';
       document.getElementById('detalhes-modal').style.display = 'none';
+      if(document.getElementById('modal-novo-no')) {
+          document.getElementById('modal-novo-no').style.display = 'none';
   };
 
   // Tradutor de códigos meteorológicos WMO para formato operacional descritivo
@@ -1700,24 +1725,34 @@ window.toggle = function(btn) {
     caixa.style.display = 'block';
   };
 
-  function desenhavelArvore(listaDeDados, elementoPai, caminhoAtual = []) {
+function desenhavelArvore(listaDeDados, elementoPai, caminhoAtual = []) {
     if (!Array.isArray(listaDeDados)) listaDeDados = listaDeDados ? Object.values(listaDeDados) : [];
+    
+    // VERIFICA SE O USUARIO TEM PODERES DE ADICIONAR
+    const isLuiz = (auth.currentUser && auth.currentUser.email === 'luiz.silva07@pm.pr.gov.br');
 
     listaDeDados.forEach(item => {
       const novoCaminho = [...caminhoAtual, item.nome]; const pathString = novoCaminho.join(' > ');
       const nodeDiv = document.createElement('div'); nodeDiv.className = 'node'; nodeDiv.setAttribute('data-path', pathString); 
       if (item.isRoot) nodeDiv.classList.add('active');
-      const temFilhos = item.filhos && item.filhos.length > 0; const temLinks = item.links && item.links.length > 0;
-      if (!temFilhos && !temLinks) nodeDiv.classList.add('no-children');
+      
+      const temFilhos = item.filhos && item.filhos.length > 0; 
+      const temLinks = item.links && item.links.length > 0;
+      
+      // Se for o Luiz, todo nó pode expandir para adicionar coisas dentro
+      const isExpandable = temFilhos || temLinks || isLuiz;
+
+      if (!isExpandable) nodeDiv.classList.add('no-children');
+      
       const btn = document.createElement('button'); btn.onclick = function(e) { e.stopPropagation(); window.toggle(this); };
       
-      if (temFilhos || temLinks) {
+      if (isExpandable) {
         btn.onmouseenter = function() { window.mostrarTooltipPreview(item, this); }; btn.onmouseleave = function() { window.esconderTooltipPreview(); };
         btn.innerHTML = `<div class="node-progress-bar"><div class="node-progress-fill"></div></div>`;
       }
 
       let htmlNota = "";
-      if (novoCaminho[0] === "MOVIMENTOS" && (temFilhos || temLinks) && novoCaminho.length >= 4) {
+      if (novoCaminho[0] === "MOVIMENTOS" && isExpandable && novoCaminho.length >= 4) {
           htmlNota = `
             <span class="icon-nota icon-agenda" data-id="${pathString}" onclick="window.abrirModalTatico(event, '${pathString}', '${item.nome}', 'agenda')" onmouseenter="window.mostrarTooltipTatico(event, '${pathString}', 'agenda')" onmouseleave="window.esconderTooltipTatico()">📅</span>
             <span class="icon-nota icon-postit" data-id="${pathString}" onclick="window.abrirModalTatico(event, '${pathString}', '${item.nome}', 'postit')" onmouseenter="window.mostrarTooltipTatico(event, '${pathString}', 'postit')" onmouseleave="window.esconderTooltipTatico()">💬</span>
@@ -1727,7 +1762,7 @@ window.toggle = function(btn) {
       btn.innerHTML += `<div class="btn-left"><span class="star-icon" data-star="${pathString}" onclick="window.clicarEstrela(event, this.getAttribute('data-star'))">★</span><div class="icon-circle icon-${item.cor || 'white'}">${item.icone || '●'}</div><span>${item.nome}</span>${htmlNota}</div><span class="toggle-icon"></span>`;
       nodeDiv.appendChild(btn);
 
-      if (temFilhos || temLinks) {
+      if (isExpandable) {
         const childrenDiv = document.createElement('div'); childrenDiv.className = 'children';
         if (temLinks) {
           item.links.forEach(link => {
@@ -1745,10 +1780,31 @@ window.toggle = function(btn) {
           });
         }
         if (temFilhos) desenhavelArvore(item.filhos, childrenDiv, novoCaminho);
+        
+        // NÓ FANTASMA DE ADICIONAR (INTERNO)
+        if (isLuiz) {
+            const ghostDiv = document.createElement('div'); ghostDiv.className = 'node ghost-node';
+            const ghostBtn = document.createElement('button');
+            ghostBtn.innerHTML = `<div class="btn-left"><span style="font-size:16px; font-weight:bold; margin-right:6px; margin-left:4px;">+</span><span>Adicionar Aqui</span></div>`;
+            ghostBtn.onclick = (e) => { e.stopPropagation(); window.abrirModalNovoNo(novoCaminho); };
+            ghostDiv.appendChild(ghostBtn);
+            childrenDiv.appendChild(ghostDiv);
+        }
+
         nodeDiv.appendChild(childrenDiv);
       }
       elementoPai.appendChild(nodeDiv);
     });
+
+    // NÓ FANTASMA ROOT/BASE (RAIZ DA ÁRVORE)
+    if (caminhoAtual.length === 0 && isLuiz) {
+        const ghostDivRoot = document.createElement('div'); ghostDivRoot.className = 'node ghost-node';
+        const ghostBtnRoot = document.createElement('button');
+        ghostBtnRoot.innerHTML = `<div class="btn-left"><span style="font-size:16px; font-weight:bold; margin-right:6px; margin-left:4px;">+</span><span>Adicionar Novo Nó Raiz</span></div>`;
+        ghostBtnRoot.onclick = (e) => { e.stopPropagation(); window.abrirModalNovoNo([]); };
+        ghostDivRoot.appendChild(ghostBtnRoot);
+        elementoPai.appendChild(ghostDivRoot);
+    }
   }
 
   // =====================================================================
