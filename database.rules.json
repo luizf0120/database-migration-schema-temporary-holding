@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "usuarios_autorizados": {
+      "$emailKey": {
+        ".read": "auth != null && auth.token.email_verified == true && auth.token.email.toLowerCase().replace('.', ',') === $emailKey",
+        ".write": false
+      }
+    },
+    "$outros": {
+      ".read": "auth != null && auth.token.email_verified == true && root.child('usuarios_autorizados').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true",
+      ".write": "auth != null && auth.token.email_verified == true && root.child('usuarios_autorizados').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true"
+    }
+  }
+}
