@@ -161,7 +161,15 @@
         const authDb = getDatabase(authApp);
         const chaveEmail = (email) => (email || '').toLowerCase().replace(/\./g, ',');
 
+        // Contas de e-mail/senha são criadas só pelo administrador no Firebase, então já estão liberadas.
+        // Contas Google precisam estar na lista "usuarios_autorizados".
         async function emailAutorizado(user) {
+            try {
+                const token = await user.getIdTokenResult();
+                if (token.signInProvider === 'password') return true;
+            } catch (err) {
+                return false;
+            }
             if (!user.email || !user.emailVerified) return false;
             try {
                 const snap = await get(ref(authDb, `usuarios_autorizados/${chaveEmail(user.email)}`));

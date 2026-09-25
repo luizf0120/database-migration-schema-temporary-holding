@@ -7,8 +7,8 @@
       }
     },
     "$outros": {
-      ".read": "auth != null && auth.token.email_verified == true && root.child('usuarios_autorizados').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true",
-      ".write": "auth != null && auth.token.email_verified == true && root.child('usuarios_autorizados').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true"
+      ".read": "auth != null && (auth.token.firebase.sign_in_provider == 'password' || (auth.token.email_verified == true && root.child('usuarios_autorizados').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true))",
+      ".write": "auth != null && (auth.token.firebase.sign_in_provider == 'password' || (auth.token.email_verified == true && root.child('usuarios_autorizados').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true))"
     }
   }
 }
