@@ -1359,6 +1359,59 @@ if (nota.metricasInsta) {
   };
 
   /* =====================================================================
+     CHAMADA AO GEMINI COM NOVAS TENTATIVAS
+     Quando o Google responde que está sobrecarregado (503), com erro interno (500)
+     ou com limite de uso (429), espera um pouco e tenta de novo. Se o modelo
+     principal continuar indisponível, tenta o modelo reserva (mais leve).
+     ===================================================================== */
+  const MODELOS_GEMINI = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+  const TENTATIVAS_POR_MODELO = 3;
+
+  async function chamarGemini(apiKey, corpo, aoAguardar) {
+      const esperar = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+      let falha = null;   // última falha relevante, usada na mensagem final
+      for (let m = 0; m < MODELOS_GEMINI.length; m++) {
+          if (m > 0 && aoAguardar) aoAguardar('⏳ Tentando modelo alternativo da IA...');
+          for (let tentativa = 1; tentativa <= TENTATIVAS_POR_MODELO; tentativa++) {
+              let resposta = null, dados = {}, erroRede = null;
+              try {
+                  resposta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODELOS_GEMINI[m]}:generateContent?key=${apiKey}`, {
+                      method: "POST", headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(corpo)
+                  });
+                  dados = await resposta.json().catch(() => ({}));
+              } catch (err) {
+                  erroRede = err;
+              }
+              if (resposta && resposta.ok) return dados;
+
+              const status = resposta ? resposta.status : 0;
+              if (status === 404) {   // modelo não existe (mais): passa para o próximo
+                  if (!falha) falha = { status, mensagem: dados.error?.message || '' };
+                  break;
+              }
+              falha = { status, mensagem: resposta ? (dados.error?.message || '') : erroRede.message };
+              console.error(`Gemini ${MODELOS_GEMINI[m]} (tentativa ${tentativa}):`, status, falha.mensagem);
+              // Chave inválida, pedido inválido etc.: tentar de novo não resolve
+              if (resposta && ![429, 500, 503].includes(status)) throw erroGemini(falha);
+              if (tentativa < TENTATIVAS_POR_MODELO) {
+                  if (aoAguardar) aoAguardar(`⏳ IA do Google ocupada, tentando de novo (${tentativa + 1}/${TENTATIVAS_POR_MODELO})...`);
+                  await esperar(3000 * tentativa);
+              }
+          }
+      }
+      throw erroGemini(falha);
+  }
+
+  function erroGemini(falha) {
+      const { status, mensagem } = falha || { status: 0, mensagem: '' };
+      if (status === 503 || status === 500) return new Error(`O serviço de IA do Google está sobrecarregado no momento (erro ${status}). O sistema tentou várias vezes, inclusive com um modelo alternativo. Tente de novo em alguns minutos.`);
+      if (status === 429) return new Error('Limite de uso da IA atingido (erro 429). Aguarde alguns minutos e tente de novo.');
+      if (status === 0) return new Error(`Sem conexão com a IA do Google. Verifique a internet. (${mensagem})`);
+      return new Error(`Erro na API do Google (HTTP ${status}): ${mensagem || 'resposta inesperada'}`);
+  }
+
+  /* =====================================================================
      CORREÇÃO DA IA: IMPLEMENTADO ENDPOINT v1beta + VALIDAÇÃO ANTI-CRASH
      ===================================================================== */
  window.processarTextoBrutoIA = async function() {
@@ -1385,21 +1438,10 @@ if (nota.metricasInsta) {
         JSON Chaves estruturais obrigatórias: "texto", "local", "data" (no formato YYYY-MM-DD), "hora" (no formato HH:MM), "movimento", "link_publicacao" (se houver algum link do instagram, facebook ou site no texto, coloque nesta chave, senão deixe vazio). 
         Texto original para análise: "${txtBruto}"`;
       
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-            method: "POST", 
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                contents: [{ parts: [{ text: promptInstrucao }] }],
-                generationConfig: { responseMimeType: "application/json" }
-            })
-        });
-
-        const dataIa = await response.json();
-        
-        if (!response.ok) {
-            console.error("Erro retornado pela API da Google:", dataIa);
-            throw new Error(dataIa.error?.message || "Erro HTTP do servidor da Google.");
-        }
+        const dataIa = await chamarGemini(apiKey, {
+            contents: [{ parts: [{ text: promptInstrucao }] }],
+            generationConfig: { responseMimeType: "application/json" }
+        }, (msg) => { btn.innerText = msg; });
 
         if (!dataIa.candidates || dataIa.candidates.length === 0) {
             throw new Error("A API respondeu com sucesso, mas não gerou candidatos de texto.");
@@ -2093,18 +2135,7 @@ Data: ${diaSemanaStr}, ${dataFormatadaBr}
                    🌤️ Clima: [Extraia o valor exato da chave "clima" presente no objeto]
 Lista de eventos para processar: ${JSON.stringify(pacotesEventos)}`;
 
-         const resposta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-              method: "POST", headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ contents: [{ parts: [{ text: promptFinal }] }] })
-          });
-
-          const dataIa = await resposta.json();
-          
-          // --- CORREÇÃO CIRÚRGICA: Trata erros 503, 400, 429, etc. ---
-          if (!resposta.ok) { 
-              throw new Error(`Erro na API do Google (HTTP ${resposta.status}): ${dataIa.error?.message || 'Servidor indisponível no momento. Tente novamente em alguns segundos.'}`); 
-          }
-          // -----------------------------------------------------------
+          const dataIa = await chamarGemini(apiKey, { contents: [{ parts: [{ text: promptFinal }] }] }, (msg) => { btn.innerText = msg; });
 
           if (!dataIa.candidates || dataIa.candidates.length === 0) { throw new Error("A IA recusou ou falhou na análise."); }
           
@@ -2196,16 +2227,7 @@ A estrutura da mensagem DEVE seguir estritamente o modelo abaixo. Não coloque l
 
           Eventos para análise: ${JSON.stringify(pacotesEventos)}`;
 
-        const resposta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-              method: "POST", headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ contents: [{ parts: [{ text: promptFinal }] }] })
-          });
-
-          const dataIa = await resposta.json();
-          
-          if (!resposta.ok) { 
-              throw new Error(`Erro na API do Google (HTTP ${resposta.status}): ${dataIa.error?.message || 'Servidor indisponível no momento. Tente novamente em alguns segundos.'}`); 
-          }
+          const dataIa = await chamarGemini(apiKey, { contents: [{ parts: [{ text: promptFinal }] }] }, (msg) => { btn.innerText = msg; });
 
           if (!dataIa.candidates || dataIa.candidates.length === 0) { throw new Error("A IA recusou ou falhou na análise."); }
           
@@ -2227,7 +2249,7 @@ A estrutura da mensagem DEVE seguir estritamente o modelo abaixo. Não coloque l
        document.getElementById('modal-overlay').style.display = 'block';
           document.getElementById('nota-modal').style.display = 'block';
       } catch (err) {
-          alert("Falha de Processamento na IA. Verifique as credenciais no console.");
+          alert(`Não foi possível gerar o relatório de IA.\n\n${err.message}`);
           console.error(err);
       }
 
@@ -2448,17 +2470,7 @@ window.gerarEstimativaPublico = async function() {
 
               Lista de eventos cadastrados para análise atual: ${JSON.stringify(pacotesComDadosInjetados)}`;
 
-              const resposta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-                  method: "POST", headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ contents: [{ parts: [{ text: promptFinal }] }] })
-              });
-
-              const dataIa = await resposta.json();
-
-              if (!resposta.ok) {
-                  if (resposta.status === 429) throw new Error("Limite de uso atingido (Erro 429). Aguarde 60 segundos.");
-                  throw new Error(dataIa.error?.message || "Erro HTTP na API da Google.");
-              }
+              const dataIa = await chamarGemini(apiKey, { contents: [{ parts: [{ text: promptFinal }] }] }, (msg) => { btn.innerText = msg; });
 
               if (!dataIa.candidates || dataIa.candidates.length === 0) throw new Error("A IA não retornou dados válidos.");
               
@@ -2665,15 +2677,10 @@ window.preverPublicoIndividualIA = async function(keyId, tipoEntrada) {
         • Clima Registrado: ${nota.clima || 'Sem informação'}
         • Resumo da Pauta: "${nota.texto || 'Sem descrição'}"`;
 
-        const resposta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                contents: [{ parts: [{ text: promptIndividual }] }],
-                generationConfig: { responseMimeType: "application/json" }
-            })
-        });
-
-        const dataIa = await resposta.json();
+        const dataIa = await chamarGemini(apiKey, {
+            contents: [{ parts: [{ text: promptIndividual }] }],
+            generationConfig: { responseMimeType: "application/json" }
+        }, (msg) => { modalTitulo.innerText = msg; });
         if (!dataIa.candidates || dataIa.candidates.length === 0) { throw new Error("A IA não gerou a previsão."); }
         
         let rawText = dataIa.candidates[0].content.parts[0].text;
