@@ -1318,7 +1318,7 @@ if (nota.metricasInsta) {
       // Ativação do botão de IA focado para este card específico
       div.querySelector('.btn-prever-ia').addEventListener('click', (e) => {
           e.preventDefault(); e.stopPropagation();
-          window.preverPublicoIndividualIA(keyId, tipoEntrada);
+          window.preverPublicoIndividualIA(keyId, tipoEntrada, e.currentTarget);
       });
 
       return div;
@@ -1719,20 +1719,28 @@ window.obterMetricasInstagram = async function(urlPost) {
             }
         });
 
-        const data = await response.json();
+        const data = await response.json().catch(() => ({}));
         console.log("RETORNO INSTAGRAM NOVO:", data);
+        if (!response.ok) {
+            console.error(`API do Instagram respondeu HTTP ${response.status}:`, data);
+            return null;
+        }
 
         // 3. Abertura genérica
         let postData = data.data || data; 
         if (postData && postData.post) postData = postData.post;
         if (postData && postData.media) postData = postData.media; 
+        if (!postData) return null;
 
-        let curtidas = 0; let comentarios = 0;
-        
-        if (postData && postData !== null) {
-            curtidas = postData.like_count ?? postData.likes ?? postData.edge_media_preview_like?.count ?? 0;
-            comentarios = postData.comment_count ?? postData.comments ?? postData.edge_media_to_comment?.count ?? 0;
+        const curtidasApi = postData.like_count ?? postData.likes ?? postData.edge_media_preview_like?.count;
+        const comentariosApi = postData.comment_count ?? postData.comments ?? postData.edge_media_to_comment?.count;
+        // Resposta sem métricas (limite do plano, post removido ou privado...): não sobrescreve as últimas salvas com zero
+        if (curtidasApi == null && comentariosApi == null) {
+            console.error("API do Instagram não retornou curtidas/comentários:", data);
+            return null;
         }
+        const curtidas = curtidasApi ?? 0;
+        const comentarios = comentariosApi ?? 0;
 
         return {
             curtidas: curtidas.toLocaleString('pt-BR'),
@@ -2327,16 +2335,51 @@ A estrutura da mensagem DEVE seguir estritamente o modelo abaixo. Não coloque l
       }
   });
 
-window.preverPublicoIndividualIA = async function(keyId, tipoEntrada) {
-    const nota = tipoEntrada === 'direto' ? alertasCalendarioGlobais[keyId] : agendaMenusGlobais[keyId];
+window.preverPublicoIndividualIA = async function(keyId, tipoEntrada, botao) {
+    let nota = tipoEntrada === 'direto' ? alertasCalendarioGlobais[keyId] : agendaMenusGlobais[keyId];
     if (!nota) return;
+    if (botao && botao.dataset.ocupado) return;   // já está atualizando as métricas deste evento
 
     const modalTitulo = document.getElementById('nota-alvo-titulo');
     const modalTexto = document.getElementById('nota-textarea');
     if (!modalTexto) return;
 
+    const dbPath = tipoEntrada === 'direto' 
+        ? `alertas_calendario/${keyId}` 
+        : `monitoramentoDiario/${dataHojeISO}/agenda_menus/${keyId}`;
+
+    // 1. Antes de prever, força a atualização das métricas do Instagram do evento (botão fica laranja)
+    let avisoMetricas = "";
+    if (nota.linkPublicacao && nota.linkPublicacao.includes('instagram.com')) {
+        const estiloOriginal = botao ? botao.getAttribute('style') : '';
+        const textoOriginal = botao ? botao.innerText : '';
+        if (botao) {
+            botao.dataset.ocupado = '1';
+            botao.innerText = '📊 Atualizando métricas...';
+            botao.style.background = 'var(--accent-orange)';
+            botao.style.borderColor = 'var(--accent-orange)';
+            botao.style.cursor = 'wait';
+        }
+        const metricas = await window.obterMetricasInstagram(nota.linkPublicacao);
+        if (metricas) {
+            nota = { ...nota, metricasInsta: metricas };
+            try { await set(ref(db, `${dbPath}/metricasInsta`), metricas); }
+            catch (err) { console.error("Falha ao salvar as métricas do Instagram:", err); }
+        } else {
+            avisoMetricas = nota.metricasInsta
+                ? `\n\n⚠️ Não foi possível atualizar as métricas do Instagram; usando as últimas salvas (checadas às ${nota.metricasInsta.atualizadoEm}).`
+                : `\n\n⚠️ Não foi possível obter as métricas do Instagram deste evento.`;
+        }
+        if (botao) {
+            botao.setAttribute('style', estiloOriginal);
+            botao.innerText = textoOriginal;
+            delete botao.dataset.ocupado;
+        }
+    }
+
+    // 2. Previsão de público pela IA
     modalTitulo.innerText = `🤖 Processando Previsão Tática...`;
-    modalTexto.value = `Aguarde... Conectando à IA e processando vetores históricos para o movimento "${nota.tituloOrigem || 'Geral'}".`;
+    modalTexto.value = `Aguarde... Conectando à IA e processando vetores históricos para o movimento "${nota.tituloOrigem || 'Geral'}".${avisoMetricas}`;
     document.getElementById('container-local').style.display = 'none';
     document.getElementById('container-tempo').style.display = 'none';
     document.getElementById('container-atrelar-movimento').style.display = 'none';
@@ -2388,6 +2431,10 @@ window.preverPublicoIndividualIA = async function(keyId, tipoEntrada) {
             }
         }
         let strMemoria = memoriaErros.length > 0 ? memoriaErros.slice(-3).join(" | ") : "Nenhum feedback anterior. Considere este o primeiro evento ou evento isolado.";
+        const metricasIg = nota.metricasInsta;
+        const linhaInstagram = metricasIg
+            ? `${metricasIg.curtidas} curtidas e ${metricasIg.comentarios} comentários na publicação de convocação (checado às ${metricasIg.atualizadoEm})`
+            : 'Sem métricas do Instagram';
 
         const promptIndividual = `Você é um algoritmo especialista em análise preditiva de inteligência de segurança pública. Calcule a projeção de público exclusivamente para o evento especificado abaixo.
         
@@ -2397,7 +2444,7 @@ window.preverPublicoIndividualIA = async function(keyId, tipoEntrada) {
         
         Responda OBRIGATORIAMENTE com um objeto JSON plano válido contendo as chaves:
         "previsao" (String resumida contendo a estimativa de público, ex: "150 a 200 participantes"),
-        "consideracoes" (String bem concisa e direta justificando o cálculo baseado na âncora de ${H_ult} pessoas, clima e pauta),
+        "consideracoes" (String bem concisa e direta justificando o cálculo baseado na âncora de ${H_ult} pessoas, clima, pauta e engajamento no Instagram),
         "texto_completo" (String formatada contendo o relatório analítico expandido).
 
         DADOS ATUAIS DO EVENTO SELECIONADO:
@@ -2405,6 +2452,7 @@ window.preverPublicoIndividualIA = async function(keyId, tipoEntrada) {
         • Data: ${dataFormatadaBr} às ${nota.horaAlerta || 'Horário não informado'}
         • Local de Concentração: ${nota.local || 'Não cadastrado'}
         • Clima Registrado: ${nota.clima || 'Sem informação'}
+        • Engajamento no Instagram: ${linhaInstagram}
         • Resumo da Pauta: "${nota.texto || 'Sem descrição'}"`;
 
         const dataIa = await chamarGemini(apiKey, {
@@ -2424,10 +2472,6 @@ window.preverPublicoIndividualIA = async function(keyId, tipoEntrada) {
             relatorioIaCompleto: dataObjeto.texto_completo || ""
         };
 
-        const dbPath = tipoEntrada === 'direto' 
-            ? `alertas_calendario/${keyId}` 
-            : `monitoramentoDiario/${dataHojeISO}/agenda_menus/${keyId}`;
-        
         // 🔒 SALVAMENTO ABSOLUTO E IMEDIATO AQUI
         await set(ref(db, dbPath), novosDados);
 
