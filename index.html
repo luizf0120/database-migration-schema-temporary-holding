@@ -703,8 +703,9 @@
   const googleProvider = new GoogleAuthProvider();
   googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-  getRedirectResult(auth).catch(() => {
-    document.getElementById('msg-erro').innerText = "Falha no login com Google. Tente novamente.";
+  getRedirectResult(auth).catch((error) => {
+    console.error("Erro no login com Google:", error);
+    document.getElementById('msg-erro').innerText = `Falha no login com Google. (${error.code || error.message})`;
   });
 
   // Login com e-mail e senha (contas criadas em Authentication no Firebase)
@@ -717,9 +718,19 @@
     try {
       await signInWithEmailAndPassword(auth, email, senha);
     } catch (error) {
-      msg.innerText = error.code === 'auth/too-many-requests'
-        ? "Muitas tentativas. Aguarde alguns minutos e tente novamente."
-        : "Acesso negado. Credenciais incorretas.";
+      console.error("Erro no login com senha:", error);
+      const mensagens = {
+        'auth/invalid-credential': "E-mail ou senha incorretos.",
+        'auth/invalid-login-credentials': "E-mail ou senha incorretos.",
+        'auth/wrong-password': "E-mail ou senha incorretos.",
+        'auth/user-not-found': "E-mail ou senha incorretos.",
+        'auth/invalid-email': "E-mail inválido.",
+        'auth/user-disabled': "Esta conta está desativada no Firebase.",
+        'auth/too-many-requests': "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+        'auth/operation-not-allowed': "Login por e-mail/senha desativado no Firebase.",
+        'auth/network-request-failed': "Sem conexão com o Firebase. Verifique a internet."
+      };
+      msg.innerText = `${mensagens[error.code] || "Falha no login."} (${error.code || error.message})`;
     }
   }
   document.getElementById('btn-entrar').addEventListener('click', entrarComSenha);
@@ -737,7 +748,8 @@
       } else if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
         msg.innerText = "";
       } else {
-        msg.innerText = "Falha no login com Google. Tente novamente.";
+        console.error("Erro no login com Google:", error);
+        msg.innerText = `Falha no login com Google. (${error.code || error.message})`;
       }
     }
   });
@@ -757,6 +769,7 @@
       return snap.val() === true;
     } catch (err) {
       // Sem permissão de leitura = e-mail fora da lista (bloqueado pelas regras do banco)
+      console.error("Erro ao verificar usuarios_autorizados:", err);
       return false;
     }
   }
@@ -799,7 +812,7 @@
         const msg = document.getElementById('msg-erro'); msg.innerText = "Verificando autorização...";
         if (!(await emailAutorizado(user))) {
             await signOut(auth);
-            msg.innerText = `Acesso negado: ${user.email || 'conta sem e-mail'} não está autorizado.`;
+            msg.innerText = `Acesso negado: ${user.email || 'conta sem e-mail'} não está autorizado. (procurado em usuarios_autorizados/${chaveEmail(user.email)} = true)`;
             return;
         }
         msg.innerText = "";
