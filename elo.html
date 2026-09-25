@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Carregando...</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        body { background-color: #121212; color: #ffffff; padding: 40px 20px; font-family: Arial, sans-serif; }
+        .form-container { background: #1e1e1e; padding: 30px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 800px; margin: 0 auto; }
+        .form-control, .form-select { background-color: #3b3b3b !important; color: #ffffff !important; border: 1px solid #555555; border-radius: 15px !important; padding: 10px 15px; }
+        .input-group .form-select { border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; }
+        .input-group .btn-remove { border-top-right-radius: 15px !important; border-bottom-right-radius: 15px !important; border: 1px solid #555555; border-left: none; }
+        .form-control:focus, .form-select:focus { background-color: #4a4a4a !important; border-color: #888888; box-shadow: none; }
+        .form-control::placeholder { color: #bbbbbb; }
+        .form-check-input { background-color: #3b3b3b; border: 2px solid #666; width: 20px; height: 20px; cursor: pointer; }
+        .form-check-input[value="nao"]:checked { background-color: #ff4d4d !important; border-color: #ff4d4d !important; }
+        .form-check-input[value="sim"]:checked { background-color: #007bff !important; border-color: #007bff !important; }
+        .form-check-label { margin-top: 2px; margin-left: 5px; cursor: pointer; }
+        .btn-salvar { background-color: #007bff; border: none; border-radius: 15px; padding: 12px; font-weight: bold; color: white; transition: 0.3s; }
+        .btn-salvar:hover { background-color: #0056b3; }
+        .diligencia-titulo { color: #007bff; font-size: 1.1em; margin: 0; padding: 0; }
+        .diligencia-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; margin-top: 5px; }
+        .diligencia-block { background-color: #252525; padding: 15px 20px; border-radius: 12px; margin-top: 15px; }
+        
+        .interactive-input { cursor: pointer !important; background-color: #2a2a2a !important; }
+        .custom-picker { display: none; position: absolute; background: #1e1e1e; border: 1px solid #555; border-radius: 12px; padding: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); z-index: 9999; width: 320px; }
+        .grid-4-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .grid-7-cols { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .picker-item { background: #3b3b3b; color: white; text-align: center; padding: 10px 5px; border-radius: 8px; cursor: pointer; font-size: 0.9em; transition: 0.2s; }
+        .picker-item:hover { background: #007bff; transform: scale(1.05); }
+
+        /* Conteúdo só aparece depois de confirmar o login */
+        body.verificando .form-container { display: none; }
+        #msg-acesso { text-align: center; color: #bbbbbb; }
+        body:not(.verificando) #msg-acesso { display: none; }
+        .topo-elo { display: flex; justify-content: space-between; align-items: center; max-width: 800px; margin: 0 auto 15px; font-size: 0.85em; color: #888; }
+        .topo-elo a { color: #bbbbbb; text-decoration: none; border: 1px solid #555; border-radius: 15px; padding: 5px 14px; }
+        .topo-elo a:hover { color: #fff; border-color: #888; }
+    </style>
+</head>
+<body class="verificando">
+
+    <p id="msg-acesso">Verificando acesso...</p>
+
+    <div class="topo-elo" id="topo-elo" style="display: none;">
+        <a href="index.html">↩ Módulos</a>
+        <span id="operador-elo"></span>
+    </div>
+
+    <div class="form-container">
+        <h3 class="mb-4 text-center" id="form-title">Carregando Título...</h3>
+        
+        <form id="registroForm">
+            <div class="mb-4">
+                <label for="data" class="form-label fw-bold">DATA:</label>
+                <input type="text" class="form-control interactive-input" id="data" placeholder="DD/MM/AAAA" readonly required onclick="window.openDatePicker(this.id, event)">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">ELO (Policial):</label>
+                <div id="container_elos">
+                    <div class="input-group mb-2">
+                        <select class="form-select elo-select" required>
+                            <option value="" selected disabled>Carregando dados do Firebase...</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="window.adicionarElo()">+ Adicionar Policial</button>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Viatura:</label>
+                <div id="container_viaturas">
+                    <div class="input-group mb-2">
+                        <select class="form-select viatura-select" required>
+                            <option value="" selected disabled>Carregando dados do Firebase...</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="window.adicionarViatura()">+ Adicionar Viatura</button>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold d-block">Sobreaviso:</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="sobreaviso" id="sobreaviso_nao" value="nao" checked>
+                    <label class="form-check-label" for="sobreaviso_nao">Não</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="sobreaviso" id="sobreaviso_sim" value="sim">
+                    <label class="form-check-label" for="sobreaviso_sim">Sim</label>
+                </div>
+            </div>
+
+            <div class="mb-2" id="campo_diligencias" style="display: block;">
+                <label for="qtd_diligencias" class="form-label fw-bold">Quantidade de diligências:</label>
+                <select class="form-select" id="qtd_diligencias" required>
+                    <option value="" selected disabled>Selecione a quantidade...</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+
+            <div id="container_diligencias_dinamicas" class="mb-4"></div>
+
+            <button type="button" class="btn btn-salvar w-100 mt-3" id="btnSalvar">Gerar Relatório</button>
+        </form>
+    </div>
+
+    <!-- MOLDE OCULTO PARA O PDF -->
+    <div id="pdf-wrapper" style="display: none;">
+        <div id="pdf-template" style="background: white; color: black; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; padding: 40px; width: 800px; text-align: justify; white-space: pre-wrap;"></div>
+    </div>
+
+    <!-- MENUS FLUTUANTES -->
+    <div id="custom-time-picker" class="custom-picker">
+        <div id="tp-header" class="text-center fw-bold mb-3 pb-2" style="border-bottom: 1px solid #555;">Selecione a Hora</div>
+        <div id="tp-hours" class="grid-4-cols"></div>
+        <div id="tp-minutes" class="grid-4-cols" style="display:none;"></div>
+    </div>
+
+    <div id="custom-date-picker" class="custom-picker">
+        <div id="dp-header" class="text-center fw-bold mb-3 pb-2" style="border-bottom: 1px solid #555;">Selecione o Dia</div>
+        <div id="dp-days" class="grid-7-cols"></div>
+        <div id="dp-months" class="grid-4-cols" style="display:none;"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        // Login: mesmo projeto e mesma sessão da página inicial (index.html).
+        // Precisa ser o app padrão para enxergar o usuário que já entrou por lá.
+        const authApp = initializeApp({
+            apiKey: "AIzaSyBVPuhWEddM3QH3tDCU0IPENF09Kg-_ves",
+            authDomain: "aesi-movimentos-sociais.firebaseapp.com",
+            databaseURL: "https://aesi-movimentos-sociais-default-rtdb.firebaseio.com",
+            projectId: "aesi-movimentos-sociais",
+            storageBucket: "aesi-movimentos-sociais.firebasestorage.app",
+            messagingSenderId: "957926070108",
+            appId: "1:957926070108:web:6673062b6e703d9e741399"
+        });
+        const auth = getAuth(authApp);
+        const authDb = getDatabase(authApp);
+        const chaveEmail = (email) => (email || '').toLowerCase().replace(/\./g, ',');
+
+        async function emailAutorizado(user) {
+            if (!user.email || !user.emailVerified) return false;
+            try {
+                const snap = await get(ref(authDb, `usuarios_autorizados/${chaveEmail(user.email)}`));
+                return snap.val() === true;
+            } catch (err) {
+                return false;
+            }
+        }
+
+      const firebaseConfig = {
+            apiKey: "AIzaSyBaHkWwObzo3_A5uLzZXpzU37ycGvF98qw",
+            authDomain: "policia-93923.firebaseapp.com",
+            projectId: "policia-93923",
+            storageBucket: "policia-93923.firebasestorage.app",
+            messagingSenderId: "949030805336",
+            appId: "1:949030805336:web:715b8117ad112177d94f2d"
+        };
+
+        // Dados do ELO (policiais, viaturas, configurações) ficam no projeto "policia-93923".
+        const app = initializeApp(firebaseConfig, "elo");
+        const db = getFirestore(app);
+
+        window.htmlOpcoesPoliciais = '<option value="" selected disabled>Carregando...</option>';
+        window.htmlOpcoesViaturas = '<option value="" selected disabled>Carregando...</option>';
+
+        window.adicionarElo = function() {
+            const container = document.getElementById('container_elos');
+            const novaDiv = document.createElement('div');
+            novaDiv.className = 'input-group mb-2';
+            novaDiv.innerHTML = `<select class="form-select elo-select" required>${window.htmlOpcoesPoliciais}</select><button class="btn btn-outline-danger btn-remove" type="button" onclick="this.parentElement.remove()">X</button>`;
+            container.appendChild(novaDiv);
+        };
+
+        window.adicionarViatura = function() {
+            const container = document.getElementById('container_viaturas');
+            const novaDiv = document.createElement('div');
+            novaDiv.className = 'input-group mb-2';
+            novaDiv.innerHTML = `<select class="form-select viatura-select" required>${window.htmlOpcoesViaturas}</select><button class="btn btn-outline-danger btn-remove" type="button" onclick="this.parentElement.remove()">X</button>`;
+            container.appendChild(novaDiv);
+        };
+
+        async function carregarPoliciais() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "policiais"));
+                let html = '<option value="" selected disabled>Selecione o policial...</option>';
+                querySnapshot.forEach((documento) => { html += `<option value="${documento.data().nome}">${documento.data().nome}</option>`; });
+                window.htmlOpcoesPoliciais = html; 
+                document.querySelectorAll('.elo-select').forEach(select => { select.innerHTML = html; });
+            } catch (error) {
+                console.error("Erro ao carregar policiais:", error);
+                document.querySelectorAll('.elo-select').forEach(s => s.innerHTML = `<option disabled selected>Erro: ${error.code || error.message}</option>`);
+            }
+        }
+
+        async function carregarViaturas() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "viaturas"));
+                let html = '<option value="" selected disabled>Selecione a viatura...</option>';
+                querySnapshot.forEach((documento) => {
+                    const nome = documento.data().nome || documento.data().prefixo || "Viatura sem ID";
+                    html += `<option value="${nome}">${nome}</option>`;
+                });
+                window.htmlOpcoesViaturas = html; 
+                document.querySelectorAll('.viatura-select').forEach(select => { select.innerHTML = html; });
+            } catch (error) {
+                console.error("Erro ao carregar viaturas:", error);
+                document.querySelectorAll('.viatura-select').forEach(s => s.innerHTML = `<option disabled selected>Erro: ${error.code || error.message}</option>`);
+            }
+        }
+
+        let activeDateInputId = null;
+        let selectedDayStr = "";
+        const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+        window.initDatePicker = function() {
+            let dHTML = ''; for(let i=1; i<=31; i++) dHTML += `<div class="picker-item" onclick="window.selectDay(${i}, event)">${i}</div>`;
+            document.getElementById('dp-days').innerHTML = dHTML;
+            let mHTML = ''; meses.forEach((mes, index) => mHTML += `<div class="picker-item" onclick="window.selectMonth(${index + 1}, event)">${mes}</div>`);
+            document.getElementById('dp-months').innerHTML = mHTML;
+        };
+
+        window.openDatePicker = function(inputId, event) {
+            event.stopPropagation();
+            activeDateInputId = inputId;
+            const input = document.getElementById(inputId);
+            const picker = document.getElementById('custom-date-picker');
+            const rect = input.getBoundingClientRect();
+            picker.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+            picker.style.left = (rect.left + window.scrollX) + 'px';
+            document.getElementById('dp-header').innerText = "Selecione o Dia";
+            document.getElementById('dp-days').style.display = 'grid';
+            document.getElementById('dp-months').style.display = 'none';
+            picker.style.display = 'block';
+            document.getElementById('custom-time-picker').style.display = 'none';
+        };
+
+        window.selectDay = function(d, event) {
+            event.stopPropagation();
+            selectedDayStr = d.toString().padStart(2, '0');
+            document.getElementById('dp-header').innerText = `Dia ${selectedDayStr} - Selecione o Mês`;
+            document.getElementById('dp-days').style.display = 'none';
+            document.getElementById('dp-months').style.display = 'grid';
+        };
+
+        window.selectMonth = function(m, event) {
+            event.stopPropagation();
+            const monthStr = m.toString().padStart(2, '0');
+            const currentYear = new Date().getFullYear();
+            const input = document.getElementById(activeDateInputId);
+            if(input) input.value = `${selectedDayStr}/${monthStr}/${currentYear}`;
+            document.getElementById('custom-date-picker').style.display = 'none';
+        };
+
+        let activeTimeInputId = null;
+        let selectedHourStr = "";
+
+        window.initTimePicker = function() {
+            let hHTML = ''; for(let i=0; i<24; i++) hHTML += `<div class="picker-item" onclick="window.selectHour(${i}, event)">${i.toString().padStart(2,'0')}h</div>`;
+            document.getElementById('tp-hours').innerHTML = hHTML;
+            let mHTML = ''; for(let i=0; i<60; i+=10) mHTML += `<div class="picker-item" onclick="window.selectMinute(${i}, event)">${i.toString().padStart(2,'0')}m</div>`;
+            document.getElementById('tp-minutes').innerHTML = mHTML;
+        };
+
+        window.openTimePicker = function(inputId, event) {
+            event.stopPropagation();
+            activeTimeInputId = inputId;
+            const input = document.getElementById(inputId);
+            const picker = document.getElementById('custom-time-picker');
+            const rect = input.getBoundingClientRect();
+            picker.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+            picker.style.left = (rect.left + window.scrollX) + 'px';
+            document.getElementById('tp-header').innerText = "Selecione a Hora";
+            document.getElementById('tp-hours').style.display = 'grid';
+            document.getElementById('tp-minutes').style.display = 'none';
+            picker.style.display = 'block';
+            document.getElementById('custom-date-picker').style.display = 'none';
+        };
+
+        window.selectHour = function(h, event) {
+            event.stopPropagation();
+            selectedHourStr = h.toString().padStart(2, '0');
+            document.getElementById('tp-header').innerText = `${selectedHourStr}h - Selecione os Minutos`;
+            document.getElementById('tp-hours').style.display = 'none';
+            document.getElementById('tp-minutes').style.display = 'grid';
+        };
+
+        window.selectMinute = function(m, event) {
+            event.stopPropagation();
+            const minStr = m.toString().padStart(2, '0');
+            const input = document.getElementById(activeTimeInputId);
+            if(input) input.value = `${selectedHourStr}:${minStr}`;
+            document.getElementById('custom-time-picker').style.display = 'none';
+        };
+
+        document.addEventListener('click', function(e) {
+            document.getElementById('custom-time-picker').style.display = 'none';
+            document.getElementById('custom-date-picker').style.display = 'none';
+        });
+
+        async function carregarTitulo() {
+            try {
+                const docRef = doc(db, "configuracoes", "sistema");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    document.getElementById('page-title').innerText = docSnap.data().tituloPagina || "Relatório Padrão";
+                    document.getElementById('form-title').innerText = docSnap.data().tituloPagina || "Relatório Padrão";
+                }
+            } catch (error) {}
+        }
+
+        window.toggleBou = function(index) {
+            const radioSim = document.getElementById(`bou_sim_${index}`).checked;
+            const containerTexto = document.getElementById(`container_texto_bou_${index}`);
+            const inputTexto = document.getElementById(`texto_bou_${index}`);
+            if (radioSim) {
+                containerTexto.style.display = 'block';
+                inputTexto.setAttribute('required', 'required');
+            } else {
+                containerTexto.style.display = 'none';
+                inputTexto.removeAttribute('required');
+                inputTexto.value = ''; 
+            }
+        };
+
+        window.toggleObs = function(index) {
+            const radioSim = document.getElementById(`obs_sim_${index}`).checked;
+            const containerTexto = document.getElementById(`container_texto_obs_${index}`);
+            const inputTexto = document.getElementById(`texto_obs_${index}`);
+            if (radioSim) {
+                containerTexto.style.display = 'block';
+                inputTexto.setAttribute('required', 'required');
+            } else {
+                containerTexto.style.display = 'none';
+                inputTexto.removeAttribute('required');
+                inputTexto.value = ''; 
+            }
+        };
+
+        window.toggleOPM = function(index) {
+            const opmSim = document.getElementById(`opm_sim_${index}`).checked;
+            const colCidade = document.getElementById(`col_cidade_${index}`);
+            const colBairro = document.getElementById(`col_bairro_${index}`);
+            const colBou = document.getElementById(`col_bou_${index}`);
+            const containerTextoBou = document.getElementById(`container_texto_bou_${index}`);
+            const colInicio = document.getElementById(`col_inicio_${index}`);
+            const colTermino = document.getElementById(`col_termino_${index}`);
+            const colObs = document.getElementById(`col_obs_${index}`);
+            const inputCidade = document.getElementById(`cidade_diligencia_${index}`);
+            const inputBairro = document.getElementById(`bairro_diligencia_${index}`);
+
+            if (opmSim) {
+                colCidade.style.display = 'none';
+                colBairro.style.display = 'none';
+                colBou.style.display = 'none';
+                containerTextoBou.style.display = 'none';
+                inputCidade.removeAttribute('required');
+                inputBairro.removeAttribute('required');
+                colInicio.className = 'col-md-6 mb-2';
+                colTermino.className = 'col-md-6 mb-2';
+                colObs.className = 'col-md-12 mb-2';
+            } else {
+                colCidade.style.display = 'block';
+                colBairro.style.display = 'block';
+                colBou.style.display = 'block';
+                if(document.getElementById(`bou_sim_${index}`).checked) containerTextoBou.style.display = 'block';
+                inputCidade.setAttribute('required', 'required');
+                inputBairro.setAttribute('required', 'required');
+                colInicio.className = 'col-md-3 mb-2';
+                colTermino.className = 'col-md-3 mb-2';
+                colObs.className = 'col-md-6 mb-2';
+            }
+        };
+
+        window.gerarCamposHora = function() {
+            const selectQtd = document.getElementById('qtd_diligencias');
+            const container = document.getElementById('container_diligencias_dinamicas');
+            const quantidade = parseInt(selectQtd.value) || 0;
+            container.innerHTML = ''; 
+
+            for (let i = 1; i <= quantidade; i++) {
+                const div = document.createElement('div');
+                div.className = 'diligencia-block'; 
+                div.innerHTML = `
+                    <div class="diligencia-header">
+                        <h6 class="diligencia-titulo fw-bold">Diligência ${i}</h6>
+                        <div>
+                            <label class="form-label d-inline-block me-2 mb-0" style="font-size: 0.9em; color: #bbbbbb;">Permaneceu na OPM?</label>
+                            <div class="form-check form-check-inline m-0 me-2">
+                                <input class="form-check-input" style="width:16px; height:16px;" type="radio" name="opm_radio_${i}" id="opm_nao_${i}" value="nao" checked onchange="window.toggleOPM(${i})">
+                                <label class="form-check-label" for="opm_nao_${i}" style="font-size: 0.85em;">Não</label>
+                            </div>
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input" style="width:16px; height:16px;" type="radio" name="opm_radio_${i}" id="opm_sim_${i}" value="sim" onchange="window.toggleOPM(${i})">
+                                <label class="form-check-label" for="opm_sim_${i}" style="font-size: 0.85em;">Sim</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3 mb-2" id="col_inicio_${i}">
+                            <label class="form-label" style="font-size: 0.9em;">Início:</label>
+                            <input type="text" class="form-control interactive-input" id="inicio_diligencia_${i}" placeholder="HH:MM" readonly required onclick="window.openTimePicker(this.id, event)">
+                        </div>
+                        <div class="col-md-3 mb-2" id="col_termino_${i}">
+                            <label class="form-label" style="font-size: 0.9em;">Término:</label>
+                            <input type="text" class="form-control interactive-input" id="termino_diligencia_${i}" placeholder="HH:MM" readonly required onclick="window.openTimePicker(this.id, event)">
+                        </div>
+                        <div class="col-md-3 mb-2" id="col_cidade_${i}">
+                            <label class="form-label" style="font-size: 0.9em;">Cidade:</label>
+                            <input type="text" class="form-control" id="cidade_diligencia_${i}" placeholder="Ex: Curitiba" required>
+                        </div>
+                        <div class="col-md-3 mb-2" id="col_bairro_${i}">
+                            <label class="form-label" style="font-size: 0.9em;">Bairro:</label>
+                            <input type="text" class="form-control" id="bairro_diligencia_${i}" placeholder="Ex: Centro" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-6 mb-2" id="col_bou_${i}">
+                            <label class="form-label d-inline-block me-3 mb-0" style="font-size: 0.9em;">Gerou BOU?</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="bou_radio_${i}" id="bou_nao_${i}" value="nao" checked onchange="window.toggleBou(${i})">
+                                <label class="form-check-label" style="font-size: 0.9em;">Não</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="bou_radio_${i}" id="bou_sim_${i}" value="sim" onchange="window.toggleBou(${i})">
+                                <label class="form-check-label" style="font-size: 0.9em;">Sim</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2" id="col_obs_${i}">
+                            <label class="form-label d-inline-block me-3 mb-0" style="font-size: 0.9em;">Observações?</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="obs_radio_${i}" id="obs_nao_${i}" value="nao" checked onchange="window.toggleObs(${i})">
+                                <label class="form-check-label" style="font-size: 0.9em;">Não</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="obs_radio_${i}" id="obs_sim_${i}" value="sim" onchange="window.toggleObs(${i})">
+                                <label class="form-check-label" style="font-size: 0.9em;">Sim</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" id="container_texto_bou_${i}" style="display: none;">
+                        <div class="col-12 mb-3">
+                            <input type="text" class="form-control" id="texto_bou_${i}" placeholder="Digite o número do BOU gerado...">
+                        </div>
+                    </div>
+
+                    <div class="row" id="container_texto_obs_${i}" style="display: none;">
+                        <div class="col-12 mb-2">
+                            <textarea class="form-control" id="texto_obs_${i}" rows="7" placeholder="Digite as observações..."></textarea>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            }
+        };
+
+        window.verificarSobreaviso = function() {
+            const radioNao = document.getElementById('sobreaviso_nao').checked;
+            const divDiligencias = document.getElementById('campo_diligencias');
+            const selectDiligencias = document.getElementById('qtd_diligencias');
+            const containerHoras = document.getElementById('container_diligencias_dinamicas');
+
+            if (radioNao) {
+                divDiligencias.style.display = 'block';
+                selectDiligencias.setAttribute('required', 'required');
+            } else {
+                divDiligencias.style.display = 'none';
+                selectDiligencias.removeAttribute('required');
+                selectDiligencias.value = ''; 
+                containerHoras.innerHTML = ''; 
+            }
+        };
+
+        document.getElementById('sobreaviso_nao').addEventListener('change', window.verificarSobreaviso);
+        document.getElementById('sobreaviso_sim').addEventListener('change', window.verificarSobreaviso);
+        document.getElementById('qtd_diligencias').addEventListener('change', window.gerarCamposHora);
+
+        function coletarDadosRelatorio() {
+            const dataRelatorio = document.getElementById('data').value;
+            const sobreaviso = document.querySelector('input[name="sobreaviso"]:checked').value;
+            const policiais = [];
+            document.querySelectorAll('.elo-select').forEach(select => { if (select.value) policiais.push(select.value); });
+            const viaturas = [];
+            document.querySelectorAll('.viatura-select').forEach(select => { if (select.value) viaturas.push(select.value); });
+            const dados = { data: dataRelatorio, sobreaviso, policiais, viaturas, diligencias: [] };
+
+            if (sobreaviso === 'nao') {
+                const qtdDiligencias = parseInt(document.getElementById('qtd_diligencias').value) || 0;
+                for (let i = 1; i <= qtdDiligencias; i++) {
+                    const permaneceuOpm = document.querySelector(`input[name="opm_radio_${i}"]:checked`).value;
+                    let diligencia = {
+                        numero: i,
+                        permaneceuOpm: permaneceuOpm,
+                        inicio: document.getElementById(`inicio_diligencia_${i}`).value,
+                        termino: document.getElementById(`termino_diligencia_${i}`).value
+                    };
+                    if (permaneceuOpm === 'nao') {
+                        diligencia.cidade = document.getElementById(`cidade_diligencia_${i}`).value;
+                        diligencia.bairro = document.getElementById(`bairro_diligencia_${i}`).value;
+                        diligencia.gerouBou = document.querySelector(`input[name="bou_radio_${i}"]:checked`).value;
+                        if (diligencia.gerouBou === 'sim') diligencia.numeroBou = document.getElementById(`texto_bou_${i}`).value;
+                    }
+                    diligencia.temObs = document.querySelector(`input[name="obs_radio_${i}"]:checked`).value;
+                    if (diligencia.temObs === 'sim') diligencia.textoObs = document.getElementById(`texto_obs_${i}`).value;
+                    dados.diligencias.push(diligencia);
+                }
+            }
+            return dados;
+        }
+
+        async function gerarTextoRelatorio(event) {
+            event.preventDefault(); 
+            const dados = coletarDadosRelatorio();
+
+            if (!dados.data || dados.policiais.length === 0) {
+                alert("Preencha os campos obrigatórios (Data e pelo menos um Policial).");
+                return;
+            }
+
+            let textoTemplate = "Data: {data}\nEquipe: {policiais}\nViaturas: {viaturas}\n\nATIVIDADES DESENVOLVIDAS:\n{diligencias}";
+            try {
+                const docRef = doc(db, "configuracoes", "template_relatorio");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().texto) textoTemplate = docSnap.data().texto;
+            } catch (error) {}
+
+            const strPoliciais = dados.policiais.join(", ");
+            const strViaturas = dados.viaturas.length > 0 ? dados.viaturas.join(", ") : "Nenhuma viatura informada";
+            let strDiligencias = "";
+            if (dados.sobreaviso === 'sim') {
+                strDiligencias = "A equipe permaneceu de sobreaviso. Nenhuma diligência externa realizada no período.";
+            } else {
+                dados.diligencias.forEach(dil => {
+                    strDiligencias += `\n--- DILIGÊNCIA ${dil.numero} ---\nHorário: ${dil.inicio} às ${dil.termino}\n`;
+                    if (dil.permaneceuOpm === 'sim') {
+                        strDiligencias += `Situação: A equipe permaneceu na OPM.\n`;
+                    } else {
+                        strDiligencias += `Local: Bairro ${dil.bairro}, cidade de ${dil.cidade}.\nBOU Gerado: ${dil.gerouBou === 'sim' ? dil.numeroBou : 'Não'}\n`;
+                    }
+                    if (dil.temObs === 'sim') strDiligencias += `Observações: ${dil.textoObs}\n`;
+                });
+            }
+
+            const textoFinal = textoTemplate
+                .replace(/{data}/g, dados.data)
+                .replace(/{policiais}/g, strPoliciais)
+                .replace(/{viaturas}/g, strViaturas)
+                .replace(/{diligencias}/g, strDiligencias.trim());
+
+            const pdfWrapper = document.getElementById('pdf-wrapper');
+            const pdfTemplate = document.getElementById('pdf-template');
+            pdfTemplate.innerText = textoFinal;
+            pdfWrapper.style.display = 'block';
+
+            const opt = {
+                margin:       15,
+                filename:     `Relatorio_ELO_${dados.data.replace(/\//g, '-')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(pdfTemplate).save().then(() => {
+                pdfWrapper.style.display = 'none';
+            });
+        }
+
+        document.getElementById('btnSalvar').addEventListener('click', gerarTextoRelatorio);
+
+        window.initTimePicker(); 
+        window.initDatePicker(); 
+        window.verificarSobreaviso(); 
+
+        // Sem login ou e-mail não autorizado -> volta para a tela de login.
+        let eloIniciado = false;
+        onAuthStateChanged(auth, async (user) => {
+            if (!user || !(await emailAutorizado(user))) {
+                window.location.replace('index.html');
+                return;
+            }
+            document.body.classList.remove('verificando');
+            document.getElementById('topo-elo').style.display = 'flex';
+            document.getElementById('operador-elo').innerText = `Operador: ${user.email}`;
+            if (!eloIniciado) {
+                eloIniciado = true;
+                carregarTitulo();      
+                carregarPoliciais();
+                carregarViaturas();    
+            }
+        });
+    </script>
+</body>
+</html>

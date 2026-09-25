@@ -69,6 +69,34 @@
   .login-box .btn-google:hover { background: #e8e8e8; }
 
   /* =========================================
+     TELA DE ESCOLHA DO MÓDULO
+     ========================================= */
+  #choice-screen {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: var(--bg-color);
+  }
+  .choice-box { width: 100%; max-width: 560px; text-align: center; }
+  .choice-box h2 { margin: 0 0 6px; font-size: 20px; letter-spacing: 1px; }
+  .choice-box .choice-user { color: #888; font-size: 12px; margin-bottom: 30px; }
+  .choice-options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .choice-card {
+    background: var(--card-bg); border: 1px solid #222; border-radius: 12px; padding: 36px 16px;
+    color: var(--text-main); font-size: 18px; font-weight: bold; letter-spacing: 1px; cursor: pointer;
+    transition: 0.2s; box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-family: inherit;
+  }
+  .choice-card span { display: block; font-size: 36px; margin-bottom: 12px; }
+  .choice-card:hover { border-color: var(--accent-red); transform: translateY(-3px); }
+  .choice-sair {
+    margin-top: 30px; background: none; border: none; color: #888; font-size: 12px; cursor: pointer; text-decoration: underline;
+  }
+  @media (max-width: 480px) { .choice-options { grid-template-columns: 1fr; } }
+
+  /* =========================================
      PAINEL PRINCIPAL
      ========================================= */
   #app-content { display: none; padding: 20px; }
@@ -403,6 +431,18 @@
     </div>
 </div>
 
+<div id="choice-screen">
+    <div class="choice-box">
+        <h2>SELECIONE O MÓDULO</h2>
+        <div class="choice-user" id="choice-user"></div>
+        <div class="choice-options">
+            <button class="choice-card" id="btn-modulo-elo"><span>🚓</span>ELO</button>
+            <button class="choice-card" id="btn-modulo-mov"><span>🕵️</span>MOV. SOCIAIS</button>
+        </div>
+        <button class="choice-sair" id="btn-sair-escolha">Sair</button>
+    </div>
+</div>
+
 <div id="app-content">
   <div class="header-container">
     <div class="header-title">
@@ -424,6 +464,7 @@
       </div>
       <div class="action-buttons">
         <button class="btn-action" onclick="window.baixarRelatorio()">📄 Relatório (7 Dias)</button>
+        <button class="btn-action" id="btn-trocar-modulo">↩ Módulos</button>
         <button class="btn-action btn-logout" id="btn-sair">Deslogar [X]</button>
       </div>
     </div>
@@ -675,7 +716,38 @@
     }
   }
 
-  document.getElementById('btn-sair').addEventListener('click', () => { signOut(auth).then(() => { location.reload(); }); });
+  const sair = () => {
+    try { sessionStorage.removeItem('modulo'); } catch (e) {}
+    signOut(auth).then(() => { location.reload(); });
+  };
+  document.getElementById('btn-sair').addEventListener('click', sair);
+  document.getElementById('btn-sair-escolha').addEventListener('click', sair);
+
+  // Depois do login o operador escolhe o módulo. A escolha fica guardada na sessão
+  // para que os recarregamentos automáticos (meio-dia/meia-noite) não voltem para esta tela.
+  let sistemaC2Iniciado = false;
+
+  function mostrarTela(tela) {
+    document.getElementById('login-screen').style.display = tela === 'login' ? 'flex' : 'none';
+    document.getElementById('choice-screen').style.display = tela === 'escolha' ? 'flex' : 'none';
+    document.getElementById('app-content').style.display = tela === 'mov' ? 'block' : 'none';
+  }
+
+  function abrirMovSociais() {
+    try { sessionStorage.setItem('modulo', 'mov'); } catch (e) {}
+    mostrarTela('mov');
+    if (!sistemaC2Iniciado) { sistemaC2Iniciado = true; iniciarSistemaC2(); }
+  }
+
+  document.getElementById('btn-modulo-mov').addEventListener('click', abrirMovSociais);
+  document.getElementById('btn-modulo-elo').addEventListener('click', () => {
+    try { sessionStorage.removeItem('modulo'); } catch (e) {}
+    window.location.href = 'elo.html';
+  });
+  document.getElementById('btn-trocar-modulo').addEventListener('click', () => {
+    try { sessionStorage.removeItem('modulo'); } catch (e) {}
+    mostrarTela('escolha');
+  });
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -686,13 +758,13 @@
             return;
         }
         msg.innerText = "";
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app-content').style.display = 'block';
         document.getElementById('connection-status').innerText = `Operador: ${user.email} | Sincronizado 🟢`;
-        iniciarSistemaC2();
+        document.getElementById('choice-user').innerText = `Operador: ${user.email}`;
+        let modulo = null;
+        try { modulo = sessionStorage.getItem('modulo'); } catch (e) {}
+        if (modulo === 'mov') abrirMovSociais(); else mostrarTela('escolha');
     } else {
-        document.getElementById('login-screen').style.display = 'flex';
-        document.getElementById('app-content').style.display = 'none';
+        mostrarTela('login');
     }
   });
 
