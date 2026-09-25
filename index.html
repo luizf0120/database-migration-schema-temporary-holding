@@ -1154,6 +1154,18 @@ window.inicializarCamposMovimento = function(listaMovimentos = []) {
     }
 };
 
+// A mesma janela é usada pelo Prever Público e pelos relatórios de IA, que trocam a ação e a cor
+// do botão (Fechar / Copiar). Toda janela de cadastro ou edição restaura o botão "Gravar".
+function prepararBotaoGravar(texto) {
+    const btn = document.getElementById('btn-modal-gravar');
+    btn.onclick = () => window.salvarNotaFirebase();
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.display = 'block';
+    btn.disabled = false;
+    btn.innerText = texto;
+}
+
 window.abrirModalCalendarioDireto = function() {
     contextoAtual = 'direto'; alvoAtualNota = "";
     window.CURRENT_IA_TEXTO_BRUTO = "";
@@ -1172,8 +1184,7 @@ window.abrirModalCalendarioDireto = function() {
     document.getElementById('container-tempo').style.display = 'flex';
     document.getElementById('container-atrelar-movimento').style.display = 'block';
     
-    document.getElementById('btn-modal-gravar').style.display = 'block';
-    document.getElementById('btn-modal-gravar').innerText = "Gravar Alerta";
+    prepararBotaoGravar("Gravar Alerta");
 
     document.getElementById('modal-overlay').style.display = 'block';
     document.getElementById('nota-modal').style.display = 'block';
@@ -1477,7 +1488,7 @@ document.getElementById('nota-link-pub').value = dataObjeto.link_publicacao || "
         document.getElementById('container-tempo').style.display = 'flex';
         document.getElementById('container-atrelar-movimento').style.display = 'block';
       document.getElementById('container-link-pub').style.display = 'block';
-        document.getElementById('btn-modal-gravar').innerText = "Confirmar e Gravar Alerta";
+        prepararBotaoGravar("Confirmar e Gravar Alerta");
         document.getElementById('nota-modal').style.display = 'block';
 
     } catch (err) {
@@ -1532,8 +1543,7 @@ window.abrirModalTatico = function(e, idUnico, titulo, tipo) {
     window.CURRENT_IA_TEXTO_BRUTO = "";
     
     document.getElementById('container-atrelar-movimento').style.display = 'none';
-    document.getElementById('btn-modal-gravar').style.display = 'block';
-    document.getElementById('btn-modal-gravar').innerText = "Gravar Alerta";
+    prepararBotaoGravar("Gravar Alerta");
 
     if (tipo === 'postit') {
         document.getElementById('nota-alvo-titulo').innerText = "Nota (Post-it): " + titulo;
