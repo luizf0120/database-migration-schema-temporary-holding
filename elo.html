@@ -371,6 +371,7 @@
             const colObs = document.getElementById(`col_obs_${index}`);
             const inputCidade = document.getElementById(`cidade_diligencia_${index}`);
             const inputBairro = document.getElementById(`bairro_diligencia_${index}`);
+            window.atualizarTextosPadrao();
 
             if (opmSim) {
                 colCidade.style.display = 'none';
@@ -420,6 +421,8 @@
                         </div>
                     </div>
                     
+                    <div id="texto_opm_${i}" class="texto-opm" style="display: none; background: #1e1e1e; border-radius: 10px; padding: 10px 15px; margin-bottom: 15px; text-align: justify;"></div>
+
                     <div class="row mb-3">
                         <div class="col-md-3 mb-2" id="col_inicio_${i}">
                             <label class="form-label" style="font-size: 0.9em;">Início:</label>
@@ -480,53 +483,73 @@
             }
         };
 
-        // Textos do sobreaviso vêm do Firestore: configuracoes/textos_sobreaviso,
-        // campo "singular" (1 policial) e campo "plural" (2 ou mais).
-        let textosSobreaviso = null;
-        let erroTextosSobreaviso = "Carregando texto do sobreaviso...";
+        // Textos padrão vêm do Firestore (coleção "configuracoes"), cada um com os campos
+        // "singular" (1 policial) e "plural" (2 ou mais):
+        //   textos_sobreaviso -> Sobreaviso = Sim
+        //   textos_opm        -> diligência com "Permaneceu na OPM" = Sim
+        const textosPadrao = {
+            sobreaviso: { documento: 'textos_sobreaviso', nome: 'do sobreaviso', valores: null, erro: 'Carregando texto do sobreaviso...' },
+            opm:        { documento: 'textos_opm',        nome: 'da OPM',        valores: null, erro: 'Carregando texto da OPM...' }
+        };
 
-        async function carregarTextosSobreaviso() {
-            try {
-                const docSnap = await getDoc(doc(db, "configuracoes", "textos_sobreaviso"));
-                const d = docSnap.exists() ? docSnap.data() : {};
-                if (d.singular && d.plural) {
-                    textosSobreaviso = { singular: String(d.singular), plural: String(d.plural) };
-                } else {
-                    erroTextosSobreaviso = "Texto do sobreaviso não cadastrado no Firebase (configuracoes/textos_sobreaviso: campos \"singular\" e \"plural\").";
+        async function carregarTextosPadrao() {
+            await Promise.all(Object.values(textosPadrao).map(async (t) => {
+                try {
+                    const docSnap = await getDoc(doc(db, "configuracoes", t.documento));
+                    const d = docSnap.exists() ? docSnap.data() : {};
+                    if (d.singular && d.plural) {
+                        t.valores = { singular: String(d.singular), plural: String(d.plural) };
+                    } else {
+                        t.erro = `Texto ${t.nome} não cadastrado no Firebase (configuracoes/${t.documento}: campos "singular" e "plural").`;
+                    }
+                } catch (error) {
+                    console.error(`Erro ao carregar ${t.documento}:`, error);
+                    t.erro = `Erro ao carregar texto ${t.nome}: ${error.code || error.message}`;
                 }
-            } catch (error) {
-                console.error("Erro ao carregar textos do sobreaviso:", error);
-                erroTextosSobreaviso = `Erro ao carregar texto do sobreaviso: ${error.code || error.message}`;
-            }
-            window.atualizarTextoSobreaviso();
+            }));
+            window.atualizarTextosPadrao();
         }
 
-        function textoSobreaviso(qtdPoliciais) {
-            if (!textosSobreaviso) return null;
-            return qtdPoliciais > 1 ? textosSobreaviso.plural : textosSobreaviso.singular;
+        function textoPadrao(chave, qtdPoliciais) {
+            const t = textosPadrao[chave];
+            if (!t.valores) return null;
+            return qtdPoliciais > 1 ? t.valores.plural : t.valores.singular;
         }
 
         function contarPoliciaisSelecionados() {
             return [...document.querySelectorAll('.elo-select')].filter(s => s.value).length;
         }
 
-        window.atualizarTextoSobreaviso = function() {
+        window.atualizarTextosPadrao = function() {
+            const qtd = contarPoliciaisSelecionados();
+
             const caixa = document.getElementById('texto_sobreaviso');
             if (document.getElementById('sobreaviso_sim').checked) {
-                caixa.innerText = textoSobreaviso(contarPoliciaisSelecionados()) || erroTextosSobreaviso;
+                caixa.innerText = textoPadrao('sobreaviso', qtd) || textosPadrao.sobreaviso.erro;
                 caixa.style.display = 'block';
             } else {
                 caixa.style.display = 'none';
             }
+
+            document.querySelectorAll('.texto-opm').forEach(caixaOpm => {
+                const i = caixaOpm.id.replace('texto_opm_', '');
+                const opmSim = document.getElementById(`opm_sim_${i}`);
+                if (opmSim && opmSim.checked) {
+                    caixaOpm.innerText = textoPadrao('opm', qtd) || textosPadrao.opm.erro;
+                    caixaOpm.style.display = 'block';
+                } else {
+                    caixaOpm.style.display = 'none';
+                }
+            });
         };
 
         // Atualiza o texto quando policiais são escolhidos, adicionados ou removidos
         const containerElos = document.getElementById('container_elos');
-        containerElos.addEventListener('change', window.atualizarTextoSobreaviso);
-        new MutationObserver(window.atualizarTextoSobreaviso).observe(containerElos, { childList: true });
+        containerElos.addEventListener('change', window.atualizarTextosPadrao);
+        new MutationObserver(window.atualizarTextosPadrao).observe(containerElos, { childList: true });
 
         window.verificarSobreaviso = function() {
-            window.atualizarTextoSobreaviso();
+            window.atualizarTextosPadrao();
             const radioNao = document.getElementById('sobreaviso_nao').checked;
             const divDiligencias = document.getElementById('campo_diligencias');
             const selectDiligencias = document.getElementById('qtd_diligencias');
@@ -613,16 +636,21 @@
             const strViaturas = dados.viaturas.length > 0 ? dados.viaturas.join(", ") : "Nenhuma viatura informada";
             let strDiligencias = "";
             if (dados.sobreaviso === 'sim') {
-                strDiligencias = textoSobreaviso(dados.policiais.length);
+                strDiligencias = textoPadrao('sobreaviso', dados.policiais.length);
                 if (!strDiligencias) {
-                    alert(erroTextosSobreaviso);
+                    alert(textosPadrao.sobreaviso.erro);
                     return;
                 }
             } else {
+                const textoOpm = textoPadrao('opm', dados.policiais.length);
+                if (!textoOpm && dados.diligencias.some(dil => dil.permaneceuOpm === 'sim')) {
+                    alert(textosPadrao.opm.erro);
+                    return;
+                }
                 dados.diligencias.forEach(dil => {
                     strDiligencias += `\n--- DILIGÊNCIA ${dil.numero} ---\nHorário: ${dil.inicio} às ${dil.termino}\n`;
                     if (dil.permaneceuOpm === 'sim') {
-                        strDiligencias += `Situação: A equipe permaneceu na OPM.\n`;
+                        strDiligencias += `${textoOpm}\n`;
                     } else {
                         strDiligencias += `Local: Bairro ${dil.bairro}, cidade de ${dil.cidade}.\nBOU Gerado: ${dil.gerouBou === 'sim' ? dil.numeroBou : 'Não'}\n`;
                     }
@@ -710,7 +738,7 @@
             if (!eloIniciado) {
                 eloIniciado = true;
                 carregarTitulo();      
-                carregarTextosSobreaviso();
+                carregarTextosPadrao();
                 carregarPoliciais();
                 carregarViaturas();    
             }
