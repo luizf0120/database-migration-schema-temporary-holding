@@ -753,6 +753,8 @@
 
         window.initTimePicker(); 
         window.initDatePicker(); 
+        // Campo DATA já vem com o dia de hoje (horário de Brasília); clicar nele permite trocar
+        document.getElementById('data').value = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
         window.verificarSobreaviso(); 
 
         // Sem login ou e-mail não autorizado -> volta para a tela de login.
