@@ -746,6 +746,16 @@
                 });
             });
 
+            // Rodapé de todas as páginas, à esquerda: quem gerou o relatório (e-mail do login)
+            const autor = emailOperador || (auth.currentUser && auth.currentUser.email) || 'Desconhecido';
+            const totalPaginas = pdf.getNumberOfPages();
+            for (let pagina = 1; pagina <= totalPaginas; pagina++) {
+                pdf.setPage(pagina);
+                pdf.setFont('times', 'normal');
+                pdf.setFontSize(9);
+                pdf.text(`Relatório gerado por: ${autor}`, margemX, alturaPagina - 10);
+            }
+
             pdf.save(`Relatorio_ELO_${dados.data.replace(/\//g, '-')}.pdf`);
         }
 
@@ -759,6 +769,7 @@
 
         // Sem login ou e-mail não autorizado -> volta para a tela de login.
         let eloIniciado = false;
+        let emailOperador = '';
         onAuthStateChanged(auth, async (user) => {
             if (!user || !(await emailAutorizado(user))) {
                 window.location.replace('index.html');
@@ -766,6 +777,7 @@
             }
             document.body.classList.remove('verificando');
             document.getElementById('topo-elo').style.display = 'flex';
+            emailOperador = user.email || '';
             document.getElementById('operador-elo').innerText = `Operador: ${user.email}`;
             if (!eloIniciado) {
                 eloIniciado = true;
