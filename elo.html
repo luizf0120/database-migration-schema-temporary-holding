@@ -26,6 +26,9 @@
         .diligencia-block { background-color: #252525; padding: 15px 20px; border-radius: 12px; margin-top: 15px; }
         
         .interactive-input { cursor: pointer !important; background-color: #2a2a2a !important; }
+        .btn-relogio { background: none; border: none; padding: 0 0 0 4px; color: #888; cursor: pointer; line-height: 1; vertical-align: middle; }
+        .btn-relogio:hover { color: #bbbbbb; }
+        .btn-relogio.ativo { color: #007bff; }
         .custom-picker { display: none; position: absolute; background: #1e1e1e; border: 1px solid #555; border-radius: 12px; padding: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); z-index: 9999; width: 320px; }
         .grid-4-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .grid-7-cols { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
@@ -396,6 +399,22 @@
             }
         };
 
+        // Relógio ao lado de "Término": liga/desliga a data de término (diligência que termina em outro dia)
+        window.toggleTerminoData = function(index) {
+            const btn = document.getElementById(`btn_relogio_${index}`);
+            const inputData = document.getElementById(`termino_data_diligencia_${index}`);
+            const ativar = btn.getAttribute('aria-pressed') !== 'true';
+            btn.setAttribute('aria-pressed', ativar ? 'true' : 'false');
+            btn.classList.toggle('ativo', ativar);
+            inputData.style.display = ativar ? 'block' : 'none';
+            if (ativar) {
+                inputData.setAttribute('required', 'required');
+            } else {
+                inputData.removeAttribute('required');
+                inputData.value = '';
+            }
+        };
+
         window.gerarCamposHora = function() {
             const selectQtd = document.getElementById('qtd_diligencias');
             const container = document.getElementById('container_diligencias_dinamicas');
@@ -429,7 +448,8 @@
                             <input type="text" class="form-control interactive-input" id="inicio_diligencia_${i}" placeholder="HH:MM" readonly required onclick="window.openTimePicker(this.id, event)">
                         </div>
                         <div class="col-md-3 mb-2" id="col_termino_${i}">
-                            <label class="form-label" style="font-size: 0.9em;">Término:</label>
+                            <label class="form-label" style="font-size: 0.9em;">Término:<button type="button" class="btn-relogio" id="btn_relogio_${i}" title="Terminou em outro dia (informar data e hora)" aria-pressed="false" onclick="window.toggleTerminoData(${i})"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5V8l2.5 1.5"/></svg></button></label>
+                            <input type="text" class="form-control interactive-input mb-1" id="termino_data_diligencia_${i}" placeholder="DD/MM/AAAA" readonly style="display: none;" onclick="window.openDatePicker(this.id, event)">
                             <input type="text" class="form-control interactive-input" id="termino_diligencia_${i}" placeholder="HH:MM" readonly required onclick="window.openTimePicker(this.id, event)">
                         </div>
                         <div class="col-md-3 mb-2" id="col_cidade_${i}">
@@ -587,7 +607,9 @@
                         numero: i,
                         permaneceuOpm: permaneceuOpm,
                         inicio: document.getElementById(`inicio_diligencia_${i}`).value,
-                        termino: document.getElementById(`termino_diligencia_${i}`).value
+                        termino: document.getElementById(`termino_diligencia_${i}`).value,
+                        terminoOutroDia: document.getElementById(`btn_relogio_${i}`).getAttribute('aria-pressed') === 'true',
+                        dataTermino: document.getElementById(`termino_data_diligencia_${i}`).value
                     };
                     if (permaneceuOpm === 'nao') {
                         diligencia.cidade = document.getElementById(`cidade_diligencia_${i}`).value;
@@ -609,6 +631,11 @@
 
             if (!dados.data || dados.policiais.length === 0) {
                 alert("Preencha os campos obrigatórios (Data e pelo menos um Policial).");
+                return;
+            }
+            const semDataTermino = dados.diligencias.find(dil => dil.terminoOutroDia && !dil.dataTermino);
+            if (semDataTermino) {
+                alert(`Informe a data de término da Diligência ${semDataTermino.numero} (ou clique no relógio para voltar a só hora).`);
                 return;
             }
 
@@ -648,7 +675,10 @@
                     return;
                 }
                 dados.diligencias.forEach(dil => {
-                    strDiligencias += `\n--- DILIGÊNCIA ${dil.numero} ---\nHorário: ${dil.inicio} às ${dil.termino}\n`;
+                    const horario = dil.terminoOutroDia
+                        ? `${dil.inicio} do dia ${dados.data} às ${dil.termino} do dia ${dil.dataTermino}`
+                        : `${dil.inicio} às ${dil.termino}`;
+                    strDiligencias += `\n--- DILIGÊNCIA ${dil.numero} ---\nHorário: ${horario}\n`;
                     if (dil.permaneceuOpm === 'sim') {
                         strDiligencias += `${textoOpm}\n`;
                     } else {
