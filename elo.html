@@ -355,6 +355,7 @@
             } else {
                 containerTexto.style.display = 'none';
                 inputTexto.removeAttribute('required');
+                inputTexto.classList.remove('is-invalid');
                 inputTexto.value = ''; 
             }
         };
@@ -395,6 +396,7 @@
                 inputBairro.removeAttribute('required');
                 inputCidade.classList.remove('is-invalid');
                 inputBairro.classList.remove('is-invalid');
+                document.getElementById(`texto_bou_${index}`).classList.remove('is-invalid');
                 colInicio.className = 'col-md-6 mb-2';
                 colTermino.className = 'col-md-6 mb-2';
                 colObs.className = 'col-md-12 mb-2';
@@ -661,10 +663,11 @@
                 exigir(`inicio_diligencia_${dil.numero}`, 'horário de início');
                 exigir(`termino_diligencia_${dil.numero}`, 'horário de término');
                 if (dil.terminoOutroDia) exigir(`termino_data_diligencia_${dil.numero}`, 'data de término');
-                // Cidade e bairro só aparecem quando a equipe não permaneceu na OPM
+                // Cidade, bairro e BOU só aparecem quando a equipe não permaneceu na OPM
                 if (dil.permaneceuOpm === 'nao') {
                     exigir(`cidade_diligencia_${dil.numero}`, 'cidade');
                     exigir(`bairro_diligencia_${dil.numero}`, 'bairro');
+                    if (dil.gerouBou === 'sim') exigir(`texto_bou_${dil.numero}`, 'número do BOU');
                 }
                 if (faltam.length) pendencias.push(`• Diligência ${dil.numero}: ${faltam.join(', ')}`);
             });
