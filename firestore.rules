@@ -1,0 +1,25 @@
+rules_version = '2';
+
+// Regras do Firestore do projeto "policia-93923" (dados do ELO).
+// O login é feito no projeto "aesi-movimentos-sociais", então aqui não há usuário autenticado.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Dados do ELO: a página só lê
+    match /policiais/{id}     { allow read: if true; }
+    match /viaturas/{id}      { allow read: if true; }
+    match /configuracoes/{id} { allow read: if true; }
+
+    // Rascunhos do ELO (24h). O ID de cada documento é o uid do login do policial:
+    // só consegue abrir quem sabe esse ID, e listar a coleção é proibido.
+    match /rascunhos_elo/{uid} {
+      allow get, delete: if uid.matches('^[A-Za-z0-9]{20,128}$');
+      allow list: if false;
+      allow create, update: if uid.matches('^[A-Za-z0-9]{20,128}$')
+        && request.resource.data.keys().hasOnly(['estado', 'operador', 'criadoEm', 'atualizadoEm', 'expiraEm'])
+        && request.resource.data.estado is string
+        && request.resource.data.estado.size() < 200000
+        && request.resource.data.expiraEm is timestamp;
+    }
+  }
+}

@@ -120,6 +120,10 @@
 
             <button type="button" class="btn btn-salvar w-100 mt-3" id="btnSalvar">Gerar Relatório</button>
         </form>
+        <div id="status-rascunho" class="text-center mt-2" style="display: none; font-size: 0.8em; color: #888;">
+            <span id="texto-rascunho"></span>
+            <a href="#" id="limpar-rascunho" style="color: #bbbbbb; margin-left: 6px;" onclick="window.limparRascunho(); return false;">Limpar</a>
+        </div>
     </div>
 
     <!-- MENUS FLUTUANTES -->
@@ -137,7 +141,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
@@ -274,7 +278,10 @@
             const monthStr = m.toString().padStart(2, '0');
             const currentYear = new Date().getFullYear();
             const input = document.getElementById(activeDateInputId);
-            if(input) input.value = `${selectedDayStr}/${monthStr}/${currentYear}`;
+            if(input) {
+                input.value = `${selectedDayStr}/${monthStr}/${currentYear}`;
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
             document.getElementById('custom-date-picker').style.display = 'none';
         };
 
@@ -315,7 +322,10 @@
             event.stopPropagation();
             const minStr = m.toString().padStart(2, '0');
             const input = document.getElementById(activeTimeInputId);
-            if(input) input.value = `${selectedHourStr}:${minStr}`;
+            if(input) {
+                input.value = `${selectedHourStr}:${minStr}`;
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
             document.getElementById('custom-time-picker').style.display = 'none';
         };
 
@@ -413,12 +423,15 @@
                 inputData.removeAttribute('required');
                 inputData.value = '';
             }
+            inputData.dispatchEvent(new Event('change', { bubbles: true }));
         };
 
         window.gerarCamposHora = function() {
             const selectQtd = document.getElementById('qtd_diligencias');
             const container = document.getElementById('container_diligencias_dinamicas');
             const quantidade = parseInt(selectQtd.value) || 0;
+            // Guarda as diligências já preenchidas para não perdê-las ao mudar a quantidade
+            const preenchidas = [...container.querySelectorAll('.diligencia-block')].map((_, idx) => lerDiligencia(idx + 1));
             container.innerHTML = ''; 
 
             for (let i = 1; i <= quantidade; i++) {
@@ -501,6 +514,7 @@
                 `;
                 container.appendChild(div);
             }
+            preenchidas.slice(0, quantidade).forEach((d, idx) => preencherDiligencia(idx + 1, d));
         };
 
         // Textos padrão vêm do Firestore (coleção "configuracoes"), cada um com os campos
@@ -757,9 +771,200 @@
             }
 
             pdf.save(`Relatorio_ELO_${dados.data.replace(/\//g, '-')}.pdf`);
+            await apagarRascunho();
+            mostrarStatusRascunho('Relatório gerado. O rascunho foi apagado.');
         }
 
         document.getElementById('btnSalvar').addEventListener('click', gerarTextoRelatorio);
+
+        /* =====================================================================
+           RASCUNHO AUTOMÁTICO (24h)
+           Enquanto o relatório não é gerado, o formulário é salvo sozinho no Firestore
+           do projeto policia (rascunhos_elo/<uid do login>) e restaurado ao abrir a página.
+           Vale por 24h a partir do primeiro salvamento; depois disso é apagado.
+           ===================================================================== */
+        const VALIDADE_RASCUNHO_MS = 24 * 60 * 60 * 1000;
+        let refRascunho = null;
+        let rascunhoPronto = false;   // só salva depois de tentar restaurar (nunca sobrescreve com o formulário vazio)
+        let rascunhoCriadoEm = null;
+        let ultimoEstadoSalvo = null;
+        let timerRascunho = null;
+
+        const fmtHora = (ms) => new Date(ms).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+        const fmtDia = (ms) => new Date(ms).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', timeZone: 'America/Sao_Paulo' });
+
+        function mostrarStatusRascunho(texto, { erro = false, limpar = false } = {}) {
+            const caixa = document.getElementById('status-rascunho');
+            document.getElementById('texto-rascunho').innerText = texto;
+            document.getElementById('limpar-rascunho').style.display = limpar ? 'inline' : 'none';
+            caixa.style.color = erro ? '#ff6b6b' : '#888';
+            caixa.style.display = texto ? 'block' : 'none';
+        }
+
+        function lerDiligencia(i) {
+            const valor = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+            const marcado = (nome) => { const el = document.querySelector(`input[name="${nome}"]:checked`); return el ? el.value : 'nao'; };
+            const relogio = document.getElementById(`btn_relogio_${i}`);
+            return {
+                opm: marcado(`opm_radio_${i}`),
+                inicio: valor(`inicio_diligencia_${i}`),
+                termino: valor(`termino_diligencia_${i}`),
+                terminoOutroDia: !!relogio && relogio.getAttribute('aria-pressed') === 'true',
+                dataTermino: valor(`termino_data_diligencia_${i}`),
+                cidade: valor(`cidade_diligencia_${i}`),
+                bairro: valor(`bairro_diligencia_${i}`),
+                bou: marcado(`bou_radio_${i}`),
+                numeroBou: valor(`texto_bou_${i}`),
+                obs: marcado(`obs_radio_${i}`),
+                textoObs: valor(`texto_obs_${i}`)
+            };
+        }
+
+        function preencherDiligencia(i, d) {
+            if (!d || !document.getElementById(`inicio_diligencia_${i}`)) return;
+            const definir = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+            if (d.opm === 'sim') { document.getElementById(`opm_sim_${i}`).checked = true; window.toggleOPM(i); }
+            definir(`inicio_diligencia_${i}`, d.inicio);
+            definir(`termino_diligencia_${i}`, d.termino);
+            if (d.terminoOutroDia) { window.toggleTerminoData(i); definir(`termino_data_diligencia_${i}`, d.dataTermino); }
+            definir(`cidade_diligencia_${i}`, d.cidade);
+            definir(`bairro_diligencia_${i}`, d.bairro);
+            if (d.bou === 'sim') { document.getElementById(`bou_sim_${i}`).checked = true; window.toggleBou(i); }
+            definir(`texto_bou_${i}`, d.numeroBou);
+            if (d.obs === 'sim') { document.getElementById(`obs_sim_${i}`).checked = true; window.toggleObs(i); }
+            definir(`texto_obs_${i}`, d.textoObs);
+        }
+
+        function lerFormulario() {
+            // Opção desabilitada = "Selecione..." (ou erro de carregamento): conta como vazio
+            const valorSelect = (s) => (s.selectedOptions[0] && !s.selectedOptions[0].disabled) ? s.value : '';
+            return {
+                data: document.getElementById('data').value,
+                policiais: [...document.querySelectorAll('.elo-select')].map(valorSelect),
+                viaturas: [...document.querySelectorAll('.viatura-select')].map(valorSelect),
+                sobreaviso: document.querySelector('input[name="sobreaviso"]:checked').value,
+                qtdDiligencias: document.getElementById('qtd_diligencias').value || '',
+                diligencias: [...document.querySelectorAll('#container_diligencias_dinamicas .diligencia-block')].map((_, idx) => lerDiligencia(idx + 1))
+            };
+        }
+
+        function formularioVazio(e) {
+            return !e.policiais.some(Boolean) && !e.viaturas.some(Boolean) && e.sobreaviso === 'nao' && !e.qtdDiligencias;
+        }
+
+        function preencherSelects(seletor, adicionar, valores) {
+            (valores || []).forEach((valor, idx) => {
+                if (idx > 0) adicionar();
+                const selects = document.querySelectorAll(seletor);
+                const select = selects[selects.length - 1];
+                if (valor && [...select.options].some(o => o.value === valor)) select.value = valor;
+            });
+        }
+
+        function aplicarFormulario(e) {
+            if (e.data) document.getElementById('data').value = e.data;
+            preencherSelects('.elo-select', window.adicionarElo, e.policiais);
+            preencherSelects('.viatura-select', window.adicionarViatura, e.viaturas);
+            document.getElementById(e.sobreaviso === 'sim' ? 'sobreaviso_sim' : 'sobreaviso_nao').checked = true;
+            window.verificarSobreaviso();
+            if (e.sobreaviso !== 'sim' && e.qtdDiligencias) {
+                document.getElementById('qtd_diligencias').value = e.qtdDiligencias;
+                window.gerarCamposHora();
+                (e.diligencias || []).forEach((d, idx) => preencherDiligencia(idx + 1, d));
+            }
+            window.atualizarTextosPadrao();
+        }
+
+        async function restaurarRascunho() {
+            try {
+                const snap = await getDoc(refRascunho);
+                if (snap.exists()) {
+                    const r = snap.data();
+                    const expira = r.expiraEm && r.expiraEm.toMillis ? r.expiraEm.toMillis() : 0;
+                    if (expira <= Date.now()) {
+                        await deleteDoc(refRascunho);   // passou de 24h: apaga
+                    } else {
+                        aplicarFormulario(JSON.parse(r.estado));
+                        rascunhoCriadoEm = r.criadoEm.toMillis();
+                        const salvoEm = r.atualizadoEm.toMillis();
+                        mostrarStatusRascunho(`Rascunho de ${fmtDia(salvoEm)} às ${fmtHora(salvoEm)} restaurado · guardado até ${fmtDia(expira)} às ${fmtHora(expira)}`, { limpar: true });
+                    }
+                }
+                ultimoEstadoSalvo = JSON.stringify(lerFormulario());
+                rascunhoPronto = true;
+            } catch (error) {
+                console.error("Erro ao carregar rascunho:", error);
+                mostrarStatusRascunho(`Rascunho indisponível (${error.code || error.message}). As informações não estão sendo salvas.`, { erro: true });
+            }
+        }
+
+        function agendarRascunho() {
+            if (!rascunhoPronto) return;
+            clearTimeout(timerRascunho);
+            timerRascunho = setTimeout(salvarRascunho, 800);
+        }
+
+        async function salvarRascunho() {
+            clearTimeout(timerRascunho);
+            timerRascunho = null;
+            if (!rascunhoPronto || !refRascunho) return;
+            const estado = lerFormulario();
+            const json = JSON.stringify(estado);
+            if (json === ultimoEstadoSalvo) return;
+            ultimoEstadoSalvo = json;
+            try {
+                if (formularioVazio(estado)) {
+                    if (rascunhoCriadoEm) { rascunhoCriadoEm = null; await deleteDoc(refRascunho); }
+                    mostrarStatusRascunho('');
+                    return;
+                }
+                const agora = Date.now();
+                if (!rascunhoCriadoEm || agora - rascunhoCriadoEm > VALIDADE_RASCUNHO_MS) rascunhoCriadoEm = agora;
+                const expira = rascunhoCriadoEm + VALIDADE_RASCUNHO_MS;
+                await setDoc(refRascunho, {
+                    estado: json,
+                    operador: emailOperador,
+                    criadoEm: Timestamp.fromMillis(rascunhoCriadoEm),
+                    atualizadoEm: Timestamp.fromMillis(agora),
+                    expiraEm: Timestamp.fromMillis(expira)
+                });
+                mostrarStatusRascunho(`Rascunho salvo às ${fmtHora(agora)} · guardado até ${fmtDia(expira)} às ${fmtHora(expira)}`, { limpar: true });
+            } catch (error) {
+                console.error("Erro ao salvar rascunho:", error);
+                ultimoEstadoSalvo = null;   // tenta de novo na próxima alteração
+                mostrarStatusRascunho(`Não foi possível salvar o rascunho (${error.code || error.message}).`, { erro: true });
+            }
+        }
+
+        async function apagarRascunho() {
+            clearTimeout(timerRascunho);
+            timerRascunho = null;
+            // O que está na tela já foi usado; só vira rascunho de novo se algo for alterado
+            ultimoEstadoSalvo = JSON.stringify(lerFormulario());
+            rascunhoCriadoEm = null;
+            if (!refRascunho) return;
+            try {
+                await deleteDoc(refRascunho);
+            } catch (error) {
+                console.error("Erro ao apagar rascunho:", error);
+            }
+        }
+
+        window.limparRascunho = async function() {
+            if (!confirm('Apagar o rascunho e limpar o formulário?')) return;
+            rascunhoPronto = false;   // não salva de novo durante o recarregamento
+            await apagarRascunho();
+            location.reload();
+        };
+
+        // Qualquer alteração no formulário (digitação, seleção, campos adicionados/removidos) agenda o salvamento
+        const formRegistro = document.getElementById('registroForm');
+        formRegistro.addEventListener('input', agendarRascunho);
+        formRegistro.addEventListener('change', agendarRascunho);
+        new MutationObserver(agendarRascunho).observe(formRegistro, { childList: true, subtree: true });
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden' && timerRascunho) salvarRascunho();
+        });
 
         window.initTimePicker(); 
         window.initDatePicker(); 
@@ -781,10 +986,11 @@
             document.getElementById('operador-elo').innerText = `Operador: ${user.email}`;
             if (!eloIniciado) {
                 eloIniciado = true;
+                refRascunho = doc(db, "rascunhos_elo", user.uid);
                 carregarTitulo();      
                 carregarTextosPadrao();
-                carregarPoliciais();
-                carregarViaturas();    
+                // O rascunho só é restaurado depois que as listas de policiais e viaturas carregarem
+                Promise.all([carregarPoliciais(), carregarViaturas()]).then(restaurarRascunho);
             }
         });
     </script>
