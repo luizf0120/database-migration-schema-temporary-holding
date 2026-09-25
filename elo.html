@@ -120,7 +120,10 @@
 
     <!-- MOLDE OCULTO PARA O PDF -->
     <div id="pdf-wrapper" style="display: none;">
-        <div id="pdf-template" style="background: white; color: black; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; padding: 40px; width: 800px; text-align: justify; white-space: pre-wrap;"></div>
+        <div id="pdf-template" style="background: white; color: black; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; padding: 40px; width: 800px;">
+            <div id="pdf-cabecalho" style="text-align: center; font-weight: bold; line-height: 1.4; margin-bottom: 25px;"></div>
+            <div id="pdf-corpo" style="text-align: justify; white-space: pre-wrap;"></div>
+        </div>
     </div>
 
     <!-- MENUS FLUTUANTES -->
@@ -546,6 +549,19 @@
                 if (docSnap.exists() && docSnap.data().texto) textoTemplate = docSnap.data().texto;
             } catch (error) {}
 
+            // Cabeçalho do PDF vem do Firestore: configuracoes/cabecalho_relatorio, campo "linhas" (array de textos).
+            let linhasCabecalho = [];
+            try {
+                const docSnap = await getDoc(doc(db, "configuracoes", "cabecalho_relatorio"));
+                if (docSnap.exists()) {
+                    const d = docSnap.data();
+                    if (Array.isArray(d.linhas)) linhasCabecalho = d.linhas;
+                    else if (typeof d.texto === 'string') linhasCabecalho = d.texto.split(/\\n|\n/);
+                }
+            } catch (error) {
+                console.error("Erro ao carregar cabeçalho do relatório:", error);
+            }
+
             const strPoliciais = dados.policiais.join(", ");
             const strViaturas = dados.viaturas.length > 0 ? dados.viaturas.join(", ") : "Nenhuma viatura informada";
             let strDiligencias = "";
@@ -571,7 +587,15 @@
 
             const pdfWrapper = document.getElementById('pdf-wrapper');
             const pdfTemplate = document.getElementById('pdf-template');
-            pdfTemplate.innerText = textoFinal;
+            const pdfCabecalho = document.getElementById('pdf-cabecalho');
+            pdfCabecalho.innerHTML = '';
+            linhasCabecalho.map(l => String(l).trim()).filter(Boolean).forEach(linha => {
+                const div = document.createElement('div');
+                div.textContent = linha;
+                pdfCabecalho.appendChild(div);
+            });
+            pdfCabecalho.style.display = pdfCabecalho.childElementCount ? 'block' : 'none';
+            document.getElementById('pdf-corpo').innerText = textoFinal;
             pdfWrapper.style.display = 'block';
 
             const opt = {
