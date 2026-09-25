@@ -1785,13 +1785,10 @@ window.salvarNotaFirebase = async function() {
         dadosClimaticos = await window.obterClimaOpenMeteo(local, dataAlerta);
     }
 
-    // Busca métricas do Instagram em tempo real
-    let metricasInsta = null;
-    if (linkPublicacao) {
-        btnGravar.innerText = "📊 Buscando Métricas do IG...";
-        btnGravar.disabled = true;
-        metricasInsta = await window.obterMetricasInstagram(linkPublicacao);
-    }
+    // Métricas do Instagram não são buscadas ao gravar (só no "Prever Público").
+    // Mantém as já salvas, a menos que o link da publicação tenha mudado (seriam de outro post).
+    const metricasMantidas = (existentes) =>
+        (linkPublicacao && linkPublicacao === existentes.linkPublicacao) ? (existentes.metricasInsta || null) : null;
 
     if (contextoAtual === 'direto') {
         const uniqueKey = alvoAtualNota || ("CAL_" + Date.now()); 
@@ -1814,7 +1811,7 @@ window.salvarNotaFirebase = async function() {
                 dataAlerta, 
                 horaAlerta, 
                 linkPublicacao,
-                metricasInsta: metricasInsta || dadosExistentes.metricasInsta || null,
+                metricasInsta: metricasMantidas(dadosExistentes),
                 clima: dadosClimaticos || dadosExistentes.clima || "",
                 movimentoAtrelado: movimentoAtreladoOriginal,
                 movimentosAtrelados: movimentosAtrelados,     
@@ -1850,7 +1847,7 @@ window.salvarNotaFirebase = async function() {
                 dataAlerta, 
                 horaAlerta,
                 linkPublicacao,
-                metricasInsta: metricasInsta || dadosExistentes.metricasInsta || null,
+                metricasInsta: metricasMantidas(dadosExistentes),
                 clima: dadosClimaticos || dadosExistentes.clima || "",
                 operador: user, 
                 time: obterHoraBrasilia(), 
