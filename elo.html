@@ -488,11 +488,30 @@
             }
         };
 
-        // Texto padrão do sobreaviso: "O policial..." para 1 policial, "A equipe..." para 2 ou mais.
+        // Textos do sobreaviso vêm do Firestore: configuracoes/textos_sobreaviso,
+        // campo "singular" (1 policial) e campo "plural" (2 ou mais).
+        let textosSobreaviso = null;
+        let erroTextosSobreaviso = "Carregando texto do sobreaviso...";
+
+        async function carregarTextosSobreaviso() {
+            try {
+                const docSnap = await getDoc(doc(db, "configuracoes", "textos_sobreaviso"));
+                const d = docSnap.exists() ? docSnap.data() : {};
+                if (d.singular && d.plural) {
+                    textosSobreaviso = { singular: String(d.singular), plural: String(d.plural) };
+                } else {
+                    erroTextosSobreaviso = "Texto do sobreaviso não cadastrado no Firebase (configuracoes/textos_sobreaviso: campos \"singular\" e \"plural\").";
+                }
+            } catch (error) {
+                console.error("Erro ao carregar textos do sobreaviso:", error);
+                erroTextosSobreaviso = `Erro ao carregar texto do sobreaviso: ${error.code || error.message}`;
+            }
+            window.atualizarTextoSobreaviso();
+        }
+
         function textoSobreaviso(qtdPoliciais) {
-            return qtdPoliciais > 1
-                ? "A equipe mencionada acima permaneceu de sobreaviso na data referida, não tendo sido acionada ou cumprido qualquer atividade operacional de inteligência."
-                : "O policial mencionado acima permaneceu de sobreaviso na data referida, não tendo sido acionado ou cumprido qualquer atividade operacional de inteligência.";
+            if (!textosSobreaviso) return null;
+            return qtdPoliciais > 1 ? textosSobreaviso.plural : textosSobreaviso.singular;
         }
 
         function contarPoliciaisSelecionados() {
@@ -502,7 +521,7 @@
         window.atualizarTextoSobreaviso = function() {
             const caixa = document.getElementById('texto_sobreaviso');
             if (document.getElementById('sobreaviso_sim').checked) {
-                caixa.innerText = textoSobreaviso(contarPoliciaisSelecionados());
+                caixa.innerText = textoSobreaviso(contarPoliciaisSelecionados()) || erroTextosSobreaviso;
                 caixa.style.display = 'block';
             } else {
                 caixa.style.display = 'none';
@@ -603,6 +622,10 @@
             let strDiligencias = "";
             if (dados.sobreaviso === 'sim') {
                 strDiligencias = textoSobreaviso(dados.policiais.length);
+                if (!strDiligencias) {
+                    alert(erroTextosSobreaviso);
+                    return;
+                }
             } else {
                 dados.diligencias.forEach(dil => {
                     strDiligencias += `\n--- DILIGÊNCIA ${dil.numero} ---\nHorário: ${dil.inicio} às ${dil.termino}\n`;
@@ -666,6 +689,7 @@
             if (!eloIniciado) {
                 eloIniciado = true;
                 carregarTitulo();      
+                carregarTextosSobreaviso();
                 carregarPoliciais();
                 carregarViaturas();    
             }
