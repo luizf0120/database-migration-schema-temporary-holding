@@ -612,10 +612,10 @@
         function coletarDadosRelatorio() {
             const dataRelatorio = document.getElementById('data').value;
             const sobreaviso = document.querySelector('input[name="sobreaviso"]:checked').value;
-            const policiais = [];
-            document.querySelectorAll('.elo-select').forEach(select => { if (select.value) policiais.push(select.value); });
-            const viaturas = [];
-            document.querySelectorAll('.viatura-select').forEach(select => { if (select.value) viaturas.push(select.value); });
+            // Opções desabilitadas ("Selecione...", "Carregando...", "Erro: ...") não contam como escolha
+            const escolhido = (select) => { const opcao = select.selectedOptions[0]; return opcao && !opcao.disabled ? select.value : ''; };
+            const policiais = [...document.querySelectorAll('.elo-select')].map(escolhido).filter(Boolean);
+            const viaturas = [...document.querySelectorAll('.viatura-select')].map(escolhido).filter(Boolean);
             const dados = { data: dataRelatorio, sobreaviso, policiais, viaturas, diligencias: [] };
 
             if (sobreaviso === 'nao') {
@@ -648,12 +648,17 @@
             event.preventDefault(); 
             const dados = coletarDadosRelatorio();
 
-            if (!dados.data || dados.policiais.length === 0) {
-                alert("Preencha os campos obrigatórios (Data e pelo menos um Policial).");
-                return;
-            }
-            // Horários obrigatórios em cada diligência (e a data de término, se o relógio estiver ligado)
+            // Campos obrigatórios: ficam marcados em vermelho e são listados num aviso só
             const pendencias = [];
+            if (!dados.data) {
+                document.getElementById('data').classList.add('is-invalid');
+                pendencias.push('• Data do relatório');
+            }
+            if (dados.policiais.length === 0) {
+                document.querySelector('.elo-select').classList.add('is-invalid');
+                pendencias.push('• Pelo menos um policial');
+            }
+            // Em cada diligência: horários (e a data de término, se o relógio estiver ligado)
             dados.diligencias.forEach(dil => {
                 const faltam = [];
                 const exigir = (id, nome) => {
@@ -672,7 +677,7 @@
                 if (faltam.length) pendencias.push(`• Diligência ${dil.numero}: ${faltam.join(', ')}`);
             });
             if (pendencias.length) {
-                document.querySelector('#container_diligencias_dinamicas .is-invalid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                document.querySelector('#registroForm .is-invalid').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 alert(`Preencha antes de gerar o relatório:\n${pendencias.join('\n')}`);
                 return;
             }
@@ -988,6 +993,9 @@
         // Campo marcado como faltando volta ao normal quando é preenchido (digitando ou pelos seletores)
         const desmarcarPreenchido = (e) => {
             if (e.target.classList.contains('is-invalid') && e.target.value.trim()) e.target.classList.remove('is-invalid');
+            if (e.target.classList.contains('elo-select') && e.target.value) {
+                document.querySelectorAll('.elo-select.is-invalid').forEach(s => s.classList.remove('is-invalid'));
+            }
         };
         formRegistro.addEventListener('input', desmarcarPreenchido);
         formRegistro.addEventListener('change', desmarcarPreenchido);
