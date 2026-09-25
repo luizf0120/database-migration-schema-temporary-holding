@@ -393,6 +393,8 @@
                 containerTextoBou.style.display = 'none';
                 inputCidade.removeAttribute('required');
                 inputBairro.removeAttribute('required');
+                inputCidade.classList.remove('is-invalid');
+                inputBairro.classList.remove('is-invalid');
                 colInicio.className = 'col-md-6 mb-2';
                 colTermino.className = 'col-md-6 mb-2';
                 colObs.className = 'col-md-12 mb-2';
@@ -654,11 +656,16 @@
                 const faltam = [];
                 const exigir = (id, nome) => {
                     const campo = document.getElementById(id);
-                    if (campo && !campo.value) { campo.classList.add('is-invalid'); faltam.push(nome); }
+                    if (campo && !campo.value.trim()) { campo.classList.add('is-invalid'); faltam.push(nome); }
                 };
                 exigir(`inicio_diligencia_${dil.numero}`, 'horário de início');
                 exigir(`termino_diligencia_${dil.numero}`, 'horário de término');
                 if (dil.terminoOutroDia) exigir(`termino_data_diligencia_${dil.numero}`, 'data de término');
+                // Cidade e bairro só aparecem quando a equipe não permaneceu na OPM
+                if (dil.permaneceuOpm === 'nao') {
+                    exigir(`cidade_diligencia_${dil.numero}`, 'cidade');
+                    exigir(`bairro_diligencia_${dil.numero}`, 'bairro');
+                }
                 if (faltam.length) pendencias.push(`• Diligência ${dil.numero}: ${faltam.join(', ')}`);
             });
             if (pendencias.length) {
@@ -975,10 +982,12 @@
         const formRegistro = document.getElementById('registroForm');
         formRegistro.addEventListener('input', agendarRascunho);
         formRegistro.addEventListener('change', agendarRascunho);
-        // Campo marcado como faltando volta ao normal quando é preenchido
-        formRegistro.addEventListener('change', (e) => {
-            if (e.target.classList.contains('is-invalid') && e.target.value) e.target.classList.remove('is-invalid');
-        });
+        // Campo marcado como faltando volta ao normal quando é preenchido (digitando ou pelos seletores)
+        const desmarcarPreenchido = (e) => {
+            if (e.target.classList.contains('is-invalid') && e.target.value.trim()) e.target.classList.remove('is-invalid');
+        };
+        formRegistro.addEventListener('input', desmarcarPreenchido);
+        formRegistro.addEventListener('change', desmarcarPreenchido);
         new MutationObserver(agendarRascunho).observe(formRegistro, { childList: true, subtree: true });
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden' && timerRascunho) salvarRascunho();
