@@ -421,6 +421,7 @@
                 inputData.setAttribute('required', 'required');
             } else {
                 inputData.removeAttribute('required');
+                inputData.classList.remove('is-invalid');
                 inputData.value = '';
             }
             inputData.dispatchEvent(new Event('change', { bubbles: true }));
@@ -647,9 +648,22 @@
                 alert("Preencha os campos obrigatórios (Data e pelo menos um Policial).");
                 return;
             }
-            const semDataTermino = dados.diligencias.find(dil => dil.terminoOutroDia && !dil.dataTermino);
-            if (semDataTermino) {
-                alert(`Informe a data de término da Diligência ${semDataTermino.numero} (ou clique no relógio para voltar a só hora).`);
+            // Horários obrigatórios em cada diligência (e a data de término, se o relógio estiver ligado)
+            const pendencias = [];
+            dados.diligencias.forEach(dil => {
+                const faltam = [];
+                const exigir = (id, nome) => {
+                    const campo = document.getElementById(id);
+                    if (campo && !campo.value) { campo.classList.add('is-invalid'); faltam.push(nome); }
+                };
+                exigir(`inicio_diligencia_${dil.numero}`, 'horário de início');
+                exigir(`termino_diligencia_${dil.numero}`, 'horário de término');
+                if (dil.terminoOutroDia) exigir(`termino_data_diligencia_${dil.numero}`, 'data de término');
+                if (faltam.length) pendencias.push(`• Diligência ${dil.numero}: ${faltam.join(', ')}`);
+            });
+            if (pendencias.length) {
+                document.querySelector('#container_diligencias_dinamicas .is-invalid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                alert(`Preencha antes de gerar o relatório:\n${pendencias.join('\n')}`);
                 return;
             }
 
@@ -961,6 +975,10 @@
         const formRegistro = document.getElementById('registroForm');
         formRegistro.addEventListener('input', agendarRascunho);
         formRegistro.addEventListener('change', agendarRascunho);
+        // Campo marcado como faltando volta ao normal quando é preenchido
+        formRegistro.addEventListener('change', (e) => {
+            if (e.target.classList.contains('is-invalid') && e.target.value) e.target.classList.remove('is-invalid');
+        });
         new MutationObserver(agendarRascunho).observe(formRegistro, { childList: true, subtree: true });
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden' && timerRascunho) salvarRascunho();
