@@ -474,6 +474,11 @@
     </div>
   </div>
 
+  <div id="painel-aprovacao" style="display: none; margin: 0 40px 15px; padding: 12px 16px; border: 1px solid var(--accent-orange); border-radius: 8px; background: #1a1206;">
+    <div style="font-weight: bold; color: var(--accent-orange); margin-bottom: 8px;">⏳ Eventos aguardando aprovação: <span id="qtd-pendentes">0</span></div>
+    <div id="lista-pendentes" style="display: flex; flex-direction: column; gap: 6px;"></div>
+  </div>
+
   <div class="progress-wrapper">
     <div class="progress-header">
       <div class="progress-info">
@@ -604,6 +609,7 @@
 
     <div class="nota-actions">
         <button class="btn-fechar-nota" onclick="window.fecharModalNota()">Cancelar</button>
+        <button id="btn-modal-rejeitar" class="btn-fechar-nota" style="display: none; background: var(--accent-red); color: #fff;" onclick="window.rejeitarEventoPendente()">🗑️ Rejeitar</button>
         <button id="btn-modal-gravar" class="btn-salvar-nota" onclick="window.salvarNotaFirebase()">Gravar Alerta</button>
     </div>
 </div>
@@ -784,6 +790,12 @@
   // para que os recarregamentos automáticos (meio-dia/meia-noite) não voltem para esta tela.
   let sistemaC2Iniciado = false;
 
+  // Eventos novos só aparecem no calendário depois de aprovados por estes usuários
+  const APROVADORES_EVENTOS = ['luiz.silva07@pm.pr.gov.br', 'luizf.0120@gmail.com'];
+  const ehAprovador = () => !!(auth.currentUser && APROVADORES_EVENTOS.includes((auth.currentUser.email || '').toLowerCase()));
+  let eventosPendentesGlobais = {};
+  let revisaoAutomaticaFeita = false;
+
   function mostrarTela(tela) {
     document.getElementById('login-screen').style.display = tela === 'login' ? 'flex' : 'none';
     document.getElementById('choice-screen').style.display = tela === 'escolha' ? 'flex' : 'none';
@@ -825,7 +837,22 @@
     }
   });
 
+  function iniciarFilaAprovacao() {
+      if (!ehAprovador()) return;
+      onValue(ref(db, 'eventos_pendentes'), (snapshot) => {
+          eventosPendentesGlobais = snapshot.val() || {};
+          window.renderizarPainelAprovacao();
+          // Ao entrar no Mov. Sociais, abre sozinho o primeiro evento aguardando aprovação
+          const chaves = Object.keys(eventosPendentesGlobais).sort();
+          if (!revisaoAutomaticaFeita && chaves.length) {
+              revisaoAutomaticaFeita = true;
+              window.abrirRevisaoPendente(chaves[0]);
+          }
+      });
+  }
+
   function iniciarSistemaC2() {
+      iniciarFilaAprovacao();
       get(ref(db, 'estrutura_arvore')).then(snap => {
           if(snap.exists()) {
               window.DADOS_TOTAIS = snap.val();
@@ -1164,7 +1191,61 @@ function prepararBotaoGravar(texto) {
     btn.style.display = 'block';
     btn.disabled = false;
     btn.innerText = texto;
+    document.getElementById('btn-modal-rejeitar').style.display = 'none';
 }
+
+window.renderizarPainelAprovacao = function() {
+    const painel = document.getElementById('painel-aprovacao');
+    const lista = document.getElementById('lista-pendentes');
+    const chaves = Object.keys(eventosPendentesGlobais).sort();
+    document.getElementById('qtd-pendentes').innerText = chaves.length;
+    painel.style.display = chaves.length ? 'block' : 'none';
+    lista.innerHTML = '';
+    chaves.forEach(chave => {
+        const ev = eventosPendentesGlobais[chave] || {};
+        const linha = document.createElement('div');
+        linha.style.cssText = 'display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; background: #111; padding: 6px 10px; border-radius: 5px;';
+        const info = document.createElement('span');
+        const dataBr = ev.dataAlerta ? ev.dataAlerta.split('-').reverse().join('/') : '--/--';
+        info.textContent = `🎯 ${ev.tituloOrigem || 'Evento'} — ${dataBr} ${ev.horaAlerta || ''} — enviado por ${ev.operador || 'desconhecido'}`;
+        const botao = document.createElement('button');
+        botao.className = 'btn-action';
+        botao.textContent = 'Revisar';
+        botao.onclick = () => window.abrirRevisaoPendente(chave);
+        linha.append(info, botao);
+        lista.appendChild(linha);
+    });
+};
+
+// Abre o evento da fila na janela de agendamento, editável, com Aprovar / Rejeitar
+window.abrirRevisaoPendente = function(chave) {
+    const nota = eventosPendentesGlobais[chave];
+    if (!nota) return;
+    contextoAtual = 'revisao'; alvoAtualNota = chave;
+    window.CURRENT_IA_TEXTO_BRUTO = nota.textoBruto || "";
+    document.getElementById('nota-alvo-titulo').innerText = `⏳ Aguardando aprovação — enviado por ${nota.operador || 'desconhecido'}`;
+    document.getElementById('nota-titulo').value = nota.tituloOrigem || "";
+    document.getElementById('nota-textarea').value = nota.texto || "";
+    document.getElementById('nota-local').value = nota.local || "";
+    document.getElementById('nota-data').value = nota.dataAlerta || "";
+    document.getElementById('nota-hora').value = nota.horaAlerta || "";
+    document.getElementById('nota-link-pub').value = nota.linkPublicacao || "";
+    window.inicializarCamposMovimento(Array.isArray(nota.movimentosAtrelados) ? nota.movimentosAtrelados : (nota.movimentoAtrelado ? [nota.movimentoAtrelado] : []));
+    document.getElementById('container-local').style.display = 'block';
+    document.getElementById('container-tempo').style.display = 'flex';
+    document.getElementById('container-atrelar-movimento').style.display = 'block';
+    prepararBotaoGravar("✅ Aprovar e Publicar");
+    document.getElementById('btn-modal-rejeitar').style.display = 'inline-block';
+    document.getElementById('modal-overlay').style.display = 'block';
+    document.getElementById('nota-modal').style.display = 'block';
+};
+
+window.rejeitarEventoPendente = async function() {
+    if (contextoAtual !== 'revisao' || !alvoAtualNota) return;
+    if (!confirm('Rejeitar este evento? Ele será apagado e não aparecerá no calendário.')) return;
+    await set(ref(db, `eventos_pendentes/${alvoAtualNota}`), null);
+    window.fecharModalNota();
+};
 
 window.abrirModalCalendarioDireto = function() {
     contextoAtual = 'direto'; alvoAtualNota = "";
@@ -1620,6 +1701,7 @@ window.abrirModalTatico = function(e, idUnico, titulo, tipo) {
   };
 
 window.fecharModalNota = function() {
+      document.getElementById('btn-modal-rejeitar').style.display = 'none';
       document.getElementById('modal-overlay').style.display = 'none';
       document.getElementById('nota-modal').style.display = 'none';
       document.getElementById('ia-input-modal').style.display = 'none';
@@ -1800,15 +1882,20 @@ window.salvarNotaFirebase = async function() {
     const metricasMantidas = (existentes) =>
         (linkPublicacao && linkPublicacao === existentes.linkPublicacao) ? (existentes.metricasInsta || null) : null;
 
-    if (contextoAtual === 'direto') {
+    if (contextoAtual === 'direto' || contextoAtual === 'revisao') {
+        const revisao = contextoAtual === 'revisao';   // aprovador aprovando um evento da fila
         const uniqueKey = alvoAtualNota || ("CAL_" + Date.now()); 
-        const notaRef = ref(db, `alertas_calendario/${uniqueKey}`);
+        // Evento novo de quem não é aprovador vai para a fila de aprovação (não aparece no calendário)
+        const aguardaAprovacao = !revisao && !alvoAtualNota && !ehAprovador();
+        const notaRef = ref(db, `${aguardaAprovacao ? 'eventos_pendentes' : 'alertas_calendario'}/${uniqueKey}`);
+        const origemRef = revisao ? ref(db, `eventos_pendentes/${uniqueKey}`) : notaRef;
         
         if (texto === "" && local === "" && dataAlerta === "" && horaAlerta === "") {
             set(notaRef, null);
+            if (revisao) set(origemRef, null);
         } else {
             let dadosExistentes = {};
-            try { const snap = await get(notaRef); if(snap.exists()) dadosExistentes = snap.val(); } catch(e){}
+            try { const snap = await get(origemRef); if(snap.exists()) dadosExistentes = snap.val(); } catch(e){}
 
             let tituloFinal = tituloDefinido;
             if (!tituloFinal || tituloFinal === "Evento Geral") {
@@ -1825,14 +1912,18 @@ window.salvarNotaFirebase = async function() {
                 clima: dadosClimaticos || dadosExistentes.clima || "",
                 movimentoAtrelado: movimentoAtreladoOriginal,
                 movimentosAtrelados: movimentosAtrelados,     
-                operador: user, 
-                time: obterHoraBrasilia(), 
+                operador: revisao ? (dadosExistentes.operador || user) : user, 
+                time: revisao ? (dadosExistentes.time || obterHoraBrasilia()) : obterHoraBrasilia(), 
                 tituloOrigem: tituloFinal,
                 isDirectCalendar: true, 
                 keyId: uniqueKey,
                 numeroManifestantes: dadosExistentes.numeroManifestantes || null,
-                textoBruto: window.CURRENT_IA_TEXTO_BRUTO || dadosExistentes.textoBruto || ""
+                textoBruto: window.CURRENT_IA_TEXTO_BRUTO || dadosExistentes.textoBruto || "",
+                ...(aguardaAprovacao ? { dataEnvio: dataHojeISO } : {}),
+                ...(revisao ? { aprovadoPor: user, aprovadoEm: `${dataHojeISO} ${obterHoraBrasilia()}` } : {})
             });
+            if (revisao) await set(origemRef, null);   // saiu da fila: agora está no calendário
+            if (aguardaAprovacao) alert("✅ Evento enviado para aprovação.\n\nEle aparecerá no calendário depois de aprovado.");
         }
     } else if (contextoAtual === 'postit') {
         const notaRef = ref(db, `monitoramentoDiario/${dataHojeISO}/anotacoes/${safeKey}`);
