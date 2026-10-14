@@ -257,6 +257,21 @@
   }
   #modal-novo-no h4 { margin: 0 0 15px 0; color: var(--accent-green); font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 10px; }
 
+  /* MOVIMENTOS EM ANDAMENTO (lembretes abaixo do calendário) */
+  .balao-mov {
+    display: flex; align-items: center; gap: 8px; background: #111; border: 1px solid #2a2a2a;
+    border-radius: 14px; padding: 8px 12px; font-size: 14px;
+  }
+  .balao-mov .texto-mov { flex: 1; font-weight: bold; word-break: break-word; line-height: 1.35; }
+  .balao-mov .remover-mov { cursor: pointer; color: #666; font-size: 16px; line-height: 1; padding: 0 2px; user-select: none; }
+  .balao-mov .remover-mov:hover { color: var(--accent-red); }
+  .cor-mov {
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent; cursor: pointer;
+    opacity: 0.4; transition: 0.15s; padding: 0; flex-shrink: 0;
+  }
+  .cor-mov:hover { opacity: 0.75; }
+  .cor-mov[aria-pressed="true"] { opacity: 1; border-color: #fff; transform: scale(1.1); }
+
   /* EXCLUIR ITEM DA ÁRVORE (só administradores) */
   .icon-lixo {
     font-size: 12px; cursor: pointer; margin-left: 6px; color: #888; background: #161616;
@@ -551,6 +566,23 @@
                   <button id="btn-ia-diario" class="btn-action" onclick="window.gerarRelatorioDiarioIA()" style="width: 100%; margin-top: 8px; background: #fffb00; color: black; font-weight: bold; border: none; padding: 12px; border-radius: 6px; font-size: 14px;">🤖 Gerar Relatório Diário IA</button>
                 
                   <button id="btn-ia-report" class="btn-action" onclick="window.gerarRelatorioIA()" style="width: 100%; margin-top: 8px; background: #00ffaa; color: black; font-weight: bold; border: none; padding: 12px; border-radius: 6px; font-size: 14px;">🤖 Gerar Relatório IA (7 Dias)</button>
+
+                  <div id="secao-movimentos-andamento" style="margin-top: 20px; border-top: 1px solid #222; padding-top: 15px;">
+                      <h5 style="margin: 0 0 12px 0; font-size: 13px; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.5px;">Movimentos em Andamento</h5>
+                      <div id="lista-movimentos-andamento" style="display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; padding-right: 4px;"></div>
+                      <div id="form-movimento-andamento" style="display: none; margin-top: 10px; background: #0d0d0d; border: 1px solid #333; border-radius: 10px; padding: 10px;">
+                          <input type="text" id="texto-movimento-andamento" maxlength="120" placeholder="Nome do movimento..." autocomplete="off" style="width: 100%; box-sizing: border-box; background: #111; border: 1px solid #333; border-radius: 6px; padding: 9px 10px; font-size: 14px; font-weight: bold; outline: none;">
+                          <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+                              <button type="button" class="cor-mov" data-cor="verde" title="Verde" aria-pressed="true" style="background: var(--accent-green);"></button>
+                              <button type="button" class="cor-mov" data-cor="amarelo" title="Amarelo" aria-pressed="false" style="background: var(--accent-yellow);"></button>
+                              <button type="button" class="cor-mov" data-cor="vermelho" title="Vermelho" aria-pressed="false" style="background: var(--accent-red);"></button>
+                              <span style="flex: 1;"></span>
+                              <button type="button" class="btn-action" onclick="window.fecharFormMovimentoAndamento()" style="padding: 6px 10px;">Cancelar</button>
+                              <button type="button" id="btn-salvar-movimento-andamento" class="btn-action" onclick="window.salvarMovimentoAndamento()" style="padding: 6px 12px; background: var(--accent-green); color: #fff; border: none;">Salvar</button>
+                          </div>
+                      </div>
+                      <button type="button" id="btn-add-movimento-andamento" class="btn-action" onclick="window.abrirFormMovimentoAndamento()" style="width: 100%; margin-top: 10px; padding: 10px; border: 1px dashed #555; background: transparent; color: #aaa;">➕ Adicionar Movimento</button>
+                  </div>
                   
                   <div id="calendar-event-list" style="margin-top: 20px; border-top: 1px solid #222; padding-top: 15px; display: none;">
                       <h5 style="margin: 0 0 12px 0; font-size: 13px; color: var(--accent-orange); text-transform: uppercase; letter-spacing: 0.5px;">Alertas do Dia Selecionado</h5>
@@ -864,6 +896,107 @@
     }
   });
 
+  /* =====================================================================
+     MOVIMENTOS EM ANDAMENTO (lembretes abaixo do calendário)
+     Ficam em "movimentos_andamento" e aparecem para todos, do mais novo para o mais antigo.
+     ===================================================================== */
+  const CORES_MOVIMENTO = { verde: 'var(--accent-green)', amarelo: 'var(--accent-yellow)', vermelho: 'var(--accent-red)' };
+  let movimentosAndamento = {};
+  let corMovimentoEscolhida = 'verde';
+
+  function iniciarMovimentosAndamento() {
+      onValue(ref(db, 'movimentos_andamento'), (snapshot) => {
+          movimentosAndamento = snapshot.val() || {};
+          renderizarMovimentosAndamento();
+      });
+      document.querySelectorAll('#form-movimento-andamento .cor-mov').forEach(btn => {
+          btn.addEventListener('click', () => escolherCorMovimento(btn.getAttribute('data-cor')));
+      });
+      const input = document.getElementById('texto-movimento-andamento');
+      input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') window.salvarMovimentoAndamento();
+          if (e.key === 'Escape') window.fecharFormMovimentoAndamento();
+      });
+  }
+
+  function renderizarMovimentosAndamento() {
+      const lista = document.getElementById('lista-movimentos-andamento');
+      lista.innerHTML = '';
+      const itens = Object.entries(movimentosAndamento)
+          .filter(([, m]) => m && m.texto)
+          .sort(([, a], [, b]) => (b.criadoEm || 0) - (a.criadoEm || 0));   // mais novo primeiro
+      if (!itens.length) {
+          const vazio = document.createElement('div');
+          vazio.style.cssText = 'color: #666; font-size: 12px; text-align: center; padding: 6px 0;';
+          vazio.textContent = 'Nenhum movimento em andamento.';
+          lista.appendChild(vazio);
+          return;
+      }
+      itens.forEach(([chave, m]) => {
+          const balao = document.createElement('div');
+          balao.className = 'balao-mov';
+          const quando = m.criadoEm ? new Date(m.criadoEm).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+          balao.title = `Adicionado por ${m.criadoPor || 'desconhecido'}${quando ? ' em ' + quando : ''}`;
+          const texto = document.createElement('span');
+          texto.className = 'texto-mov';
+          texto.textContent = m.texto;
+          texto.style.color = CORES_MOVIMENTO[m.cor] || CORES_MOVIMENTO.verde;
+          const remover = document.createElement('span');
+          remover.className = 'remover-mov';
+          remover.title = 'Remover';
+          remover.textContent = '×';
+          remover.addEventListener('click', () => {
+              if (confirm(`Remover "${m.texto}" dos movimentos em andamento?`)) set(ref(db, `movimentos_andamento/${chave}`), null);
+          });
+          balao.append(texto, remover);
+          lista.appendChild(balao);
+      });
+  }
+
+  function escolherCorMovimento(cor) {
+      corMovimentoEscolhida = CORES_MOVIMENTO[cor] ? cor : 'verde';
+      document.querySelectorAll('#form-movimento-andamento .cor-mov').forEach(btn => {
+          btn.setAttribute('aria-pressed', btn.getAttribute('data-cor') === corMovimentoEscolhida ? 'true' : 'false');
+      });
+      document.getElementById('texto-movimento-andamento').style.color = CORES_MOVIMENTO[corMovimentoEscolhida];
+  }
+
+  window.abrirFormMovimentoAndamento = function() {
+      document.getElementById('texto-movimento-andamento').value = '';
+      escolherCorMovimento('verde');   // sempre começa no verde
+      document.getElementById('form-movimento-andamento').style.display = 'block';
+      document.getElementById('btn-add-movimento-andamento').style.display = 'none';
+      document.getElementById('texto-movimento-andamento').focus();
+  };
+
+  window.fecharFormMovimentoAndamento = function() {
+      document.getElementById('form-movimento-andamento').style.display = 'none';
+      document.getElementById('btn-add-movimento-andamento').style.display = 'block';
+  };
+
+  window.salvarMovimentoAndamento = async function() {
+      const input = document.getElementById('texto-movimento-andamento');
+      const texto = input.value.trim();
+      if (!texto) { input.focus(); return; }
+      const btn = document.getElementById('btn-salvar-movimento-andamento');
+      btn.disabled = true;
+      try {
+          const agora = Date.now();
+          await set(ref(db, `movimentos_andamento/MA_${agora}_${Math.random().toString(36).slice(2, 7)}`), {
+              texto,
+              cor: corMovimentoEscolhida,
+              criadoEm: agora,
+              criadoPor: auth.currentUser ? auth.currentUser.email : 'Desconhecido'
+          });
+          window.fecharFormMovimentoAndamento();
+      } catch (err) {
+          console.error('Erro ao salvar movimento em andamento:', err);
+          alert(`Não foi possível salvar: ${err.message}`);
+      } finally {
+          btn.disabled = false;
+      }
+  };
+
   function iniciarFilaAprovacao() {
       if (!ehAdministrador()) return;
       onValue(ref(db, 'eventos_pendentes'), (snapshot) => {
@@ -880,6 +1013,7 @@
 
   function iniciarSistemaC2() {
       iniciarFilaAprovacao();
+      iniciarMovimentosAndamento();
       get(ref(db, 'estrutura_arvore')).then(snap => {
           if(snap.exists()) {
               window.DADOS_TOTAIS = snap.val();
