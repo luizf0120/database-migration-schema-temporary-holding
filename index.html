@@ -279,7 +279,15 @@
     display: inline-flex; align-items: center; justify-content: center; user-select: none; box-sizing: border-box; flex-shrink: 0;
   }
   .icon-lixo:hover { background: var(--accent-red); border-color: var(--accent-red); color: #fff; }
-  .node > .icon-lixo { margin-left: 8px; }   /* lixeira do link fica fora do cartão (o ✔ e o horário de "visto" ocupam a direita dele) */
+  .icon-editar-arvore {
+    font-size: 12px; cursor: pointer; margin-left: 6px; color: #888; background: #161616;
+    border: 1px solid #444; width: 25px; height: 25px; border-radius: 4px; transition: all 0.2s ease;
+    display: inline-flex; align-items: center; justify-content: center; user-select: none; box-sizing: border-box; flex-shrink: 0;
+  }
+  .icon-editar-arvore:hover { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
+  /* lápis e lixeira do link ficam fora do cartão (o ✔ e o horário de "visto" ocupam a direita dele) */
+  .node > .icon-editar-arvore { margin-left: 8px; }
+  .node > .icon-lixo { margin-left: 6px; }
   #modal-excluir-arvore {
     display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
     background: var(--card-bg); border: 1px solid var(--accent-red); border-radius: 8px;
@@ -675,6 +683,7 @@
     <div id="form-novo-no-pasta">
         <label style="font-size: 11px; color: #888; display: block; margin-bottom: 4px;">Nome da Pasta/Perfil:</label>
         <input type="text" id="nn-nome" placeholder="Ex: SINDICATOS" style="width: 100%; background: #111; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 6px; box-sizing: border-box; outline: none; font-size: 13px; margin-bottom: 15px;">
+        <div id="nn-nome-aviso" style="display: none; font-size: 11px; color: #888; margin: -10px 0 15px 0;">O nome desta pasta principal não pode ser alterado (o sistema depende dele). Símbolo e cor podem.</div>
         
         <div class="input-linha-dupla">
             <div>
@@ -2287,7 +2296,9 @@ function desenhavelArvore(listaDeDados, elementoPai, caminhoAtual = []) {
       }
 
       btn.innerHTML += `<div class="btn-left"><span class="star-icon" data-star="${pathString}" onclick="window.clicarEstrela(event, this.getAttribute('data-star'))">★</span><div class="icon-circle icon-${item.cor || 'white'}">${item.icone || '●'}</div><span>${item.nome}</span>${htmlNota}</div><span class="toggle-icon"></span>`;
-      if (podeApagar) btn.querySelector('.btn-left').appendChild(criarIconeLixo({ tipo: 'pasta', caminho: novoCaminho, nome: item.nome, item }));
+      if (podeApagar) btn.querySelector('.btn-left').append(
+          criarIconeEditar({ tipo: 'pasta', caminho: novoCaminho, item }),
+          criarIconeLixo({ tipo: 'pasta', caminho: novoCaminho, nome: item.nome, item }));
       nodeDiv.appendChild(btn);
 
       if (isExpandable) {
@@ -2305,7 +2316,9 @@ function desenhavelArvore(listaDeDados, elementoPai, caminhoAtual = []) {
               <div class="link-text"><span>${link.tipo === 'insta' ? 'Instagram' : 'Website'}</span><span class="link-url">${link.textoUrl || ''}</span></div>
             `;
             linkNode.appendChild(a);
-            if (podeApagar) linkNode.appendChild(criarIconeLixo({ tipo: 'link', caminho: novoCaminho, nome: link.textoUrl || link.url, url: link.url }));
+            if (podeApagar) linkNode.append(
+                criarIconeEditar({ tipo: 'link', caminho: novoCaminho, link }),
+                criarIconeLixo({ tipo: 'link', caminho: novoCaminho, nome: link.textoUrl || link.url, url: link.url }));
             childrenDiv.appendChild(linkNode); 
           });
         }
@@ -2755,6 +2768,7 @@ window.preverPublicoIndividualIA = async function(keyId, tipoEntrada, botao) {
 };
   window.abrirModalNovoNo = function(caminho) {
     window.caminhoAtualAdicao = caminho;
+    prepararModalItemArvore('adicionar');
     document.getElementById('modal-novo-no').style.display = 'block';
     document.getElementById('modal-overlay').style.display = 'block';
     
@@ -2774,6 +2788,15 @@ window.mudarFormularioNovoNo = function() {
         document.getElementById('form-novo-no-link').style.display = 'block';
     }
 };
+
+// Texto curto mostrado no cartão do link (perfil do Instagram/Facebook ou domínio do site)
+function formatarTextoUrl(url) {
+    try {
+        if (url.includes('instagram.com/')) return url.split('instagram.com/')[1].split('/')[0] || "Instagram";
+        if (url.includes('facebook.com/')) return url.split('facebook.com/')[1].split('/')[0] || "Facebook";
+        return new URL(url).hostname.replace('www.', '');
+    } catch (e) { return "Acesso"; }
+}
 
 window.salvarNovoNoFirebase = function() {
     const tipo = document.getElementById('tipo-novo-no').value;
@@ -2803,19 +2826,7 @@ window.salvarNovoNoFirebase = function() {
         if(!url) return alert("Preencha a URL oficial.");
         
         if (!ptr.links) ptr.links = [];
-        let textoFormatado = url;
-        try {
-            if (url.includes('instagram.com/')) {
-                textoFormatado = url.split('instagram.com/')[1].split('/')[0] || "Instagram";
-            } else if (url.includes('facebook.com/')) {
-                textoFormatado = url.split('facebook.com/')[1].split('/')[0] || "Facebook";
-            } else {
-                let hostname = new URL(url).hostname;
-                textoFormatado = hostname.replace('www.', '');
-            }
-        } catch(e) { textoFormatado = "Acesso"; }
-        
-        ptr.links.push({ tipo: tipoLink, url: url, textoUrl: textoFormatado });
+        ptr.links.push({ tipo: tipoLink, url: url, textoUrl: formatarTextoUrl(url) });
     }
 
     const btn = document.getElementById('btn-salvar-novo-no');
@@ -2948,10 +2959,195 @@ window.confirmarExclusaoArvore = async function() {
     }
 };
 
+/* =====================================================================
+   EDIÇÃO DE PASTAS E LINKS DA ÁRVORE (só administradores)
+   Usa a janela de "novo item" em modo edição. Renomear uma pasta ou trocar a URL de
+   um link muda o caminho do item; estrelas, vistos de hoje, post-its de hoje e a
+   contagem da semana são levados para o caminho novo.
+   ===================================================================== */
+const PASTAS_RAIZ_PROTEGIDAS = ['MOVIMENTOS', 'NOTÍCIAS'];   // nomes usados pelo código
+let edicaoArvore = null;
+
+function criarIconeEditar(alvo) {
+    const lapis = document.createElement('span');
+    lapis.className = 'icon-editar-arvore';
+    lapis.title = alvo.tipo === 'pasta' ? 'Editar pasta' : 'Editar link';
+    lapis.textContent = '✏️';
+    lapis.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); window.abrirModalEditarArvore(alvo); });
+    return lapis;
+}
+
+// A janela de item serve para adicionar e para editar: deixa no modo certo antes de abrir
+function prepararModalItemArvore(modo, tipo) {
+    const modal = document.getElementById('modal-novo-no');
+    const titulo = modal.querySelector('h4');
+    const seletorTipo = document.getElementById('tipo-novo-no');
+    const btn = document.getElementById('btn-salvar-novo-no');
+    const nome = document.getElementById('nn-nome');
+    nome.disabled = false;
+    document.getElementById('nn-nome-aviso').style.display = 'none';
+    btn.disabled = false;
+    if (modo === 'editar') {
+        titulo.textContent = tipo === 'pasta' ? '✏️ Editar Pasta' : '✏️ Editar Link';
+        titulo.style.color = 'var(--accent-blue)';
+        modal.style.borderColor = 'var(--accent-blue)';
+        seletorTipo.value = tipo;
+        seletorTipo.style.display = 'none';
+        seletorTipo.previousElementSibling.style.display = 'none';
+        btn.textContent = 'Salvar Alterações';
+        btn.style.background = 'var(--accent-blue)';
+        btn.onclick = () => window.salvarEdicaoArvore();
+    } else {
+        edicaoArvore = null;
+        titulo.textContent = '➕ Adicionar Novo Item na Árvore';
+        titulo.style.color = '';
+        modal.style.borderColor = '';
+        seletorTipo.style.display = '';
+        seletorTipo.previousElementSibling.style.display = '';
+        btn.textContent = 'Adicionar na Nuvem';
+        btn.style.background = 'var(--accent-green)';
+        btn.onclick = () => window.salvarNovoNoFirebase();
+    }
+    window.mudarFormularioNovoNo();
+}
+
+window.abrirModalEditarArvore = function(alvo) {
+    if (!ehAdministrador()) return;
+    prepararModalItemArvore('editar', alvo.tipo);
+    edicaoArvore = alvo;
+    if (alvo.tipo === 'pasta') {
+        const item = alvo.item || {};
+        const nome = document.getElementById('nn-nome');
+        nome.value = item.nome || '';
+        const cor = document.getElementById('nn-cor');
+        const corAtual = item.cor || 'white';
+        if (![...cor.options].some(o => o.value === corAtual)) cor.add(new Option(corAtual, corAtual));
+        cor.value = corAtual;
+        document.getElementById('nn-icone').value = item.icone || '●';
+        const protegida = alvo.caminho.length === 1 && PASTAS_RAIZ_PROTEGIDAS.includes(item.nome);
+        nome.disabled = protegida;
+        document.getElementById('nn-nome-aviso').style.display = protegida ? 'block' : 'none';
+    } else {
+        document.getElementById('nn-tipo-link').value = alvo.link.tipo === 'link' ? 'link' : 'insta';
+        document.getElementById('nn-url').value = alvo.link.url || '';
+    }
+    document.getElementById('modal-overlay').style.display = 'block';
+    document.getElementById('modal-novo-no').style.display = 'block';
+};
+
+// "A > B" → troca o começo do caminho, para o próprio item e tudo o que está dentro dele
+function trocarPrefixoCaminho(id, antigo, novo) {
+    if (id === antigo) return novo;
+    if (id.startsWith(antigo + ' > ')) return novo + id.slice(antigo.length);
+    return id;
+}
+function trocarPrefixoChave(chave, antigo, novo) {
+    const a = sanitizarId(antigo), n = sanitizarId(novo);   // sanitizarId troca caractere por caractere
+    if (chave === a) return n;
+    if (chave.startsWith(a + ' > ')) return n + chave.slice(a.length);
+    return chave;
+}
+
+async function migrarReferenciasArvore(antigo, novo) {
+    // Estrelas
+    const estrelas = listaArvore(estrelasOrigem);
+    const novasEstrelas = estrelas.map(id => trocarPrefixoCaminho(id, antigo, novo));
+    if (novasEstrelas.some((id, i) => id !== estrelas[i])) {
+        estrelasOrigem = novasEstrelas;
+        await set(ref(db, 'marcacoesTaticas/estrelas'), novasEstrelas);
+    }
+    // Links vistos hoje (barra de progresso)
+    const vistos = listaArvore(vistosGlobais);
+    const novosVistos = vistos.map(v => ({ ...v, id: trocarPrefixoCaminho(v.id || '', antigo, novo) }));
+    if (novosVistos.some((v, i) => v.id !== vistos[i].id)) {
+        await set(ref(db, `monitoramentoDiario/${dataHojeISO}/vistos`), novosVistos);
+    }
+    // Post-its e agenda de hoje, guardados pela chave do caminho
+    const moverChaves = async (objeto, base, ajustar = (v) => v) => {
+        for (const chave of Object.keys(objeto || {})) {
+            const nova = trocarPrefixoChave(chave, antigo, novo);
+            if (nova === chave) continue;
+            await set(ref(db, `${base}/${nova}`), ajustar(objeto[chave]));
+            await set(ref(db, `${base}/${chave}`), null);
+        }
+    };
+    await moverChaves(anotacoesGlobais, `monitoramentoDiario/${dataHojeISO}/anotacoes`);
+    await moverChaves(agendaMenusGlobais, `monitoramentoDiario/${dataHojeISO}/agenda_menus`,
+        (v) => (v && v.pathString ? { ...v, pathString: trocarPrefixoCaminho(v.pathString, antigo, novo) } : v));
+    // Contagem da semana (rankings "Mais / Menos Monitorados")
+    await moverChaves(estatisticasSemana, `estatisticas_semanal/${semanaAtualISO}`);
+}
+
+window.salvarEdicaoArvore = async function() {
+    const alvo = edicaoArvore;
+    if (!alvo || !ehAdministrador()) return;
+    const btn = document.getElementById('btn-salvar-novo-no');
+    btn.textContent = 'Salvando...'; btn.disabled = true;
+    try {
+        // Lê a árvore mais recente do Firebase, para não desfazer alterações feitas por outra pessoa
+        const snap = await get(ref(db, 'estrutura_arvore'));
+        const arvore = listaArvore(snap.val()).map(normalizarNoArvore);
+        const caminhoPai = alvo.tipo === 'pasta' ? alvo.caminho.slice(0, -1) : alvo.caminho;
+        let pai = null, irmaos = arvore;
+        for (const nome of caminhoPai) {
+            pai = irmaos.find(n => n.nome === nome);
+            if (!pai) throw new Error('Item não encontrado. Ele pode ter sido apagado ou movido.');
+            irmaos = pai.filhos;
+        }
+
+        let antigo, novo;
+        if (alvo.tipo === 'pasta') {
+            const nomeAtual = alvo.caminho[alvo.caminho.length - 1];
+            const no = irmaos.find(n => n.nome === nomeAtual);
+            if (!no) throw new Error('Pasta não encontrada. Ela pode ter sido apagada ou renomeada.');
+            const campoNome = document.getElementById('nn-nome');
+            const novoNome = campoNome.disabled ? no.nome : campoNome.value.trim();
+            if (!novoNome) throw new Error('Preencha o nome da pasta.');
+            if (novoNome.includes('>')) throw new Error('O nome não pode ter o caractere ">".');
+            if (novoNome !== no.nome && irmaos.some(n => n.nome === novoNome)) throw new Error(`Já existe uma pasta "${novoNome}" neste local.`);
+            no.nome = novoNome;
+            no.cor = document.getElementById('nn-cor').value;
+            no.icone = document.getElementById('nn-icone').value.trim() || '●';
+            antigo = alvo.caminho.join(' > ');
+            novo = [...caminhoPai, novoNome].join(' > ');
+        } else {
+            const i = pai.links.findIndex(l => l.url === alvo.link.url);
+            if (i === -1) throw new Error('Link não encontrado. Ele pode ter sido apagado ou alterado.');
+            const novaUrl = document.getElementById('nn-url').value.trim();
+            if (!novaUrl) throw new Error('Preencha a URL.');
+            if (novaUrl !== alvo.link.url && pai.links.some(l => l.url === novaUrl)) throw new Error('Esse link já existe nesta pasta.');
+            const linkAtual = pai.links[i];
+            pai.links[i] = {
+                ...linkAtual,
+                tipo: document.getElementById('nn-tipo-link').value,
+                url: novaUrl,
+                textoUrl: novaUrl === linkAtual.url ? (linkAtual.textoUrl || formatarTextoUrl(novaUrl)) : formatarTextoUrl(novaUrl)
+            };
+            antigo = alvo.caminho.join(' > ') + ' > ' + alvo.link.url;
+            novo = alvo.caminho.join(' > ') + ' > ' + novaUrl;
+        }
+
+        await set(ref(db, 'estrutura_arvore'), arvore);
+        if (antigo !== novo) {
+            try { await migrarReferenciasArvore(antigo, novo); }
+            catch (err) { console.error('Erro ao atualizar estrelas/vistos/estatísticas do item editado:', err); }
+        }
+        window.DADOS_TOTAIS = arvore;
+        redesenharArvore((caminho) => trocarPrefixoCaminho(caminho, antigo, novo));
+        edicaoArvore = null;
+        window.fecharModalNota();
+    } catch (err) {
+        console.error('Erro ao editar item da árvore:', err);
+        alert(`Não foi possível salvar: ${err.message}`);
+    } finally {
+        btn.textContent = 'Salvar Alterações'; btn.disabled = false;
+    }
+};
+
 // Redesenha a árvore mantendo abertas as pastas que estavam abertas
-function redesenharArvore() {
+function redesenharArvore(mapearCaminho = (c) => c) {
     const raiz = document.getElementById('raiz-arvore');
-    const abertas = new Set([...raiz.querySelectorAll('.node.active')].map(n => n.getAttribute('data-path')));
+    const abertas = new Set([...raiz.querySelectorAll('.node.active')].map(n => mapearCaminho(n.getAttribute('data-path'))));
     listaTodosAlvos = [];
     window.LISTA_MOVIMENTOS = [];
     extrairTodosOsAlvos(window.DADOS_TOTAIS);
