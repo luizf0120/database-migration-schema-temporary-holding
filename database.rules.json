@@ -6,6 +6,10 @@
         ".write": false
       }
     },
+    "estrutura_arvore": {
+      ".read": "auth != null && (auth.token.firebase.sign_in_provider == 'password' || (auth.token.email_verified == true && root.child('usuarios_autorizados').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true))",
+      ".write": "auth != null && ((auth.token.email.toLowerCase() === 'luiz.silva07@pm.pr.gov.br' && auth.token.email_verified == true) || (auth.token.email.toLowerCase() === 'luizf.0120@gmail.com' && auth.token.firebase.sign_in_provider == 'password'))"
+    },
     "$outros": {
       ".read": "auth != null && (auth.token.firebase.sign_in_provider == 'password' || (auth.token.email_verified == true && root.child('usuarios_autorizados').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true))",
       ".write": "auth != null && (auth.token.firebase.sign_in_provider == 'password' || (auth.token.email_verified == true && root.child('usuarios_autorizados').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true))"

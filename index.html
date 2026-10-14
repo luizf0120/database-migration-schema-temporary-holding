@@ -257,6 +257,22 @@
   }
   #modal-novo-no h4 { margin: 0 0 15px 0; color: var(--accent-green); font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 10px; }
 
+  /* EXCLUIR ITEM DA ÁRVORE (só administradores) */
+  .icon-lixo {
+    font-size: 12px; cursor: pointer; margin-left: 6px; color: #888; background: #161616;
+    border: 1px solid #444; width: 25px; height: 25px; border-radius: 4px; transition: all 0.2s ease;
+    display: inline-flex; align-items: center; justify-content: center; user-select: none; box-sizing: border-box; flex-shrink: 0;
+  }
+  .icon-lixo:hover { background: var(--accent-red); border-color: var(--accent-red); color: #fff; }
+  .node > .icon-lixo { margin-left: 8px; }   /* lixeira do link fica fora do cartão (o ✔ e o horário de "visto" ocupam a direita dele) */
+  #modal-excluir-arvore {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: var(--card-bg); border: 1px solid var(--accent-red); border-radius: 8px;
+    padding: 25px; z-index: 20000; width: 420px; max-width: 92%; box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+  }
+  #modal-excluir-arvore h4 { margin: 0 0 15px 0; color: var(--accent-red); font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+  #modal-excluir-arvore p { font-size: 13px; line-height: 1.5; margin: 0 0 12px 0; }
+
   /* =========================================
      ESTILO DO POP-UP DA IA
      ========================================= */
@@ -662,6 +678,17 @@
     </div>
 </div>
 
+<div id="modal-excluir-arvore">
+    <h4 id="excluir-titulo">🗑️ Excluir</h4>
+    <p id="excluir-pergunta"></p>
+    <p id="excluir-caminho" style="color: #888; font-size: 12px; word-break: break-word;"></p>
+    <p id="excluir-cascata" style="color: var(--accent-red); font-weight: bold;"></p>
+    <div class="nota-actions">
+        <button class="btn-fechar-nota" onclick="window.fecharModalNota()">Cancelar</button>
+        <button id="btn-confirmar-exclusao" class="btn-salvar-nota" style="background: var(--accent-red); color: #fff;" onclick="window.confirmarExclusaoArvore()">Excluir</button>
+    </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -790,9 +817,9 @@
   // para que os recarregamentos automáticos (meio-dia/meia-noite) não voltem para esta tela.
   let sistemaC2Iniciado = false;
 
-  // Eventos novos só aparecem no calendário depois de aprovados por estes usuários
-  const APROVADORES_EVENTOS = ['luiz.silva07@pm.pr.gov.br', 'luizf.0120@gmail.com'];
-  const ehAprovador = () => !!(auth.currentUser && APROVADORES_EVENTOS.includes((auth.currentUser.email || '').toLowerCase()));
+  // Administradores: aprovam os eventos novos antes de irem ao calendário e podem apagar itens da árvore
+  const ADMINISTRADORES = ['luiz.silva07@pm.pr.gov.br', 'luizf.0120@gmail.com'];
+  const ehAdministrador = () => !!(auth.currentUser && ADMINISTRADORES.includes((auth.currentUser.email || '').toLowerCase()));
   let eventosPendentesGlobais = {};
   let revisaoAutomaticaFeita = false;
 
@@ -838,7 +865,7 @@
   });
 
   function iniciarFilaAprovacao() {
-      if (!ehAprovador()) return;
+      if (!ehAdministrador()) return;
       onValue(ref(db, 'eventos_pendentes'), (snapshot) => {
           eventosPendentesGlobais = snapshot.val() || {};
           window.renderizarPainelAprovacao();
@@ -940,7 +967,20 @@
       });
 
       onValue(ref(db, `estatisticas_semanal/${semanaAtualISO}`), (snapshot) => {
-        const dataFirebase = snapshot.val() || {};
+        estatisticasSemana = snapshot.val() || {};
+        renderizarEstatisticas();
+      });
+      onValue(ref(db, 'marcacoesTaticas/estrelas'), (snapshot) => {
+          const data = snapshot.val();
+          estrelasOrigem = data ? Object.values(data) : [];
+          atualizarEstrelasUI();
+      });
+  }
+
+  // Rankings "Mais / Menos Monitorados" a partir dos links atuais da árvore
+  let estatisticasSemana = {};
+  function renderizarEstatisticas() {
+        const dataFirebase = estatisticasSemana;
         let estatisticasCompletas = listaTodosAlvos.map(alvo => {
             return { titulo: alvo.titulo, count: dataFirebase[alvo.id] ? dataFirebase[alvo.id].count : 0, caminho: alvo.caminho };
         });
@@ -952,13 +992,6 @@ const bottom15 = estatisticasCompletas.filter(s => s.caminho && s.caminho[0] !==
             ? top15.map(s => `<li data-caminho="${s.caminho.join(' > ')}" onclick="window.focarCaminhoDireto(this.getAttribute('data-caminho'))"><span>${s.titulo}</span> <span class="stat-count">${s.count} cliques</span></li>`).join('')
             : '<li style="color: #666; justify-content: center;">Nenhum alvo acessado ainda</li>';
         document.getElementById('list-bottom').innerHTML = bottom15.map(s => `<li data-caminho="${s.caminho.join(' > ')}" onclick="window.focarCaminhoDireto(this.getAttribute('data-caminho'))"><span>${s.titulo}</span> <span class="stat-count">${s.count} cliques</span></li>`).join('');
-      });
-
-      onValue(ref(db, 'marcacoesTaticas/estrelas'), (snapshot) => {
-          const data = snapshot.val();
-          estrelasOrigem = data ? Object.values(data) : [];
-          atualizarEstrelasUI();
-      });
   }
 
 function verificarAlertasExpirados() {
@@ -1706,6 +1739,7 @@ window.fecharModalNota = function() {
       document.getElementById('nota-modal').style.display = 'none';
       document.getElementById('ia-input-modal').style.display = 'none';
       document.getElementById('detalhes-modal').style.display = 'none';
+      document.getElementById('modal-excluir-arvore').style.display = 'none';
       if(document.getElementById('modal-novo-no')) {
           document.getElementById('modal-novo-no').style.display = 'none';
         }
@@ -1886,7 +1920,7 @@ window.salvarNotaFirebase = async function() {
         const revisao = contextoAtual === 'revisao';   // aprovador aprovando um evento da fila
         const uniqueKey = alvoAtualNota || ("CAL_" + Date.now()); 
         // Evento novo de quem não é aprovador vai para a fila de aprovação (não aparece no calendário)
-        const aguardaAprovacao = !revisao && !alvoAtualNota && !ehAprovador();
+        const aguardaAprovacao = !revisao && !alvoAtualNota && !ehAdministrador();
         const notaRef = ref(db, `${aguardaAprovacao ? 'eventos_pendentes' : 'alertas_calendario'}/${uniqueKey}`);
         const origemRef = revisao ? ref(db, `eventos_pendentes/${uniqueKey}`) : notaRef;
         
@@ -2101,6 +2135,7 @@ function desenhavelArvore(listaDeDados, elementoPai, caminhoAtual = []) {
     
     // VERIFICA SE O USUARIO TEM PODERES DE ADICIONAR
     const isLuiz = (auth.currentUser && auth.currentUser.email === 'luiz.silva07@pm.pr.gov.br');
+    const podeApagar = ehAdministrador();
 
     listaDeDados.forEach(item => {
       const novoCaminho = [...caminhoAtual, item.nome]; const pathString = novoCaminho.join(' > ');
@@ -2131,6 +2166,7 @@ function desenhavelArvore(listaDeDados, elementoPai, caminhoAtual = []) {
       }
 
       btn.innerHTML += `<div class="btn-left"><span class="star-icon" data-star="${pathString}" onclick="window.clicarEstrela(event, this.getAttribute('data-star'))">★</span><div class="icon-circle icon-${item.cor || 'white'}">${item.icone || '●'}</div><span>${item.nome}</span>${htmlNota}</div><span class="toggle-icon"></span>`;
+      if (podeApagar) btn.querySelector('.btn-left').appendChild(criarIconeLixo({ tipo: 'pasta', caminho: novoCaminho, nome: item.nome, item }));
       nodeDiv.appendChild(btn);
 
       if (isExpandable) {
@@ -2147,7 +2183,9 @@ function desenhavelArvore(listaDeDados, elementoPai, caminhoAtual = []) {
               <div class="icon-circle icon-${link.tipo === 'link' ? 'link' : 'insta'}">${link.tipo === 'insta' ? '📸' : '🔗'}</div>
               <div class="link-text"><span>${link.tipo === 'insta' ? 'Instagram' : 'Website'}</span><span class="link-url">${link.textoUrl || ''}</span></div>
             `;
-            linkNode.appendChild(a); childrenDiv.appendChild(linkNode); 
+            linkNode.appendChild(a);
+            if (podeApagar) linkNode.appendChild(criarIconeLixo({ tipo: 'link', caminho: novoCaminho, nome: link.textoUrl || link.url, url: link.url }));
+            childrenDiv.appendChild(linkNode); 
           });
         }
         if (temFilhos) desenhavelArvore(item.filhos, childrenDiv, novoCaminho);
@@ -2679,6 +2717,130 @@ window.salvarNovoNoFirebase = function() {
         btn.innerText = "Adicionar na Nuvem"; btn.disabled = false;
     });
 };
+
+/* =====================================================================
+   EXCLUSÃO DE PASTAS E LINKS DA ÁRVORE (só administradores)
+   Apagar uma pasta apaga tudo o que está dentro dela. Antes de apagar, uma
+   cópia do item vai para "lixeira_arvore" no Firebase, para recuperação.
+   ===================================================================== */
+const listaArvore = (v) => Array.isArray(v) ? v.filter(Boolean) : (v ? Object.values(v).filter(Boolean) : []);
+function normalizarNoArvore(no) {
+    no.filhos = listaArvore(no.filhos).map(normalizarNoArvore);
+    no.links = listaArvore(no.links);
+    return no;
+}
+function contarConteudoArvore(no) {
+    let pastas = 0, links = listaArvore(no.links).length;
+    listaArvore(no.filhos).forEach(filho => {
+        const c = contarConteudoArvore(filho);
+        pastas += 1 + c.pastas; links += c.links;
+    });
+    return { pastas, links };
+}
+
+function criarIconeLixo(alvo) {
+    const lixo = document.createElement('span');
+    lixo.className = 'icon-lixo';
+    lixo.title = alvo.tipo === 'pasta' ? 'Excluir pasta' : 'Excluir link';
+    lixo.textContent = '🗑️';
+    lixo.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); window.abrirModalExcluir(alvo); });
+    return lixo;
+}
+
+let itemParaExcluir = null;
+window.abrirModalExcluir = function(alvo) {
+    if (!ehAdministrador()) return;
+    itemParaExcluir = alvo;
+    const pasta = alvo.tipo === 'pasta';
+    document.getElementById('excluir-titulo').textContent = pasta ? '🗑️ Excluir pasta' : '🗑️ Excluir link';
+    document.getElementById('excluir-pergunta').textContent = `Tem certeza que deseja excluir ${pasta ? 'a pasta' : 'o link'} "${alvo.nome}"?`;
+    document.getElementById('excluir-caminho').textContent = 'Local: ' + alvo.caminho.join(' > ') + (pasta ? '' : ' > ' + (alvo.url || ''));
+    let cascata = '';
+    if (pasta) {
+        const { pastas, links } = contarConteudoArvore(alvo.item || {});
+        const partes = [];
+        if (pastas) partes.push(`${pastas} ${pastas === 1 ? 'pasta' : 'pastas'}`);
+        if (links) partes.push(`${links} ${links === 1 ? 'link' : 'links'}`);
+        if (partes.length) cascata = `Também ${pastas + links === 1 ? 'será apagado' : 'serão apagados'} ${partes.join(' e ')} que ${pastas + links === 1 ? 'está' : 'estão'} dentro dela.`;
+    }
+    document.getElementById('excluir-cascata').textContent = cascata;
+    const btn = document.getElementById('btn-confirmar-exclusao');
+    btn.textContent = 'Excluir'; btn.disabled = false;
+    document.getElementById('modal-overlay').style.display = 'block';
+    document.getElementById('modal-excluir-arvore').style.display = 'block';
+};
+
+window.confirmarExclusaoArvore = async function() {
+    const alvo = itemParaExcluir;
+    if (!alvo || !ehAdministrador()) return;
+    const btn = document.getElementById('btn-confirmar-exclusao');
+    btn.textContent = 'Excluindo...'; btn.disabled = true;
+    try {
+        // Lê a árvore mais recente do Firebase, para não desfazer alterações feitas por outra pessoa
+        const snap = await get(ref(db, 'estrutura_arvore'));
+        const arvore = listaArvore(snap.val()).map(normalizarNoArvore);
+
+        // Caminho até a lista que contém o item
+        const caminhoPai = alvo.tipo === 'pasta' ? alvo.caminho.slice(0, -1) : alvo.caminho;
+        let pai = null, irmaos = arvore;
+        for (const nome of caminhoPai) {
+            pai = irmaos.find(n => n.nome === nome);
+            if (!pai) throw new Error('Item não encontrado. Ele pode já ter sido apagado ou movido.');
+            irmaos = pai.filhos;
+        }
+
+        let removido;
+        if (alvo.tipo === 'pasta') {
+            const i = irmaos.findIndex(n => n.nome === alvo.caminho[alvo.caminho.length - 1]);
+            if (i === -1) throw new Error('Pasta não encontrada. Ela pode já ter sido apagada.');
+            removido = irmaos.splice(i, 1)[0];
+        } else {
+            const i = pai.links.findIndex(l => l.url === alvo.url);
+            if (i === -1) throw new Error('Link não encontrado. Ele pode já ter sido apagado.');
+            removido = pai.links.splice(i, 1)[0];
+        }
+
+        const caminhoTexto = alvo.caminho.join(' > ') + (alvo.tipo === 'link' ? ' > ' + alvo.url : '');
+        await set(ref(db, `lixeira_arvore/${Date.now()}`), {
+            tipo: alvo.tipo, caminho: caminhoTexto, item: removido,
+            apagadoPor: auth.currentUser ? auth.currentUser.email : 'Desconhecido',
+            apagadoEm: `${dataHojeISO} ${obterHoraBrasilia()}`
+        });
+        await set(ref(db, 'estrutura_arvore'), arvore);
+
+        // Estrelas do item apagado (e do que estava dentro dele) também saem
+        const estrelas = listaArvore(estrelasOrigem);
+        const restantes = estrelas.filter(id => id !== caminhoTexto && !id.startsWith(caminhoTexto + ' > '));
+        if (restantes.length !== estrelas.length) {
+            estrelasOrigem = restantes;
+            await set(ref(db, 'marcacoesTaticas/estrelas'), restantes);
+        }
+
+        window.DADOS_TOTAIS = arvore;
+        redesenharArvore();
+        itemParaExcluir = null;
+        window.fecharModalNota();
+    } catch (err) {
+        console.error('Erro ao excluir item da árvore:', err);
+        alert(`Não foi possível excluir: ${err.message}`);
+        btn.textContent = 'Excluir'; btn.disabled = false;
+    }
+};
+
+// Redesenha a árvore mantendo abertas as pastas que estavam abertas
+function redesenharArvore() {
+    const raiz = document.getElementById('raiz-arvore');
+    const abertas = new Set([...raiz.querySelectorAll('.node.active')].map(n => n.getAttribute('data-path')));
+    listaTodosAlvos = [];
+    window.LISTA_MOVIMENTOS = [];
+    extrairTodosOsAlvos(window.DADOS_TOTAIS);
+    raiz.innerHTML = '';
+    desenhavelArvore(window.DADOS_TOTAIS, raiz, []);
+    raiz.querySelectorAll('.node[data-path]').forEach(n => { if (abertas.has(n.getAttribute('data-path'))) n.classList.add('active'); });
+    atualizarUiComVistos();
+    atualizarEstrelasUI();
+    renderizarEstatisticas();
+}
 
 </script>
 </body>
