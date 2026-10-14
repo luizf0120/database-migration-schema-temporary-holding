@@ -271,8 +271,9 @@
   }
   @keyframes neonAcendeApaga { from { opacity: 0.12; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .balao-mov::after { animation: none; opacity: 0.85; } }
-  .balao-mov .texto-mov { flex: 1; font-size: 16px; font-weight: 800; letter-spacing: 0.3px; word-break: break-word; line-height: 1.35; text-shadow: 0 0 5px currentColor; }
-  .balao-mov .remover-mov { cursor: pointer; color: #666; font-size: 16px; line-height: 1; padding: 0 2px; user-select: none; }
+  /* letras sem brilho e por cima do neon do contorno, para ficarem nítidas */
+  .balao-mov .texto-mov { position: relative; z-index: 1; flex: 1; font-size: 16px; font-weight: 800; letter-spacing: 0.3px; word-break: break-word; line-height: 1.35; }
+  .balao-mov .remover-mov { position: relative; z-index: 1; cursor: pointer; color: #666; font-size: 16px; line-height: 1; padding: 0 2px; user-select: none; }
   .balao-mov .remover-mov:hover { color: var(--accent-red); }
   .cor-mov {
     width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent; cursor: pointer;
