@@ -1711,25 +1711,16 @@ window.abrirModalTatico = function(e, idUnico, titulo, tipo) {
   window.mostrarTooltipTatico = function(e, idUnico, tipo) {
       e.stopPropagation();
       const safeKey = sanitizarId(idUnico);
-      const data = tipo === 'postit' ? anotacoesGlobais[safeKey] : agendaMenusGlobais[safeKey];
+      if (tipo !== 'postit') return;
+      const data = anotacoesGlobais[safeKey];
       if (!data) return;
 
       const tooltip = document.getElementById('tooltip-preview');
-      if (tipo === 'postit') {
-          tooltip.innerHTML = `
-              <div class="tooltip-title" style="color: var(--accent-red); border-bottom-color: var(--accent-red);">NOTA (POST-IT)</div>
-              <div style="color: #ffffff; font-weight: bold; font-size: 13px; margin-bottom: 6px; white-space: pre-wrap; line-height: 1.4;">"${linkify(data.texto) || 'Sem descrição'}"</div>
-              <div style="font-size: 10px; color: #aaa; border-top: 1px solid #222; padding-top: 4px;">🎯 Operador: ${data.operador.split('@')[0]} | ⏰ Registro: ${data.time}</div>
-          `;
-      } else {
-          tooltip.innerHTML = `
-              <div class="tooltip-title" style="color: var(--accent-yellow); border-bottom-color: var(--accent-yellow);">AGENDA DE EVENTO</div>
-              <div style="color: #ffffff; font-weight: bold; font-size: 13px; margin-bottom: 6px; white-space: pre-wrap; line-height: 1.4;">"${linkify(data.texto) || 'Sem descrição'}"</div>
-              <div style="font-size: 11px; color: var(--accent-orange); margin-bottom: 3px;">📍 Local: ${data.local || 'Não informado'}</div>
-              <div style="font-size: 11px; color: var(--accent-blue); margin-bottom: 6px;">📅 Evento: ${data.dataAlerta.split('-').reverse().join('/')} às ${data.horaAlerta || '--:--'}</div>
-              <div style="font-size: 10px; color: #aaa; border-top: 1px solid #222; padding-top: 4px;">🎯 Operador: ${data.operador.split('@')[0]} | ⏰ Registro: ${data.time}</div>
-          `;
-      }
+      tooltip.innerHTML = `
+          <div class="tooltip-title" style="color: var(--accent-red); border-bottom-color: var(--accent-red);">NOTA (POST-IT)</div>
+          <div style="color: #ffffff; font-weight: bold; font-size: 13px; margin-bottom: 6px; white-space: pre-wrap; line-height: 1.4;">"${linkify(data.texto) || 'Sem descrição'}"</div>
+          <div style="font-size: 10px; color: #aaa; border-top: 1px solid #222; padding-top: 4px;">🎯 Operador: ${data.operador.split('@')[0]} | ⏰ Registro: ${data.time}</div>
+      `;
       tooltip.style.left = (e.clientX + 15) + 'px'; tooltip.style.top = (e.clientY + 10) + 'px'; tooltip.classList.add('show');
   };
 
@@ -2009,10 +2000,6 @@ window.salvarNotaFirebase = async function() {
       if (el) { el.classList.add('visto'); let stamp = document.createElement('span'); stamp.className = 'stamp'; stamp.innerText = `[${v.time}]`; el.appendChild(stamp); }
     });
 
-    document.querySelectorAll('.icon-agenda').forEach(el => {
-        if (agendaMenusGlobais[sanitizarId(el.getAttribute('data-id'))]) el.classList.add('tem-nota');
-        else el.classList.remove('tem-nota');
-    });
     document.querySelectorAll('.icon-postit').forEach(el => {
         if (anotacoesGlobais[sanitizarId(el.getAttribute('data-id'))]) el.classList.add('tem-nota');
         else el.classList.remove('tem-nota');
@@ -2159,8 +2146,8 @@ function desenhavelArvore(listaDeDados, elementoPai, caminhoAtual = []) {
 
       let htmlNota = "";
       if (novoCaminho[0] === "MOVIMENTOS" && isExpandable && novoCaminho.length >= 4) {
+          // Eventos são agendados só pelo "Agendar Evento" do calendário (passam pela aprovação)
           htmlNota = `
-            <span class="icon-nota icon-agenda" data-id="${pathString}" onclick="window.abrirModalTatico(event, '${pathString}', '${item.nome}', 'agenda')" onmouseenter="window.mostrarTooltipTatico(event, '${pathString}', 'agenda')" onmouseleave="window.esconderTooltipTatico()">📅</span>
             <span class="icon-nota icon-postit" data-id="${pathString}" onclick="window.abrirModalTatico(event, '${pathString}', '${item.nome}', 'postit')" onmouseenter="window.mostrarTooltipTatico(event, '${pathString}', 'postit')" onmouseleave="window.esconderTooltipTatico()">💬</span>
           `;
       }
