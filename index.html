@@ -259,10 +259,19 @@
 
   /* MOVIMENTOS EM ANDAMENTO (lembretes abaixo do calendário) */
   .balao-mov {
-    display: flex; align-items: center; gap: 8px; background: #111; border: 1px solid #2a2a2a;
-    border-radius: 14px; padding: 8px 12px; font-size: 14px;
+    position: relative; display: flex; align-items: center; gap: 8px; background: #111; border: 1px solid #2a2a2a;
+    border-radius: 14px; padding: 10px 14px;
   }
-  .balao-mov .texto-mov { flex: 1; font-weight: bold; word-break: break-word; line-height: 1.35; }
+  /* Contorno neon na cor do texto, acendendo e apagando devagar */
+  .balao-mov::after {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none;
+    border: 2px solid var(--cor-neon, var(--accent-green));
+    box-shadow: 0 0 6px var(--cor-neon, var(--accent-green)), 0 0 14px var(--cor-neon, var(--accent-green)), inset 0 0 6px var(--cor-neon, var(--accent-green));
+    animation: neonAcendeApaga 3s ease-in-out infinite alternate;
+  }
+  @keyframes neonAcendeApaga { from { opacity: 0.12; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .balao-mov::after { animation: none; opacity: 0.85; } }
+  .balao-mov .texto-mov { flex: 1; font-size: 16px; font-weight: 800; letter-spacing: 0.3px; word-break: break-word; line-height: 1.35; text-shadow: 0 0 5px currentColor; }
   .balao-mov .remover-mov { cursor: pointer; color: #666; font-size: 16px; line-height: 1; padding: 0 2px; user-select: none; }
   .balao-mov .remover-mov:hover { color: var(--accent-red); }
   .cor-mov {
@@ -576,8 +585,8 @@
                   <button id="btn-ia-report" class="btn-action" onclick="window.gerarRelatorioIA()" style="width: 100%; margin-top: 8px; background: #00ffaa; color: black; font-weight: bold; border: none; padding: 12px; border-radius: 6px; font-size: 14px;">🤖 Gerar Relatório IA (7 Dias)</button>
 
                   <div id="secao-movimentos-andamento" style="margin-top: 20px; border-top: 1px solid #222; padding-top: 15px;">
-                      <h5 style="margin: 0 0 12px 0; font-size: 13px; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.5px;">Movimentos em Andamento</h5>
-                      <div id="lista-movimentos-andamento" style="display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; padding-right: 4px;"></div>
+                      <h5 style="margin: 0 0 12px 0; font-size: 13px; color: #fff; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Movimentos em Andamento</h5>
+                      <div id="lista-movimentos-andamento" style="display: flex; flex-direction: column; gap: 12px; max-height: 300px; overflow-y: auto; padding: 6px 8px;"></div>
                       <div id="form-movimento-andamento" style="display: none; margin-top: 10px; background: #0d0d0d; border: 1px solid #333; border-radius: 10px; padding: 10px;">
                           <input type="text" id="texto-movimento-andamento" maxlength="120" placeholder="Nome do movimento..." autocomplete="off" style="width: 100%; box-sizing: border-box; background: #111; border: 1px solid #333; border-radius: 6px; padding: 9px 10px; font-size: 14px; font-weight: bold; outline: none;">
                           <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
@@ -949,7 +958,9 @@
           const texto = document.createElement('span');
           texto.className = 'texto-mov';
           texto.textContent = m.texto;
-          texto.style.color = CORES_MOVIMENTO[m.cor] || CORES_MOVIMENTO.verde;
+          const cor = CORES_MOVIMENTO[m.cor] || CORES_MOVIMENTO.verde;
+          texto.style.color = cor;
+          balao.style.setProperty('--cor-neon', cor);   // contorno neon na mesma cor do texto
           const remover = document.createElement('span');
           remover.className = 'remover-mov';
           remover.title = 'Remover';
