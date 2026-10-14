@@ -49,8 +49,6 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.8);
   }
 
-  .login-box img { width: 120px; margin-bottom: 30px; }
-
   .login-box input {
     width: 100%; padding: 12px; margin-bottom: 15px; background: #111;
     border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; font-size: 14px; outline: none;
@@ -482,7 +480,6 @@
 
 <div id="login-screen">
     <div class="login-box">
-        <img src="bpchq_colorido_p_0.png" alt="Brasão BPCHOQUE" onerror="this.style.display='none'">
         <input type="email" id="email" placeholder="E-mail Operacional" autocomplete="username">
         <input type="password" id="senha" placeholder="Senha" autocomplete="current-password">
         <button id="btn-entrar">ENTRAR</button>
@@ -743,7 +740,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, onValue, set, get, query, orderByKey, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBVPuhWEddM3QH3tDCU0IPENF09Kg-_ves",
@@ -2191,7 +2188,8 @@ window.salvarNotaFirebase = async function() {
   };
 
   window.baixarRelatorio = function() {
-    get(ref(db, 'monitoramentoDiario')).then(snap => {
+    // Busca só os 7 últimos dias (as chaves são datas AAAA-MM-DD), em vez de todo o histórico
+    get(query(ref(db, 'monitoramentoDiario'), orderByKey(), limitToLast(7))).then(snap => {
         if(!snap.exists()) return;
         const dados = snap.val(); let relatorio = "RELATÓRIO DE MONITORAMENTO E INTELIGÊNCIA - AESI BPCHOQUE\n\n";
         Object.keys(dados).sort().slice(-7).forEach(d => {
@@ -2215,6 +2213,9 @@ Object.values(dados[d].agenda_menus).forEach(n => {
         });
         const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([relatorio], {type: "text/plain;charset=utf-8"}));
         a.download = `Relatorio_Inteligencia_AESI_7_Dias.txt`; a.click();
+    }).catch(err => {
+        console.error("Erro ao gerar o relatório de 7 dias:", err);
+        alert(`Não foi possível gerar o relatório: ${err.message}`);
     });
   }
 
