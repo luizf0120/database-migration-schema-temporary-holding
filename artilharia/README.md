@@ -80,8 +80,10 @@ levemente achatada e base plana chanfrada. A base é onde o pistão empurra, e o
   "dança" no tubo e sai alinhado.
 - **Caminho conferido no CGAL:** o projétil passa livre apoiado no pistão armado, sem tocar no dente do gatilho,
   depois pelo degrau, pelo funil e por todo o cano.
-- **Porta-munição:** a bandeja com 6 projéteis em pé aparece ao lado do canhão na montagem
-  (`porta_projeteis`, com a palavra MUNICAO gravada).
+- **Cartucheiras na base:** a própria base guarda **10 projéteis**, 5 de cada lado (nas pernas laterais), em tubos
+  **inclinados a 45° para fora**. Cada projétil entra 15 dos seus 22 mm e fica só a ponta da ogiva para fora.
+  Um entalhe em cada tubo ajuda a tirar com a unha. Os tubos ficam abaixo da mesa giratória e longe das manivelas.
+- **Porta-munição avulso:** a peça `porta_projeteis`, bandeja com 6, continua disponível se você quiser guardar mais.
 
 | Impressão do projétil | Peso | Saída (ideal) | Energia |
 |---|---|---|---|
@@ -144,14 +146,14 @@ A estimativa usa volume e área de cada STL (±15%).
 
 | Peça | Maciço | Típico |
 |---|---|---|
-| base (em cruz, anel oco) | 369 g | **~190 g** |
+| base (em cruz, anel oco, cartucheiras para 10 projéteis) | 426 g | **~225 g** |
 | mesa (coroa com janelas) | 150 g | **~82 g** |
 | carro | 118 g | ~71 g |
 | coroa de elevação | 74 g | ~39 g |
 | culatra | 55 g | ~38 g |
 | cano | 30 g | ~23 g |
 | todo o resto (roscas, manivelas, eixos, travas…) | 103 g | ~87 g |
-| **Total impresso** | **~900 g** | **~530 g** |
+| **Total impresso** (+10 projéteis ≈ 17 g) | **~960 g** | **~580 g** |
 | + rolamento, BBs, mola e parafusos | | ~30 g |
 
 Antes desta revisão, a base e a mesa eram maciças: 651 g + 209 g (~313 g no típico).
@@ -180,7 +182,7 @@ Cada peça já sai na orientação de impressão.
 | Base e mesa | `base`, `mesa`, `pino_pivo` (ou M8), `ponteiro_az` |
 | Carro | `carro`, `ponteiro_el`, `roda_el` |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
-| Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `soquete`, `projetil` (×6 ou mais), `porta_projeteis` |
+| Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `soquete`, `projetil` (×10 para encher as cartucheiras), `porta_projeteis` |
 | Pequenas | `punho` ×2, `trava_6` ×11, `trava_8` ×4 (2 do munhão + 2 dos punhos; imprima algumas a mais) |
 
 **Comprar:** 1 rolamento 608, ~52 BBs de 6 mm, 1 mola 1,0×12×100, 6 pés de borracha adesivos de 10 mm e **8 parafusos M3**: 4 × M3×10 (carro),

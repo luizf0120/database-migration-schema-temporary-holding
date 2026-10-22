@@ -137,7 +137,14 @@ ARMADO = 1;
 L_corpo_proj = 13;   // corpo cilindrico
 L_ogiva_proj = 9;    // ogiva tangente curta
 folga_proj   = 0.3;  // folga diametral no cano (0,15 por lado nas cintas)
-n_proj       = 6;    // quantos aparecem no porta-municao da montagem
+n_proj       = 6;    // capacidade do porta-municao avulso (peca opcional)
+// cartucheiras integradas na base: 5 projeteis de cada lado, inclinados a 45 graus
+lados_sup    = [90, 270];
+n_por_lado   = 5;
+r_sup        = 81;   // raio da boca dos tubos
+z_sup        = 20;   // altura da boca dos tubos
+prof_sup     = 15;   // quanto o projetil entra (de 22 mm): ficam ~7 mm de fora
+passo_sup    = 18;   // distancia entre tubos
 
 // =====================================================================
 //  GRANDEZAS DERIVADAS (nao mexer)
@@ -528,6 +535,25 @@ module perna(ang) {   // nervura do centro ate a ponta, baixando depois do anel,
         translate([r_perna - d_sapata/2, 0, -0.01]) cylinder(d = 10.5, h = 1.2);
     }
 }
+// posicao de cada tubo da cartucheira: origem na boca, Z local = eixo (inclinado 45 graus para fora)
+module pos_sup(lado, i) {
+    da = passo_sup/r_sup*180/PI;
+    rotate(lado + (i - (n_por_lado - 1)/2)*da) translate([r_sup, 0, z_sup]) rotate([0, 45, 0]) children();
+}
+module cartucheira() {   // tubos (macicos) com a sombra ate o chao
+    for (lado = lados_sup, i = [0:n_por_lado-1]) hull() {
+        pos_sup(lado, i) translate([0, 0, -prof_sup]) cylinder(d = d_proj_e + 5.5, h = prof_sup);
+        rotate(lado + (i - (n_por_lado - 1)/2)*passo_sup/r_sup*180/PI) for (dx = [0, -prof_sup*sin(45)])
+            translate([r_sup + dx, 0, 0]) cylinder(d = d_proj_e + 5.5, h = 1);
+    }
+}
+module furos_cartucheira() {
+    for (lado = lados_sup, i = [0:n_por_lado-1]) pos_sup(lado, i) {
+        translate([0, 0, -prof_sup]) cylinder(d = d_proj_e + 0.5, h = prof_sup + 20);
+        translate([0, 0, -prof_sup]) cylinder(d1 = d_proj_e - 3, d2 = d_proj_e + 0.5, h = 2.5);   // fundo conico
+        translate([3, -3, -5]) cube([10, 6, 20]);                                            // entalhe para a unha
+    }
+}
 module base() {
     difference() {
         union() {
@@ -535,6 +561,7 @@ module base() {
             difference() { cylinder(r = r_anel[1], h = h_base, $fn = 180);           // anel da pista
                            translate([0, 0, -1]) cylinder(r = r_anel[0], h = h_base + 2, $fn = 180); }
             for (ang = [90, 180, 270]) perna(ang);
+            cartucheira();
             // apoio do ponteiro de azimute (perna de tras na altura cheia ate o ponteiro)
             translate([-(r_pont_az + 4), -5, 0]) cube([r_pont_az + 4 - r_anel[1] + 2, 10, h_base]);
             // raios do cubo ao anel (nervuras de 10 mm em cruz + diagonais)
@@ -553,6 +580,7 @@ module base() {
                 mancal(z_raz - h_base, esp_mancal_ext, 0, true);
         }
         translate([0, 0, h_base]) canal_v();
+        furos_cartucheira();
         // sede do rolamento 608 + alivio para a ponta do pino
         translate([0, 0, h_base - rol_608[2] - 0.2]) cylinder(d = rol_608[0] + 0.2, h = 10);
         translate([0, 0, h_base - rol_608[2] - 6]) cylinder(d = 12, h = 7);
@@ -977,9 +1005,10 @@ module conjunto_elevacao() {  // tudo que gira com o cano (origem no munhao)
 }
 
 module montagem() {
-    // porta-municao ao lado do canhao (alem da perna -Y)
-    translate([-20, -(r_perna + 30), 0]) porta_montado();
     color("DarkOliveGreen") base();
+    // 10 projeteis guardados nas cartucheiras da base
+    for (lado = lados_sup, i = [0:n_por_lado-1]) pos_sup(lado, i)
+        translate([0, 0, -prof_sup]) color("Goldenrod") projetil();
     color("Silver") translate([0, 0, h_base - rol_608[2]]) difference() {
         cylinder(d = rol_608[0], h = rol_608[2]);
         translate([0, 0, -1]) cylinder(d = rol_608[1], h = rol_608[2] + 2);
