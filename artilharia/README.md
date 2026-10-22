@@ -113,6 +113,40 @@ Toda engrenagem tem folga. Para a leitura ser repetível, **sempre chegue no ân
 Por exemplo, sempre subindo. Se passou, volte meia volta e chegue de novo pelo mesmo lado. É assim que se aponta
 artilharia de verdade. Na elevação, o próprio peso do cano já encosta os dentes sempre do mesmo lado.
 
+## Peso em PETG (1,27 g/cm³)
+
+"Típico" significa 3 paredes de 0,4 mm, topo e fundo de 1,2 mm e 20% de preenchimento giroide.
+A estimativa usa volume e área de cada STL (±15%).
+
+| Peça | Maciço | Típico |
+|---|---|---|
+| base (em cruz, anel oco) | 369 g | **~190 g** |
+| mesa (coroa com janelas) | 150 g | **~82 g** |
+| carro | 118 g | ~71 g |
+| coroa de elevação | 74 g | ~39 g |
+| culatra | 55 g | ~38 g |
+| cano | 30 g | ~23 g |
+| todo o resto (roscas, manivelas, eixos, travas…) | 103 g | ~87 g |
+| **Total impresso** | **~900 g** | **~530 g** |
+| + rolamento, BBs, mola e parafusos | | ~30 g |
+
+Antes desta revisão, a base e a mesa eram maciças: 651 g + 209 g (~313 g no típico).
+
+**Por que o "típico" cai menos que o "maciço":** na impressão FDM, o miolo já é preenchimento ralo, e quem
+pesa são as paredes. Tirar volume ajuda muito no maciço. No típico, o que mais pesa é a área de superfície.
+- **Para pesar menos:** imprima a base e o carro com **2 paredes e 10–15%** (dá uns 130 g a menos).
+- **Mantenha 4 paredes e 100%** nas peças que trabalham: roscas, pinhão, gatilho, travas e punhos.
+
+### Base em cruz
+A base agora tem **4 pernas em cruz** com sapatas e rebaixo para **pé de borracha adesivo de 10 mm**.
+Uma das pernas é a plataforma da rosca e da manivela de azimute. Elas alcançam 105 mm do centro e a base
+cabe numa mesa de impressão de 220 mm.
+- **Pernas:** são nervuras de 10 mm que baixam depois do anel. Quem dá a rigidez é a altura.
+- **Anel da pista:** é oco, com paredes de 2 mm e teto em V a 45°, e deixa **8 mm maciços sob o canal das esferas**.
+- **Plataforma da manivela:** tem um vão em V por baixo, que fica 9 mm abaixo da calha da rosca.
+- **Rotação acidental:** os pés de borracha e a base larga seguram o conjunto. O torque de girar a manivela
+  de azimute não faz a base patinar na mesa.
+
 ## Peças (troque `PARTE` no Customizer)
 
 Cada peça já sai na orientação de impressão.
@@ -125,7 +159,7 @@ Cada peça já sai na orientação de impressão.
 | Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `soquete` |
 | Pequenas | `punho` ×2, `trava_6` ×11, `trava_8` ×4 (2 do munhão + 2 dos punhos; imprima algumas a mais) |
 
-**Comprar:** 1 rolamento 608, ~52 BBs de 6 mm, 1 mola 1,0×12×100 e **8 parafusos M3**: 4 × M3×10 (carro),
+**Comprar:** 1 rolamento 608, ~52 BBs de 6 mm, 1 mola 1,0×12×100, 6 pés de borracha adesivos de 10 mm e **8 parafusos M3**: 4 × M3×10 (carro),
 2 × M3×8 (tampa), 1 × M3×8 (cano) e 1 × M3×16 (pivô do gatilho). Opcional: 2 × M3×30 como alma de aço dos pinos dos punhos.
 Os eixos sextavados também podem ser chaves Allen de 6 e 8 mm. Nesse caso é preciso lixar os canais das travas.
 

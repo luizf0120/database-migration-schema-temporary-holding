@@ -89,7 +89,13 @@ d_punho   = 14;
 d_pino_p  = 8;    // pino do punho (oco: aceita parafuso M3 como alma de aco)
 
 /* [Base e rolamento] */
-r_base    = 80;
+r_base    = 80;   // raio ate onde a base fica na altura cheia (anel da pista + cubo)
+// base em cruz: 4 pernas (uma e a da rosca/manivela de azimute, em +X)
+r_perna   = 105;  // alcance das pernas (cabe numa mesa de impressao de 220 mm)
+larg_perna = 10;  // nervura (a rigidez vem da altura)
+d_sapata  = 26;  // sapata redonda na ponta de cada perna
+h_ponta   = 10;   // altura na ponta das pernas
+r_anel    = [51, 63];  // anel sob a pista das esferas (oco por dentro)
 h_base    = 30;
 R_pista   = 57;   // raio da pista das esferas
 d_esfera  = 6;    // BB de airsoft 6 mm
@@ -501,10 +507,33 @@ module escala_el_2d() {
 // =====================================================================
 
 // ---- BASE fixa: pista das esferas, sede do 608, 3 mancais da rosca az
+module perna(ang) {   // nervura do centro ate a ponta, baixando depois do anel, com sapata
+    rotate(ang) difference() {
+        union() {
+            hull() {
+                translate([0, -larg_perna/2, 0]) cube([r_anel[1] + 4, larg_perna, h_base]);
+                translate([r_perna - d_sapata/2, -larg_perna/2, 0]) cube([1, larg_perna, h_ponta]);
+            }
+            translate([r_perna - d_sapata/2, 0, 0]) cylinder(d = d_sapata, h = 4);            // sapata
+            translate([r_perna - d_sapata/2, 0, 0]) cylinder(d1 = d_sapata - 4, d2 = larg_perna, h = h_ponta - 2);
+        }
+        // rebaixo para pe de borracha adesivo (10 mm)
+        translate([r_perna - d_sapata/2, 0, -0.01]) cylinder(d = 10.5, h = 1.2);
+    }
+}
 module base() {
     difference() {
         union() {
-            cylinder(r = r_base, h = h_base, $fn = 180);
+            cylinder(r = 15, h = h_base);                                           // cubo do 608
+            difference() { cylinder(r = r_anel[1], h = h_base, $fn = 180);           // anel da pista
+                           translate([0, 0, -1]) cylinder(r = r_anel[0], h = h_base + 2, $fn = 180); }
+            for (ang = [90, 180, 270]) perna(ang);
+            // apoio do ponteiro de azimute (perna de tras na altura cheia ate o ponteiro)
+            translate([-(r_pont_az + 4), -5, 0]) cube([r_pont_az + 4 - r_anel[1] + 2, 10, h_base]);
+            // raios do cubo ao anel (nervuras de 10 mm em cruz + diagonais)
+            for (ang = [45, 135, 225, 315]) rotate(ang) translate([0, -4, 0]) cube([r_anel[0] + 1, 8, h_base]);
+            // perna +X: plataforma da rosca e da manivela de azimute
+            translate([0, -5, 0]) cube([x_raz, 10, h_base]);
             translate([x_raz - 16, -(y_ext_az + esp_mancal_ext), 0])
                 cube([16 + r_tambor + 7.5, y_ext_az + esp_mancal_ext + y_mancal_az + esp_mancal_az, h_base]);
             // mancais junto a rosca
@@ -520,13 +549,21 @@ module base() {
         // sede do rolamento 608 + alivio para a ponta do pino
         translate([0, 0, h_base - rol_608[2] - 0.2]) cylinder(d = rol_608[0] + 0.2, h = 10);
         translate([0, 0, h_base - rol_608[2] - 6]) cylinder(d = 12, h = 7);
-        // alivio conico por baixo (teto a 45 graus, imprime sem suporte)
-        rotate_extrude($fn = 120) polygon([[20, -0.01], [R_pista + 12, -0.01], [(R_pista + 32)/2, (R_pista - 8)/2]]);
+        // anel oco: paredes de 2 mm e teto em V a 45 graus, deixando 8 mm de material sob a pista
+        rotate_extrude($fn = 120) polygon([[r_anel[0] + 2, -0.01], [r_anel[1] - 2, -0.01],
+            [r_anel[1] - 2, h_base - 12], [(r_anel[0] + r_anel[1])/2, h_base - 8], [r_anel[0] + 2, h_base - 12]]);
+        // canais de alivio por baixo da plataforma (teto em V a 45 graus)
+        translate([x_raz + 5, -(y_ext_az + esp_mancal_ext) + 14, 0]) rotate([-90, 0, 0])
+            linear_extrude(y_ext_az + esp_mancal_ext + y_mancal_az + esp_mancal_az - 28)
+                polygon([[-17, 0.01], [17, 0.01], [0, -17]]);   // cumeeira 9 mm abaixo da calha da rosca
         // calha de folga sob a rosca
         translate([x_raz, 0, z_raz]) rotate([90, 0, 0])
             cylinder(r = ra_raz + 1, h = 2*y_mancal_az, center = true);
-        // furo do ponteiro de azimute
+        // furo do ponteiro de azimute (na perna de tras)
         translate([-r_pont_az, 0, h_base]) furo_ponteiro(8);
+        // pes de borracha sob a plataforma da manivela
+        for (p = [[x_raz + r_tambor + 2, -(y_ext_az + esp_mancal_ext) + 7], [x_raz + r_tambor + 2, y_mancal_az + esp_mancal_az - 7]])
+            translate([p[0], p[1], -0.01]) cylinder(d = 10.5, h = 1.2);
     }
 }
 
@@ -539,6 +576,12 @@ module mesa() {
         translate([0, 0, h_mesa - 3]) cylinder(d = 14.5, h = 4);
         for (p = furos_carro) translate([p[0], p[1], h_mesa - 10]) cylinder(d = 2.8, h = 11);
         translate([0, 0, h_mesa - prof_grav]) linear_extrude(1, convexity = 10) escala_az_2d();
+        // janelas de alivio entre o cubo e a pista: 6 raios de 8 mm + ressaltos nos parafusos
+        translate([0, 0, -1]) linear_extrude(h_mesa + 2, convexity = 8) offset(r = 2) offset(delta = -2) difference() {
+            difference() { circle(r = 46, $fn = 120); circle(r = 17); }
+            for (i = [0:5]) rotate(i*60 + 30) translate([0, -4]) square([50, 8]);
+            for (p = furos_carro) translate(p) circle(r = 6);
+        }
     }
 }
 
