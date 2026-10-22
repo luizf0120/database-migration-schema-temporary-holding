@@ -80,9 +80,11 @@ levemente achatada e base plana chanfrada. A base é onde o pistão empurra, e o
   "dança" no tubo e sai alinhado.
 - **Caminho conferido no CGAL:** o projétil passa livre apoiado no pistão armado, sem tocar no dente do gatilho,
   depois pelo degrau, pelo funil e por todo o cano.
-- **Cartucheiras na base:** a própria base guarda **10 projéteis**, 5 de cada lado (nas pernas laterais), em tubos
-  **inclinados a 45° para fora**. Cada projétil entra 15 dos seus 22 mm e fica só a ponta da ogiva para fora.
-  Um entalhe em cada tubo ajuda a tirar com a unha. Os tubos ficam abaixo da mesa giratória e longe das manivelas.
+- **Cartucheiras na base:** a própria base guarda **10 projéteis** numa **saia baixa** (16 mm) rente ao anel.
+  Eles ficam deitados a 25° e apontando para fora, espalhados por toda a lateral: 5 do lado +Y (de 30° em 30°,
+  da plataforma da manivela até o pé oposto) e 5 do lado −Y (de 210° a 290°, livre da manivela de azimute).
+  Cada um entra 13 mm. **A ogiva fica inteira para fora**, e você pega de lado com dois dedos.
+  Como estão inclinados para cima, a gravidade os mantém no lugar. A saia fica abaixo da mesa giratória.
 - **Porta-munição avulso:** a peça `porta_projeteis`, bandeja com 6, continua disponível se você quiser guardar mais.
 
 | Impressão do projétil | Peso | Saída (ideal) | Energia |
@@ -146,14 +148,14 @@ A estimativa usa volume e área de cada STL (±15%).
 
 | Peça | Maciço | Típico |
 |---|---|---|
-| base (em cruz, anel oco, cartucheiras para 10 projéteis) | 426 g | **~225 g** |
+| base (em cruz, anel oco, saia com 10 projéteis) | 484 g | **~234 g** |
 | mesa (coroa com janelas) | 150 g | **~82 g** |
 | carro | 118 g | ~71 g |
 | coroa de elevação | 74 g | ~39 g |
 | culatra | 55 g | ~38 g |
 | cano | 30 g | ~23 g |
 | todo o resto (roscas, manivelas, eixos, travas…) | 103 g | ~87 g |
-| **Total impresso** (+10 projéteis ≈ 17 g) | **~960 g** | **~580 g** |
+| **Total impresso** (+10 projéteis ≈ 17 g) | **~1010 g** | **~590 g** |
 | + rolamento, BBs, mola e parafusos | | ~30 g |
 
 Antes desta revisão, a base e a mesa eram maciças: 651 g + 209 g (~313 g no típico).
