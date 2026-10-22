@@ -170,18 +170,20 @@ A estimativa usa volume e área de cada STL (±15%).
 
 | Peça | Maciço | Típico |
 |---|---|---|
-| base (anel oco, saia com 10 projéteis, plataforma) | 445 g | **~217 g** |
-| mesa (coroa de 120 dentes com janelas) | 172 g | **~101 g** |
+| base em bandeja (anel oco, piso, parede, saia com 10 projéteis, plataforma) | 378 g | **~218 g** |
+| mesa (setor de coroa com janelas) | 136 g | **~81 g** |
 | carro | 134 g | ~80 g |
 | 2 anéis de pista | 52 g | ~44 g |
-| coroa de elevação (120 dentes) | 129 g | ~66 g |
+| setor de elevação (−20° a +85°) | 83 g | ~44 g |
 | culatra + cano | 84 g | ~61 g |
 | 10 projéteis | 28 g | ~17 g |
 | todo o resto (roscas, manivelas, eixos, rebites, travas…) | 122 g | ~101 g |
-| **Total impresso** | **~1170 g** | **~690 g** |
+| **Total impresso** | **~1016 g** | **~645 g** |
 | + BBs e mola | | ~11 g |
 
-Antes desta revisão, a base e a mesa eram maciças: 651 g + 209 g (~313 g no típico).
+Comparando com a v5 (coroas inteiras): **−154 g maciço e −45 g no típico**. A mesa perdeu 20 g e a coroa de elevação 22 g.
+A base pesa o mesmo no típico, porque o piso e a parede da bandeja gastam o que a altura menor economizou.
+Em troca, ela é **15 mm mais baixa e mais rígida**, então o canhão fica mais estável. Esse peso embaixo é útil: é lastro.
 
 **Por que o "típico" cai menos que o "maciço":** na impressão FDM, o miolo já é preenchimento ralo, e quem
 pesa são as paredes. Tirar volume ajuda muito no maciço. No típico, o que mais pesa é a área de superfície.
