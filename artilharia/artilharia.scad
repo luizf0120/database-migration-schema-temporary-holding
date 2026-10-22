@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, manivela_armar, gatilho, soquete, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_az, ponteiro_el, pino_pivo]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_az, ponteiro_el, pino_pivo]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -123,7 +123,6 @@ m_ra      = 1.25;
 z_ra      = 16;    // coroa de armar -> 16 voltas de manivela por volta do pinhao
 d_rosca_ra = 14;
 L_rosca_ra = 24;
-R_manivela_arm = 15;
 esp_mancal_ra = 5;
 // estado mostrado na montagem: 0 = descansado, 1 = armado e PRONTO
 ARMADO = 1;
@@ -752,18 +751,22 @@ module coroa_armar() {
     }
 }
 
-// ---- MANIVELA simples (de armar)
-module manivela_simples(R) {
-    z_p = 6;
+// ---- VOLANTE de armar (16 voltas por disparo): disco recartilhado + pino de giro.
+//      Alcance de 14 mm do eixo: fica fora do caminho da manivela de elevacao em
+//      qualquer elevacao (uma manivela comprida batia nela perto de 82 graus).
+r_volante = 14;
+module volante_armar() {
     difference() {
         union() {
+            cylinder(r = r_volante - 0.8, h = 8, $fn = 60);
+            for (i = [0:17]) rotate(i*20) translate([r_volante - 1.2, 0, 0]) cylinder(r = 1.2, h = 8, $fn = 12);
             cylinder(r = 7, h = h_cubo);
-            hull() { cylinder(r = 7, h = z_p); translate([R, 0, 0]) cylinder(r = 6.5, h = z_p); }
-            translate([R, 0, 0]) cylinder(d = d_pino_p, h = z_p + L_punho + 0.4 + g_canal + 2);
+            translate([8.5, 0, 0]) cylinder(d = 6, h = 8 + 12);            // pino para girar com o dedo
+            translate([8.5, 0, 8 + 12]) sphere(d = 6, $fn = 16);
         }
         translate([0, 0, h_cubo/2]) hex_furo(f_eixo, h_cubo + 2);
-        translate([R, 0, z_p + L_punho + 0.4]) canal(dc_8);
-        translate([R, 0, -1]) cylinder(d = 3.2, h = 60, $fn = 16);   // alma opcional: parafuso M3
+        translate([0, 0, 8 - prof_grav]) linear_extrude(1, convexity = 6)  // seta do sentido de armar
+            rotate(200) translate([-1.5, -9.5]) polygon([[0, 0], [3, 0], [3, 4], [5, 4], [1.5, 7], [-2, 4], [0, 4]]);
     }
 }
 
@@ -874,11 +877,8 @@ module conjunto_elevacao() {  // tudo que gira com o cano (origem no munhao)
             color("Silver") eixo_hex(f_eixo, ra_z0, ra_z1, [ra_g1, ra_g2, ra_g3], dc_6);
             travas_eixo([ra_g1, ra_g2, ra_g3]);
         }
-        translate([x_g - x_man_ra, y_ra, z_ra_eixo]) rotate([0, -90, 0]) rotate(-th_arm*z_ra) {
-            color("Firebrick") manivela_simples(R_manivela_arm);
-            color("Black") translate([R_manivela_arm, 0, 6.2]) punho();
-            color("DeepSkyBlue") translate([R_manivela_arm, 0, 6 + L_punho + 0.5]) trava(dc_8);
-        }
+        translate([x_g - x_man_ra, y_ra, z_ra_eixo]) rotate([0, -90, 0]) rotate(-th_arm*z_ra)
+            color("Firebrick") volante_armar();
         // coroa de elevacao + munhao
         color("Goldenrod") translate([0, y_roda - h_roda_el/2, 0]) rotate([-90, 0, 0]) roda_el();
         rotate([-90, 0, 0]) {
@@ -927,7 +927,7 @@ else if (PARTE == "pistao")      translate([0, 0, -(x_g - 4)]) rotate([0, -90, 0
 else if (PARTE == "pinhao_armar") translate([0, 0, 3]) pinhao_armar();
 else if (PARTE == "coroa_armar") translate([0, 0, 3]) coroa_armar();
 else if (PARTE == "rosca_armar") translate([0, 0, L_rosca_ra/2]) rosca(m_ra, d_rosca_ra, L_rosca_ra);
-else if (PARTE == "manivela_armar") manivela_simples(R_manivela_arm);
+else if (PARTE == "volante_armar") volante_armar();
 else if (PARTE == "gatilho")     translate([0, 0, -(z_b + 1)]) gatilho();
 else if (PARTE == "tampa")       translate([0, 0, -(x_tr - 3)]) rotate([0, -90, 0]) translate([0, 0, -z_b]) tampa();
 else if (PARTE == "amortecedor") translate([0, 0, -x_s]) rotate([0, -90, 0]) translate([0, 0, -z_b]) amortecedor();

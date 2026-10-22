@@ -41,7 +41,8 @@ canhão antigo, e rola até o pistão. Com o cano na horizontal, empurre com o `
 
 ### Como funciona
 
-1. **Armar:** a manivela de armar fica atrás, na esquerda, com o eixo paralelo ao cano. Ela gira uma **rosca sem fim
+1. **Armar:** o **volante de armar** (Ø28, com pino para girar com o dedo) fica atrás, na esquerda, com o eixo paralelo ao cano.
+   Ele gira uma **rosca sem fim
    (16:1, autotravante)**, que gira uma coroa e um **pinhão "mutilado"**. Esse pinhão tem 8 dentes de um lado e é liso do outro,
    como o setor de um gearbox de airsoft. O pinhão puxa a **cremalheira** que fica no topo do pistão, comprimindo a mola.
 2. **Clique:** quando o pistão chega a 35 mm de recuo, a **lingueta do gatilho** estala na frente dele.
@@ -59,7 +60,7 @@ canhão antigo, e rola até o pistão. Com o cano na horizontal, empurre com o `
   Ela não empurra nem o carro nem a mesa.
 - **As roscas de pontaria são autotravantes.** O avanço é de 4–5°, e tan γ < μ. Nenhum esforço que chega às coroas consegue girar
   as roscas de volta. Só a sua mão, pela manivela, move a pontaria.
-- **A manivela de armar tem o eixo paralelo ao cano.** O torque da sua mão gira o cano em torno do próprio eixo,
+- **O volante de armar tem o eixo paralelo ao cano.** O torque da sua mão gira o cano em torno do próprio eixo,
   e não em elevação.
 - **A rosca de armar também é autotravante.** Soltar a manivela no meio do caminho não dispara nem volta.
 
@@ -121,11 +122,11 @@ Cada peça já sai na orientação de impressão.
 | Base e mesa | `base`, `mesa`, `pino_pivo` (ou M8), `ponteiro_az` |
 | Carro | `carro`, `ponteiro_el`, `roda_el` |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
-| Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `manivela_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `soquete` |
-| Pequenas | `punho` ×3, `trava_6` ×11, `trava_8` ×5 (2 do munhão + 3 dos punhos; imprima algumas a mais) |
+| Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `soquete` |
+| Pequenas | `punho` ×2, `trava_6` ×11, `trava_8` ×4 (2 do munhão + 2 dos punhos; imprima algumas a mais) |
 
 **Comprar:** 1 rolamento 608, ~52 BBs de 6 mm, 1 mola 1,0×12×100 e **8 parafusos M3**: 4 × M3×10 (carro),
-2 × M3×8 (tampa), 1 × M3×8 (cano) e 1 × M3×16 (pivô do gatilho). Opcional: 3 × M3×30 como alma de aço dos pinos dos punhos.
+2 × M3×8 (tampa), 1 × M3×8 (cano) e 1 × M3×16 (pivô do gatilho). Opcional: 2 × M3×30 como alma de aço dos pinos dos punhos.
 Os eixos sextavados também podem ser chaves Allen de 6 e 8 mm. Nesse caso é preciso lixar os canais das travas.
 
 ## Montagem (resumo)
@@ -146,4 +147,5 @@ Todas as peças geram sólido válido. Também conferi:
   A única exceção é o contato esperado da lingueta, que o pistão empurra para fora quando está em repouso.
 - O disparo passa livre pelo pinhão em toda a janela PRONTO.
 - As roscas engrenam com as coroas de azimute e elevação sem se interpenetrar.
-- As manivelas giram livres, e a manivela de armar dá a volta completa.
+- As manivelas giram livres, e o volante de armar dá a volta completa. Ele substituiu uma manivela comprida que,
+  perto de 82° de elevação, batia na manivela de elevação.
