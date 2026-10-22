@@ -263,3 +263,8 @@ Todas as peças geram sólido válido. Também conferi:
 - As roscas engrenam com as coroas de azimute e elevação sem se interpenetrar.
 - As manivelas giram livres, e o volante de armar dá a volta completa. Ele substituiu uma manivela comprida que,
   perto de 82° de elevação, batia na manivela de elevação.
+- **v6 (setores e bandeja):**
+  - A mesa gira de −50° a +50° sem tocar na base, na parede nem na rosca. O ponteiro passa 0,5 mm acima da parede.
+    Em ±52° o ressalto encosta no batente, e a rosca ainda tem ~8° de dentes de sobra.
+  - A rosca de elevação engrena em −20°, 0° e 85°, e os batentes encostam em −22° e +87°.
+  - O cano fica livre do carro de −20° a 85°. A manivela de elevação e o volante de armar não se tocam em −20° nem em 85°.
