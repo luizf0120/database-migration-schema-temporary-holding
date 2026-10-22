@@ -1,18 +1,22 @@
 // =====================================================================
-//  CANHÃO DE BRINQUEDO  -  reparo com coroa e rosca sem fim
+//  CANHÃO DE BRINQUEDO  -  reparo com coroa e rosca sem fim  (v2)
 // ---------------------------------------------------------------------
-//  Dois eixos de pontaria, cada um com manivela e redução por
-//  rosca sem fim (1 entrada) + coroa helicoidal:
+//  Dois eixos de pontaria, cada um com manivela e redução 100:1 por
+//  rosca sem fim (1 entrada) + coroa helicoidal de 100 dentes:
 //
 //    AZIMUTE  (horizontal): rosca na base fixa  -> coroa grande que é a
 //                           própria MESA giratória, apoiada num
 //                           rolamento de esferas (BBs 6 mm) + 608 central.
 //    ELEVAÇÃO (vertical)  : rosca no carro      -> coroa no munhão do cano.
 //
-//  Escalas em graus:
-//    - azimute : gravada no anel da mesa, ponteiro preso na base
-//    - elevação: gravada na face da coroa, ponteiro preso na bochecha
-//    - cada manivela tem um "tambor micrométrico" com marcas de 0,5°
+//  1 volta de manivela = 3,6°.
+//
+//  Escalas em graus (nas duas coroas):
+//    número a cada 10°, traço a cada 5°, ponto no meio (2,5°)
+//    + tambor micrométrico na manivela: 36 marcas = 0,1° cada
+//
+//  Cada eixo de manivela tem 3 mancais: dois junto à rosca e um mancal
+//  externo que afasta a manivela de tudo (giro conferido sem colisão).
 //
 //  O mecanismo de disparo ainda NÃO existe: o cano é um tubo simples
 //  encaixado no berço (troque o módulo cano() depois).
@@ -22,11 +26,14 @@
 
 /* [Visualização] */
 // O que gerar: "montagem" ou o nome de uma peça para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, berco, cano, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, eixo_az, eixo_el, eixo_munhao, ponteiro_az, ponteiro_el, pino_pivo]
+PARTE = "montagem"; // [montagem, base, mesa, carro, berco, cano, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, eixo_az, eixo_el, eixo_munhao, ponteiro_az, ponteiro_el, pino_pivo]
 // Ângulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Ângulo vertical mostrado na montagem (graus)
 ELEVACAO = 25;
+// Giro das manivelas na montagem (graus, só visual)
+GIRO_MANIVELA_AZ = 0;
+GIRO_MANIVELA_EL = 0;
 // Anima com $t (View > Animate)
 ANIMAR = false;
 MOSTRAR_ESFERAS = true;
@@ -36,36 +43,45 @@ folga       = 0.3;   // folga de impressão em furos/encaixes
 folga_dente = 0.15;  // folga (backlash) nos dentes
 pa          = 20;    // ângulo de pressão dos dentes (graus)
 fonte       = "Liberation Sans:style=Bold";
+prof_grav   = 0.6;   // profundidade da gravação das escalas
 $fn = 48;
 
 /* [Eixos sextavados] */
 // Chave Allen 6 mm serve como eixo das roscas!
-f_eixo   = 6;    // eixos das roscas (medida entre faces)
+f_eixo   = 6;    // eixos das roscas/manivelas (medida entre faces)
 f_munhao = 8;    // eixo do munhão (chave Allen 8 mm serve)
 d_pino   = 2.0;  // furos transversais p/ pino de filamento 1,75 mm
 
 /* [Azimute] */
-m_az        = 2;    // módulo
-z_az        = 72;   // dentes da coroa/mesa  -> redução 72:1
+m_az        = 1.5;  // módulo
+z_az        = 100;  // dentes da coroa/mesa  -> redução 100:1
 h_mesa      = 12;   // espessura da mesa (largura do dente)
 d_rosca_az  = 18;   // diâmetro primitivo da rosca
 L_rosca_az  = 40;   // comprimento da rosca
-R_manivela_az = 20; // raio da manivela
+R_manivela_az = 18; // raio da manivela (centro do punho)
+y_ext_az    = 50;   // distância da face interna do mancal externo ao centro da rosca
 
 /* [Elevação] */
-m_el        = 1.5;
-z_el        = 60;   // dentes da coroa de elevação -> redução 60:1
+m_el        = 1;
+z_el        = 100;  // dentes da coroa de elevação -> redução 100:1
 h_roda_el   = 10;
-d_rosca_el  = 16;
+d_rosca_el  = 14;
 L_rosca_el  = 34;
-R_manivela_el = 16;
+R_manivela_el = 18;
+x_ext_el    = 38;   // distância da face interna do mancal externo ao centro da rosca
 el_min      = -10;  // faixa da escala gravada
 el_max      = 80;
 
+/* [Manivela] */
+r_tambor  = 17;   // raio do tambor micrométrico
+n_tambor  = 36;   // marcas no tambor (36 -> 0,1° por marca com 3,6°/volta)
+L_punho   = 20;   // comprimento do punho giratório
+d_punho   = 12;
+
 /* [Base e rolamento] */
-r_base    = 82;
-h_base    = 22;
-R_pista   = 56;   // raio da pista das esferas
+r_base    = 86;
+h_base    = 30;
+R_pista   = 60;   // raio da pista das esferas
 d_esfera  = 6;    // BB de airsoft 6 mm
 prof_v    = 3.4;  // profundidade do canal em V (90°)
 rol_608   = [22, 8, 7];  // rolamento central: ext, int, largura
@@ -74,14 +90,19 @@ rol_608   = [22, 8, 7];  // rolamento central: ext, int, largura
 larg_berco   = 24;
 esp_bochecha = 6;
 h_placa      = 5;
-z_rosca_el   = 28;  // altura do eixo da rosca de elevação acima da mesa
+// altura do eixo da rosca de elevação acima da mesa: alta o bastante para a
+// manivela de elevação passar POR CIMA da manivela de azimute ao girar a mesa
+z_rosca_el   = 46;
 esp_mancal_az = 8;
 esp_mancal_el = 6;
+esp_mancal_ext = 6;
 
 // =====================================================================
 //  GRANDEZAS DERIVADAS (não mexer)
 // =====================================================================
 rp_az    = m_az*z_az/2;
+ra_az    = rp_az + m_az;
+rf_az    = rp_az - 1.25*m_az;
 ra_raz   = d_rosca_az/2 + m_az;            // raio externo da rosca az
 x_raz    = rp_az + d_rosca_az/2;           // distância entre eixos (az)
 folga_v  = 2*(d_esfera/2*sqrt(2) - prof_v);// vão entre base e mesa
@@ -92,6 +113,8 @@ z_raz    = z_mesa + h_mesa/2;              // eixo da rosca az
 y_mancal_az = L_rosca_az/2 + 1;            // face interna dos mancais az
 
 rp_el    = m_el*z_el/2;
+ra_el    = rp_el + m_el;
+rf_el    = rp_el - 1.25*m_el;
 ra_rel   = d_rosca_el/2 + m_el;
 a_el     = rp_el + d_rosca_el/2;           // distância entre eixos (el)
 H_t      = z_rosca_el + a_el;              // altura do munhão sobre a mesa
@@ -105,24 +128,39 @@ gama_el  = atan(m_el/d_rosca_el);
 
 n_esferas = floor(2*PI*R_pista/(d_esfera + 0.4));
 
-// posição dos ponteiros
-r_pont_az = 78;            // furo do ponteiro na base
-x_pont_el = -53;           // furo do ponteiro na bochecha
-h_pont_az = z_deck + 0.8 + 1.5 - h_base;               // agulha 0,8 mm acima da mesa
-c_pont_az = r_pont_az - 68.5;                          // ponta logo além das marcas
+// manivela: face do tambor encosta a 1 mm do mancal externo
+z_pino_man = 9;          // furo do pino no cubo (a partir da face do tambor)
+h_cubo     = 12;
+y_man_az = y_ext_az + esp_mancal_ext + 1;  // face do tambor (lado -Y)
+x_man_el = x_ext_el + esp_mancal_ext + 1;  // face do tambor (lado -X)
+
+// escalas
+r_esc_az  = rf_az - 1.1;   // borda externa das marcas de azimute
+r_esc_el  = rf_el - 1.7;   // borda externa das marcas de elevação
+
+// ponteiros
+r_pont_az = ra_az + 4.5;                   // furo do ponteiro na base
+x_pont_el = -(ra_el + 4);                  // furo do ponteiro na bochecha
+h_pont_az = z_deck + 0.8 + 1.5 - h_base;   // agulha 0,8 mm acima da mesa
+c_pont_az = r_pont_az - (r_esc_az + 0.5);  // ponta logo além das marcas
 h_pont_el = y_roda + h_roda_el/2 + 0.5 + 1.5 - y_boch_out; // agulha 0,5 mm da face da coroa
-c_pont_el = -x_pont_el - 42.5;
+c_pont_el = -x_pont_el - (r_esc_el + 0.5);
 
-// furos de fixação do carro na mesa (M3 / parafuso auto-atarraxante)
-furos_carro = [[-22,-23], [28,-23], [-10, y_roda+5], [10, y_roda+5]];
+// placa do carro e furos de fixação na mesa (M3 / auto-atarraxante)
+placa_x = [-(x_ext_el + esp_mancal_ext + 2), 33];
+placa_y = [-27, y_roda + 9];
+furos_carro = [[-22,-23], [28,-23], [-8, y_roda + 5.5], [8, y_roda + 5.5]];
 
-// comprimentos dos eixos
-L_eixo_az = (y_mancal_az + esp_mancal_az + 4.5) + (y_mancal_az + esp_mancal_az + 1 + 9 + 4.5);
-L_eixo_el = (x_mancal_el + esp_mancal_el + 4.5) + (x_mancal_el + esp_mancal_el + 1 + 9 + 4.5);
+// comprimentos dos eixos (o pino de trava da manivela passa pelo cubo)
+L_eixo_az = (y_mancal_az + esp_mancal_az + 4.5) + (y_man_az + h_cubo);
+L_eixo_el = (x_mancal_el + esp_mancal_el + 4.5) + (x_man_el + h_cubo);
 L_munhao  = (y_boch_out + 4.5) + (y_roda + h_roda_el/2 + 4.5);
 
-echo(str("=== AZIMUTE : redução ", z_az, ":1  ->  ", 360/z_az, " graus por volta da manivela"));
-echo(str("=== ELEVAÇÃO: redução ", z_el, ":1  ->  ", 360/z_el, " graus por volta da manivela"));
+echo(str("=== AZIMUTE : redução ", z_az, ":1  ->  ", 360/z_az, "° por volta da manivela, ",
+         360/z_az/n_tambor, "° por marca do tambor"));
+echo(str("=== ELEVAÇÃO: redução ", z_el, ":1  ->  ", 360/z_el, "° por volta da manivela, ",
+         360/z_el/n_tambor, "° por marca do tambor"));
+echo(str("=== coroa az Ø", 2*ra_az, " mm, coroa el Ø", 2*ra_el, " mm, munhão a ", H_t, " mm da mesa"));
 echo(str("=== ângulo de avanço az = ", gama_az, "°, el = ", gama_el,
          "°  (autotravante se tan(γ) < μ≈0,3 -> ", tan(max(gama_az,gama_el)) < 0.3 ? "SIM" : "NÃO", ")"));
 echo(str("=== esferas de ", d_esfera, " mm na pista: até ", n_esferas, " (use ~", n_esferas-3, ")"));
@@ -219,35 +257,58 @@ module eixo_hex(f, L, furos) {
 
 // Mancal: perfil no plano XY (eixo na origem), extrudado em Z.
 // h_ax = distância do eixo até a superfície de apoio.
-// ang_ind = direção da seta índice do tambor micrométrico.
-module mancal(h_ax, esp, ang_ind, seta = true, larg = 16) {
+// ang_ind = direção da seta índice do tambor micrométrico (só se seta=true).
+module mancal(h_ax, esp, ang_ind = 90, seta = false, larg = 16) {
     difference() {
         linear_extrude(esp) hull() {
             translate([-larg/2, -h_ax]) square([larg, h_ax]);
             circle(r = larg/2);
-            if (seta) rotate(ang_ind) translate([0, -4]) square([13, 8]);
+            if (seta) rotate(ang_ind) translate([0, -4]) square([r_tambor + 6.5, 8]);
         }
         translate([0, 0, esp/2]) furo_redondo_p_hex(f_eixo, esp + 2);
-        if (seta) translate([0, 0, esp - 0.8]) linear_extrude(1)
-            rotate(ang_ind) polygon([[8.6, 0], [12.3, -2.2], [12.3, 2.2]]);
+        if (seta) translate([0, 0, esp - 0.8]) linear_extrude(1) rotate(ang_ind)
+            polygon([[r_tambor + 1.3, 0], [r_tambor + 5.5, -2.4], [r_tambor + 5.5, 2.4]]);
     }
 }
 
-// Manivela com tambor micrométrico: n_marcas no aro (pares = 1°, ímpares = 0,5°)
-module manivela(R, n_marcas) {
+// Manivela (local: face do tambor em z=0, voltada para o mancal externo)
+//  - tambor micrométrico com n marcas (a cada 5 marcas um traço longo);
+//    o próprio braço marca o "zero"
+//  - cubo sextavado travado por pino de filamento que atravessa cubo + eixo
+//  - pino para o punho giratório (peça "punho"), travado por outro pino
+module manivela(R, n = n_tambor) {
     difference() {
         union() {
-            cylinder(r = 7.5, h = 9);
+            cylinder(r = r_tambor, h = 3);
+            cylinder(r = 7, h = h_cubo);
             hull() {
-                cylinder(r = 7.5, h = 5);
-                translate([R, 0, 0]) cylinder(r = 5, h = 5);
+                cylinder(r = 7, h = 6);
+                translate([R, 0, 0]) cylinder(r = 5.5, h = 6);
             }
-            translate([R, 0, 0]) cylinder(r = 4.5, h = 5 + 20);   // punho
-            translate([R, 0, 25]) cylinder(r1 = 4.5, r2 = 3.5, h = 1.5);
+            translate([R, 0, 0]) cylinder(d = 6, h = 6 + L_punho + 4.5);
         }
-        translate([0, 0, 4.5]) hex_furo(f_eixo, 12);
-        for (i = [0:n_marcas-1]) rotate(i*360/n_marcas)
-            translate([7.5 - (i % 2 == 0 ? 1.4 : 0.8), -0.4, 5.5]) cube([2, 0.8, 4]);
+        translate([0, 0, 6]) hex_furo(f_eixo, 2*h_cubo);
+        translate([0, 0, z_pino_man]) rotate([90, 0, 0])
+            cylinder(d = d_pino, h = 20, center = true, $fn = 16);
+        translate([R, 0, 6 + L_punho + 2]) rotate([90, 0, 0])
+            cylinder(d = d_pino, h = 8, center = true, $fn = 16);
+        // marcas do tambor (fora da região coberta pelo braço)
+        for (i = [0:n-1]) let(a = i*360/n)
+            if (abs(a - 360*round(a/360)) > 20)
+                rotate(a) translate([r_tambor - (i % 5 == 0 ? 2.4 : 1.3), -0.4, -1])
+                    cube([3, 0.8, 5]);
+        // traço de referência no braço
+        translate([7.5, -0.4, 6 - 0.6]) cube([R - 12, 0.8, 1]);
+    }
+}
+
+// Punho giratório (desliza no pino da manivela)
+module punho() {
+    difference() {
+        cylinder(d = d_punho, h = L_punho - 0.4);
+        translate([0, 0, -1]) cylinder(d = 6 + 0.6, h = L_punho + 2);
+        for (zz = [0, L_punho - 0.4]) translate([0, 0, zz])   // chanfros
+            cylinder(d1 = 8.5, d2 = 6.2, h = 1.2, center = true);
     }
 }
 
@@ -271,57 +332,73 @@ module canal_v() {
 
 // =====================================================================
 //  ESCALAS GRAVADAS
+//  número a cada 10°, traço a cada 5°, ponto no meio de cada 5° (2,5°)
 // =====================================================================
+module arco(r1, r2, a1, a2) {
+    n = max(8, ceil(abs(a2 - a1)));
+    polygon(concat([for (i = [0:n]) polar(r2, a1 + (a2 - a1)*i/n)],
+                   [for (i = [n:-1:0]) polar(r1, a1 + (a2 - a1)*i/n)]));
+}
+
 // Azimute: valor v fica no ângulo local 180 - v (ponteiro está em 180°)
 module escala_az_2d() {
+    re = r_esc_az;
+    difference() { circle(r = re, $fn = 360); circle(r = re - 0.6, $fn = 360); }
     for (v = [0:5:355]) rotate(180 - v) {
-        r0 = v % 30 == 0 ? 62.5 : (v % 10 == 0 ? 64 : 65.5);
-        translate([r0, -0.4]) square([68.3 - r0, 0.8]);
+        r0 = v % 10 == 0 ? re - 6.5 : re - 4;
+        translate([r0, -0.4]) square([re - r0, 0.8]);
     }
-    for (v = [0:30:330]) let(a = 180 - v)
-        translate(polar(58.5, a)) rotate(a + 90)
-            text(str(v), size = 4.5, font = fonte, halign = "center", valign = "center");
+    for (v = [2.5:5:357.5]) rotate(180 - v)
+        translate([re - 2, 0]) circle(d = 1.3, $fn = 16);
+    for (v = [0:10:350]) let(a = 180 - v)
+        translate(polar(re - 9.5, a)) rotate(a + 90)
+            text(str(v), size = 3.6, font = fonte, halign = "center", valign = "center", $fn = 40);
 }
 
 // Elevação: valor v no ângulo local v - 180 (vira 180 - v depois de montada)
 module escala_el_2d() {
+    re = r_esc_el;
+    arco(re - 0.6, re, el_min - 180, el_max - 180);
     for (v = [el_min:5:el_max]) rotate(v - 180) {
-        r0 = v % 10 == 0 ? 36 : 38.5;
-        translate([r0, -0.4]) square([42 - r0, 0.8]);
-        if (v % 10 == 0)
-            translate([35, 0]) text(str(v), size = 3.2, font = fonte,
-                                    halign = "right", valign = "center");
+        r0 = v % 10 == 0 ? re - 7 : re - 4.5;
+        translate([r0, -0.4]) square([re - r0, 0.8]);
     }
+    for (v = [el_min + 2.5:5:el_max]) rotate(v - 180)
+        translate([re - 2, 0]) circle(d = 1.2, $fn = 16);
+    for (v = [el_min:10:el_max]) rotate(v - 180)
+        translate([re - 8.2, 0]) text(str(v), size = 3.2, font = fonte,
+                                      halign = "right", valign = "center", $fn = 40);
 }
 
 // =====================================================================
 //  PEÇAS PRINCIPAIS
 // =====================================================================
 
-// ---- BASE fixa: pista das esferas, sede do 608, mancais da rosca az
+// ---- BASE fixa: pista das esferas, sede do 608, 3 mancais da rosca az
 module base() {
     difference() {
         union() {
             cylinder(r = r_base, h = h_base, $fn = 180);
-            translate([x_raz - 16, -(y_mancal_az + esp_mancal_az), 0])
-                cube([32, 2*(y_mancal_az + esp_mancal_az), h_base]);
-            // mancal do lado da manivela (-Y) com seta índice para cima
+            translate([x_raz - 16, -(y_ext_az + esp_mancal_ext), 0])
+                cube([32, y_ext_az + esp_mancal_ext + y_mancal_az + esp_mancal_az, h_base]);
+            // mancais junto à rosca
             translate([x_raz, -y_mancal_az, z_raz]) rotate([90, 0, 0])
-                mancal(z_raz - h_base, esp_mancal_az, 90, true);
-            // mancal do lado oposto
+                mancal(z_raz - h_base, esp_mancal_az);
             translate([x_raz, y_mancal_az + esp_mancal_az, z_raz]) rotate([90, 0, 0])
-                mancal(z_raz - h_base, esp_mancal_az, 90, false);
+                mancal(z_raz - h_base, esp_mancal_az);
+            // mancal externo com a seta índice do tambor (para cima)
+            translate([x_raz, -y_ext_az, z_raz]) rotate([90, 0, 0])
+                mancal(z_raz - h_base, esp_mancal_ext, 90, true);
         }
         translate([0, 0, h_base]) canal_v();
         // sede do rolamento 608 + alívio para a ponta do pino
         translate([0, 0, h_base - rol_608[2] - 0.2]) cylinder(d = rol_608[0] + 0.2, h = 10);
         translate([0, 0, h_base - rol_608[2] - 6]) cylinder(d = 12, h = 7);
+        // alívio cônico por baixo (teto a 45°, imprime sem suporte)
+        rotate_extrude($fn = 120) polygon([[20, -0.01], [R_pista + 12, -0.01], [(R_pista + 32)/2, (R_pista - 8)/2]]);
         // calha de folga sob a rosca
         translate([x_raz, 0, z_raz]) rotate([90, 0, 0])
             cylinder(r = ra_raz + 1, h = 2*y_mancal_az, center = true);
-        // rebaixo para a manivela de azimute girar sem bater na base
-        translate([x_raz, -(y_mancal_az + esp_mancal_az + 0.5), z_raz]) rotate([90, 0, 0])
-            cylinder(r = R_manivela_az + 6, h = 40, $fn = 96);
         // furo do ponteiro de azimute
         translate([-r_pont_az, 0, h_base]) furo_ponteiro(8);
     }
@@ -335,25 +412,26 @@ module mesa() {
         translate([0, 0, -1]) cylinder(d = rol_608[1] + 0.3, h = h_mesa + 2);
         translate([0, 0, h_mesa - 3]) cylinder(d = 14.5, h = 4);
         for (p = furos_carro) translate([p[0], p[1], h_mesa - 10]) cylinder(d = 2.8, h = 11);
-        translate([0, 0, h_mesa - 0.6]) linear_extrude(1) escala_az_2d();
+        translate([0, 0, h_mesa - prof_grav]) linear_extrude(1) escala_az_2d();
     }
 }
 
-// ---- CARRO: placa + bochechas + mancais da rosca de elevação (origem no topo da mesa)
+// ---- CARRO: placa + bochechas + 3 mancais da rosca de elevação (origem no topo da mesa)
 module perfil_bochecha(com_braco) {
     hull() {
         translate([-20, 0]) square([50, h_placa]);
         translate([0, H_t]) circle(r = 16);
     }
-    if (com_braco)  // braço inclinado (~50°, imprime sem suporte) que segura o ponteiro
-        polygon([[-17, 40], [-50, H_t - 5], [x_pont_el - 4, H_t - 5],
+    if (com_braco)  // braço inclinado (>45°, imprime sem suporte) que segura o ponteiro
+        polygon([[-17, H_t - 52], [x_pont_el + 3, H_t - 5], [x_pont_el - 4, H_t - 5],
                  [x_pont_el - 4, H_t + 5], [-6, H_t + 14]]);
 }
 
 module carro() {
     difference() {
         union() {
-            translate([-27, -27, 0]) cube([60, 27 + y_roda + 9, h_placa]);
+            translate([placa_x[0], placa_y[0], 0])
+                cube([placa_x[1] - placa_x[0], placa_y[1] - placa_y[0], h_placa]);
             // bochecha direita (+Y, com braço do ponteiro) e esquerda
             translate([0, y_boch_out, 0]) rotate([90, 0, 0])
                 linear_extrude(esp_bochecha) perfil_bochecha(true);
@@ -362,11 +440,16 @@ module carro() {
             // espaçador entre a bochecha e a coroa
             translate([0, y_boch_out - 0.01, H_t]) rotate([-90, 0, 0])
                 cylinder(d = 18, h = y_roda - h_roda_el/2 - 0.5 - y_boch_out);
-            // mancais da rosca de elevação (manivela atrás, -X)
-            translate([-x_mancal_el, y_roda, z_rosca_el]) rotate([90, 0, -90])
-                mancal(z_rosca_el - h_placa, esp_mancal_el, -90, true);
-            translate([x_mancal_el + esp_mancal_el, y_roda, z_rosca_el]) rotate([90, 0, -90])
-                mancal(z_rosca_el - h_placa, esp_mancal_el, -90, false);
+            // mancais junto à rosca de elevação, ligados à bochecha por uma alma
+            for (xm = [-x_mancal_el, x_mancal_el + esp_mancal_el]) {
+                translate([xm, y_roda, z_rosca_el]) rotate([90, 0, -90])
+                    mancal(z_rosca_el - h_placa, esp_mancal_el, larg = 14);
+                translate([xm - esp_mancal_el, y_boch_out - 0.5, 0])
+                    cube([esp_mancal_el, y_roda - y_boch_out, z_rosca_el - 4]);
+            }
+            // mancal externo (manivela atrás, -X) com seta índice para baixo
+            translate([-x_ext_el, y_roda, z_rosca_el]) rotate([90, 0, -90])
+                mancal(z_rosca_el - h_placa, esp_mancal_ext, -90, true, larg = 14);
         }
         translate([0, 0, H_t]) rotate([90, 0, 0]) furo_redondo_p_hex(f_munhao, 120);
         for (p = furos_carro) translate([p[0], p[1], 0]) {
@@ -407,15 +490,15 @@ module roda_el() {
     difference() {
         engrenagem_helicoidal(m_el, z_el, h_roda_el, gama_el);
         hex_furo(f_munhao, 3*h_roda_el);
-        for (i = [0:5]) rotate(i*60 + 30) translate([19, 0, -1]) cylinder(d = 11, h = h_roda_el + 2);
-        translate([0, 0, h_roda_el - 0.6]) linear_extrude(1) escala_el_2d();
+        for (i = [0:5]) rotate(i*60 + 30) translate([18, 0, -1]) cylinder(d = 10, h = h_roda_el + 2);
+        translate([0, 0, h_roda_el - prof_grav]) linear_extrude(1) escala_el_2d();
     }
 }
 
 // ---- Pino pivô (ou use parafuso M8)
 module pino_pivo() {
     cylinder(d = rol_608[1] - 0.1, h = (h_mesa - 3) + folga_v + rol_608[2] + 3);
-    translate([0, 0, 0]) cylinder(d = 14, h = 3);
+    cylinder(d = 14, h = 3);
 }
 
 // =====================================================================
@@ -423,8 +506,33 @@ module pino_pivo() {
 // =====================================================================
 az = ANIMAR ? 60*sin(360*$t) : AZIMUTE;
 el = ANIMAR ? 35 + 35*sin(720*$t) : ELEVACAO;
-rot_raz = -az*z_az;   // giro da rosca de azimute (graus)
-rot_rel =  el*z_el;   // giro da rosca de elevação
+rot_raz = -az*z_az + GIRO_MANIVELA_AZ;   // giro da rosca de azimute (graus)
+rot_rel =  el*z_el + GIRO_MANIVELA_EL;   // giro da rosca de elevação
+
+// manivela + punho já posicionados (eixo da manivela = Z local)
+module manivela_montada(R) {
+    color("Firebrick") manivela(R);
+    color("Black") translate([R, 0, 6.2]) punho();
+}
+
+module acion_az(giro) {   // rosca, eixo e manivela de azimute (coords da base)
+    translate([x_raz, 0, z_raz]) rotate([90, 0, 0]) {
+        color("Goldenrod") rotate(giro) rosca(m_az, d_rosca_az, L_rosca_az);
+        color("Silver") translate([0, 0, -(y_mancal_az + esp_mancal_az + 4.5)])
+            eixo_hex(f_eixo, L_eixo_az, [2.5, L_eixo_az - h_cubo + z_pino_man]);
+        translate([0, 0, y_man_az]) rotate(giro) manivela_montada(R_manivela_az);
+    }
+}
+
+module acion_el(giro) {   // rosca, eixo e manivela de elevação (coords do carro)
+    translate([0, y_roda, z_rosca_el]) rotate([0, 90, 0]) {
+        color("Goldenrod") rotate(giro) rosca(m_el, d_rosca_el, L_rosca_el);
+        color("Silver") translate([0, 0, -(x_man_el + h_cubo)])
+            eixo_hex(f_eixo, L_eixo_el, [h_cubo - z_pino_man, L_eixo_el - 2.5]);
+    }
+    translate([-x_man_el, y_roda, z_rosca_el]) rotate([0, -90, 0]) rotate(-giro)
+        manivela_montada(R_manivela_el);
+}
 
 module conjunto_elevacao() {  // tudo que gira com o cano (origem no munhão)
     rotate([0, -el, 0]) {
@@ -446,14 +554,7 @@ module montagem() {
         for (i = [0:n_esferas-4]) rotate(i*360/(n_esferas-3))
             translate([R_pista, 0, z_esf]) sphere(d = d_esfera, $fn = 16);
 
-    // acionamento de azimute (fixo na base)
-    translate([x_raz, 0, z_raz]) rotate([90, 0, 0]) {
-        color("Goldenrod") rotate(rot_raz) rosca(m_az, d_rosca_az, L_rosca_az);
-        color("Silver") translate([0, 0, -(y_mancal_az + esp_mancal_az + 4.5)])
-            eixo_hex(f_eixo, L_eixo_az, [2.5, L_eixo_az - 2.5]);
-        color("Firebrick") translate([0, 0, y_mancal_az + esp_mancal_az + 1])
-            rotate(rot_raz) manivela(R_manivela_az, round(2*360/z_az));
-    }
+    acion_az(rot_raz);
     color("Red") translate([-r_pont_az, 0, h_base]) ponteiro(h_pont_az, c_pont_az);
 
     // tudo que gira com a mesa
@@ -462,14 +563,7 @@ module montagem() {
         color("Silver") translate([0, 0, z_deck]) rotate([180, 0, 0]) pino_pivo();
         translate([0, 0, z_deck]) {
             color("DarkKhaki") carro();
-            // acionamento de elevação
-            translate([0, y_roda, z_rosca_el]) rotate([0, 90, 0]) {
-                color("Goldenrod") rotate(rot_rel) rosca(m_el, d_rosca_el, L_rosca_el);
-                color("Silver") translate([0, 0, -(x_mancal_el + esp_mancal_el + 1 + 9 + 4.5)])
-                    eixo_hex(f_eixo, L_eixo_el, [2.5, L_eixo_el - 2.5]);
-            }
-            color("Firebrick") translate([-(x_mancal_el + esp_mancal_el + 1), y_roda, z_rosca_el])
-                rotate([0, -90, 0]) rotate(-rot_rel) manivela(R_manivela_el, round(2*360/z_el));
+            acion_el(rot_rel);
             color("Red") translate([x_pont_el, y_boch_out, H_t]) rotate([-90, 0, 0])
                 ponteiro(h_pont_el, c_pont_el);
             translate([0, 0, H_t]) conjunto_elevacao();
@@ -489,11 +583,15 @@ else if (PARTE == "cano")        translate([0, 0, -8]) rotate([0, -90, 0]) cano(
 else if (PARTE == "roda_el")     roda_el();
 else if (PARTE == "rosca_az")    translate([0, 0, L_rosca_az/2]) rosca(m_az, d_rosca_az, L_rosca_az);
 else if (PARTE == "rosca_el")    translate([0, 0, L_rosca_el/2]) rosca(m_el, d_rosca_el, L_rosca_el);
-else if (PARTE == "manivela_az") manivela(R_manivela_az, round(2*360/z_az));
-else if (PARTE == "manivela_el") manivela(R_manivela_el, round(2*360/z_el));
-else if (PARTE == "eixo_az")     translate([0, 0, f_eixo/2]) rotate([90, 0, 0]) eixo_hex(f_eixo, L_eixo_az, [2.5, L_eixo_az - 2.5]);
-else if (PARTE == "eixo_el")     translate([0, 0, f_eixo/2]) rotate([90, 0, 0]) eixo_hex(f_eixo, L_eixo_el, [2.5, L_eixo_el - 2.5]);
-else if (PARTE == "eixo_munhao") translate([0, 0, f_munhao/2]) rotate([90, 0, 0]) eixo_hex(f_munhao, L_munhao, [2.5, L_munhao - 2.5]);
+else if (PARTE == "manivela_az") manivela(R_manivela_az);
+else if (PARTE == "manivela_el") manivela(R_manivela_el);
+else if (PARTE == "punho")       punho();
+else if (PARTE == "eixo_az")     translate([0, 0, f_eixo/2]) rotate([90, 0, 0])
+                                     eixo_hex(f_eixo, L_eixo_az, [2.5, L_eixo_az - h_cubo + z_pino_man]);
+else if (PARTE == "eixo_el")     translate([0, 0, f_eixo/2]) rotate([90, 0, 0])
+                                     eixo_hex(f_eixo, L_eixo_el, [h_cubo - z_pino_man, L_eixo_el - 2.5]);
+else if (PARTE == "eixo_munhao") translate([0, 0, f_munhao/2]) rotate([90, 0, 0])
+                                     eixo_hex(f_munhao, L_munhao, [2.5, L_munhao - 2.5]);
 else if (PARTE == "ponteiro_az") translate([0, 0, 2]) rotate([90, 0, 0]) ponteiro(h_pont_az, c_pont_az);
 else if (PARTE == "ponteiro_el") translate([0, 0, 2]) rotate([90, 0, 0]) ponteiro(h_pont_el, c_pont_el);
 else if (PARTE == "pino_pivo")   pino_pivo();
