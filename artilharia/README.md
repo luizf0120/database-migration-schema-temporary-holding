@@ -121,11 +121,11 @@ Cada peça já sai na orientação de impressão.
 | Base e mesa | `base`, `mesa`, `pino_pivo` (ou M8), `ponteiro_az` |
 | Carro | `carro`, `ponteiro_el`, `roda_el` |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
-| Lançador | `culatra` (com suportes), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `manivela_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `soquete` |
-| Pequenas | `punho` ×3, `trava_6` ×13, `trava_8` ×2 (imprima algumas a mais) |
+| Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `manivela_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `soquete` |
+| Pequenas | `punho` ×3, `trava_6` ×11, `trava_8` ×5 (2 do munhão + 3 dos punhos; imprima algumas a mais) |
 
-**Comprar:** 1 rolamento 608, ~52 BBs de 6 mm, 1 mola 1,0×12×100, 6 parafusos M3×10–16
-(4 do carro, 1 do pivô do gatilho, 1 que prende o cano).
+**Comprar:** 1 rolamento 608, ~52 BBs de 6 mm, 1 mola 1,0×12×100 e **8 parafusos M3**: 4 × M3×10 (carro),
+2 × M3×8 (tampa), 1 × M3×8 (cano) e 1 × M3×16 (pivô do gatilho). Opcional: 3 × M3×30 como alma de aço dos pinos dos punhos.
 Os eixos sextavados também podem ser chaves Allen de 6 e 8 mm. Nesse caso é preciso lixar os canais das travas.
 
 ## Montagem (resumo)
@@ -133,8 +133,9 @@ Os eixos sextavados também podem ser chaves Allen de 6 e 8 mm. Nesse caso é pr
 1. Base: prense o 608 e coloque as BBs. Pouse a mesa e passe o pino pivô.
 2. Rosca de azimute: passe o eixo pelos 3 mancais e encaixe as travas e a manivela.
 3. Parafuse o carro na mesa e monte a rosca de elevação.
-4. Lançador: coloque a mola sobre a guia da tampa e o pistão pela frente do cilindro, com a quilha no rasgo de cima.
-   Encaixe o cano e prenda com M3. Monte o pinhão, a coroa e o eixo, depois a rosca de armar e a manivela.
+4. Lançador: ponha o `amortecedor` no fundo (frente) do cilindro e encaixe o cano no soquete, preso com M3.
+   Coloque o pistão **por trás**, com a quilha no rasgo de cima, e a mola dentro dele. Feche com a `tampa`
+   (o ressalto entra no rasgo) e os 2 M3. Monte o pinhão, a coroa e o eixo, depois a rosca de armar e a manivela.
    O gatilho vai no M3 vertical da orelha.
 5. Coloque a culatra entre as bochechas, a coroa de elevação do lado de fora, o eixo do munhão e as travas.
 
