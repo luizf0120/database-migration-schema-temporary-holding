@@ -1,4 +1,4 @@
-# Canhão de brinquedo v4: pontaria 90:1, lançador de mola e só 2 itens para comprar
+# Canhão de brinquedo v4: pontaria 120:1 (3° por volta), lançador de mola e só 2 itens para comprar
 
 ![montagem](montagem.png)
 
@@ -13,18 +13,18 @@ Todo o resto é impresso: rolamento, rebites, baionetas, pinos, eixos e travas. 
 
 ## Pontaria
 
-| Eixo | Acionamento | Redução | 1 volta da manivela | 1/4 de volta | 1 marca do tambor |
+| Eixo | Acionamento | Redução | 1 volta da manivela | Números do tambor | 1 marca do tambor |
 |---|---|---|---|---|---|
-| **Azimute** | rosca sem fim → mesa = coroa de 90 dentes (Ø138) | 90 : 1 | **4°** | **1°** | 0,1° |
-| **Elevação** | rosca sem fim → coroa de 90 dentes (Ø92) | 90 : 1 | **4°** | **1°** | 0,1° |
+| **Azimute** | rosca sem fim → mesa = coroa de 120 dentes, módulo 1,25 (Ø152) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
+| **Elevação** | rosca sem fim → coroa de 120 dentes, módulo 1 (Ø122) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
 
 **Leitura em duas etapas, como num micrômetro:**
 1. **Escala grande** (na mesa e na coroa de elevação): número a cada 10°, traço a cada 5°, ponto a cada 2,5°.
-2. **Tambor da manivela** (Ø44): o número 0 fica no braço, e os números 1, 2 e 3 a cada 1/4 de volta.
-   Os traços médios marcam 0,5° e os curtos 0,1°. Está gravado "1 VOLTA = 4°". A seta do mancal externo é o índice.
+2. **Tambor da manivela** (Ø44): o número 0 fica no braço, e os números 1 e 2 a cada 1/3 de volta (cada um vale 1°).
+   Os traços médios marcam 0,5° e os curtos 0,1° (30 marcas por volta). Está gravado **"1 VOLTA = 3°"**. A seta do mancal externo é o índice.
 
 Exemplo: o ponteiro está entre o ponto de 32,5° e o traço de 35°, e o tambor mostra "1" mais 3 traços curtos.
-A leitura é 32,5° + 1,3° = **33,8°**.
+A leitura é 32,5° + 1,3° = **33,8°**. Uma volta inteira da manivela soma 3°. Para ir de 0° a 45° são 15 voltas.
 
 **Travas dos eixos:** são travas em "E" impressas (`trava_6` e `trava_8`). Você encosta a boca da trava no
 canal do eixo e empurra de lado. Ela abre um pouco, estala no canal e não sai mais sozinha. Para tirar,

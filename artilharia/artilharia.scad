@@ -61,8 +61,8 @@ dc_6     = 4.6;  // diametro no fundo do canal (eixo 6 e pino do punho)
 dc_8     = 6.2;  // diametro no fundo do canal (eixo 8)
 
 /* [Azimute] */
-m_az        = 1.5;  // modulo
-z_az        = 90;   // dentes da coroa/mesa  -> reducao 90:1 (4 graus/volta)
+m_az        = 1.25; // modulo
+z_az        = 120;  // dentes da coroa/mesa  -> reducao 120:1 (3 graus/volta)
 h_mesa      = 12;   // espessura da mesa (largura do dente)
 d_rosca_az  = 18;   // diametro primitivo da rosca
 L_rosca_az  = 40;   // comprimento da rosca
@@ -71,19 +71,19 @@ y_ext_az    = 52;   // distancia da face interna do mancal externo ao centro da 
 
 /* [Elevacao] */
 m_el        = 1;
-z_el        = 90;   // dentes da coroa de elevacao -> reducao 90:1 (4 graus/volta)
+z_el        = 120;  // dentes da coroa de elevacao -> reducao 120:1 (3 graus/volta)
 h_roda_el   = 10;
 d_rosca_el  = 14;
 L_rosca_el  = 34;
 R_manivela_el = 15;
-x_ext_el    = 32;   // distancia da face interna do mancal externo ao centro da rosca
+x_ext_el    = 38;   // distancia da face interna do mancal externo ao centro da rosca
 el_min      = -10;  // faixa da escala gravada
 el_max      = 80;
 el_batente  = [-12, 82];  // batentes mecanicos (protegem dentes e culatra)
 
 /* [Manivela] */
 r_tambor  = 22;   // raio do tambor micrometrico
-n_tambor  = 40;   // marcas no tambor (40 -> 0,1 grau por marca com 4 graus/volta)
+n_tambor  = round(10*360/z_az);  // marcas no tambor: 1 marca = 0,1 grau (30 com 3 graus/volta)
 L_punho   = 20;   // comprimento do punho giratorio
 d_punho   = 14;
 d_pino_p  = 8;    // pino do punho
@@ -428,9 +428,9 @@ module manivela(R, zc, n = n_tambor) {
             for (i = [0:n-1]) let(a = i*360/n)
                 rotate(a) translate([i % 10 == 0 ? rt - 5.5 : (i % 5 == 0 ? rt - 3.6 : rt - 2.2), -0.3])
                     square([6, 0.6]);
-            for (k = [1:3]) rotate(90*k) translate([rt - 8, 0]) rotate(-90)
+            for (k = [1:round(360/zc)-1]) rotate(k*zc) translate([rt - 8, 0]) rotate(-90)
                 text(str(k), size = 3, font = fonte, halign = "center", valign = "center", $fn = 32);
-            rotate(225) {   // "1 VOLTA / = 4 graus" em duas linhas
+            rotate(zc*floor(round(360/zc)/2) + zc/2) {   // "1 VOLTA / = N graus" em duas linhas
                 translate([12.6, 0]) rotate(-90) text("1 VOLTA", size = 1.9, font = fonte,
                     halign = "center", valign = "center", $fn = 24);
                 translate([9.6, 0]) rotate(-90) {
@@ -975,6 +975,10 @@ module roda_el() {
         rotate(90 - (360/z_el)*floor(90/(360/z_el))) engrenagem_helicoidal(m_el, z_el, h_roda_el, gama_el);
         hex_furo(f_munhao, 3*h_roda_el);
         for (i = [0:5]) rotate(i*60 + 30) translate([18, 0, -1]) cylinder(d = 10, h = h_roda_el + 2);
+        // segundo anel de alivios (a coroa de 120 dentes e maior), longe dos ressaltos de batente
+        for (i = [0:11]) let(a = i*30 + 15)
+            if (min([for (f = fases_batente()) abs(((a - f) % 360 + 540) % 360 - 180)]) > 18)
+                rotate(a) translate([35, 0, -1]) cylinder(d = 9, h = h_roda_el + 2);
         translate([0, 0, h_roda_el - prof_grav]) linear_extrude(1, convexity = 10) escala_el_2d();
     }
     // ressaltos de batente na face interna (encostam no batente da bochecha)
