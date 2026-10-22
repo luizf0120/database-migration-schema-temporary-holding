@@ -69,6 +69,49 @@ canhão antigo, e rola até o pistão. Com o cano na horizontal, empurre com o `
 |---|---|
 | ![repouso](corte_repouso.png) | ![armado](corte_armado.png) |
 
+## Imprimindo em PETG: folgas, encaixes e pontos críticos
+
+### Folgas (parâmetros no topo do `.scad`)
+
+| Parâmetro | Valor | Onde | Se travar |
+|---|---|---|---|
+| `folga` | 0,25 mm | eixo sextavado em furo sextavado (rosca, coroa, cubos) | 0,30 |
+| `folga_gira` | 0,40 mm (Ø) | eixo sextavado girando em furo redondo (mancais, bochechas) | 0,50 |
+| `folga_desl` | 0,25 mm (Ø) | pistão no cilindro; quilha no rasgo (0,2 mm por lado) | 0,35 |
+| `folga_ax` | 0,15 mm | **rosca encostada nos mancais** (sem jogo axial) | 0,25 |
+| `folga_dente` | 0,12 mm | entre os dentes (backlash) | 0,18 |
+
+Teste antes de imprimir tudo: imprima `trava_6`, `eixo_el`, `rosca_el` e `manivela_el`.
+Se o eixo entrar sem forçar e a trava estalar, as folgas estão boas para a sua impressora.
+
+### O que foi reforçado nesta revisão
+
+| Ponto | Problema | Solução |
+|---|---|---|
+| **Roscas sem fim** | ficavam com 1 mm de jogo de cada lado e podiam escorregar no eixo. Cada 1 mm de deslize gira a coroa sem mexer na manivela: **~0,85° no azimute** | a rosca agora encosta nos mancais (0,15 mm), que funcionam como **mancal de empuxo** |
+| **Batente do pistão** | o pistão (~7 g a ~13 m/s) para em menos de 1 mm, gerando **centenas de N** de pico a cada tiro. O tampão do cano preso por 1 M3 numa parede de 2,5 mm ia rachar | o batente agora é um **degrau interno da culatra**, com o **anel `amortecedor`** (TPU de preferência; em PETG serve de espaçador). O cano não leva mais a pancada |
+| **Tampa traseira** | era fixa, e o pistão entrava pela frente | **tampa removível** presa por 2 M3 radiais (carga estática ~27 N), com um ressalto no rasgo que impede o giro. O pistão entra por trás |
+| **Pino do punho** | Ø6 impresso em pé: a mão força o pino entre as camadas (~19 MPa) e ele quebra na raiz | **Ø8** (~8 MPa) e **oco para um parafuso M3** como alma de aço. Usa a `trava_8` |
+| **Elevação sem fim de curso** | com 90:1, insistir na manivela gera até ~4 N·m na coroa e pode esmagar a culatra ou cisalhar dentes | **batentes em −12° e 82°**: 2 ressaltos na face interna da coroa batem num bloco da bochecha |
+| **Gatilho** | 4 mm de espessura sob carga constante (~22 MPa com a mola armada): o PETG flui e a lingueta entortaria com o tempo | **6 mm** e dente de 5 mm (~10 MPa). A orelha tem 6 mm de rosca para o M3, e a mola de lâmina ficou mais longa (deforma <1%, não perde a força) |
+| **Cubos e eixos** | os canais das travas reduzem o sextavado para Ø4,6 | torção ~15 MPa com a mão forçando: aceitável. Chaves Allen de aço eliminam isso |
+
+### Pontos que continuam merecendo atenção
+
+- **Rosca de armar** (impressa em pé): o filete trabalha **entre camadas**. Use 4+ paredes, 100% de preenchimento,
+  240–250 °C e ventoinha em 30–50% para a camada colar bem.
+- **Dentes da coroa de elevação (módulo 1):** aguentam ~160 N. Os batentes limitam o esforço, mas **não force a manivela quando ela parar**.
+- **Lingueta do gatilho com o canhão armado por muito tempo:** o PETG flui sob carga constante. Não deixe armado por dias. Arme, atire e desarme.
+- **Culatra:** imprima com a frente para baixo, com suportes nas placas e nos mancais externos, e 4 paredes.
+- **PETG em PEI liso** pode arrancar o revestimento da placa. Use cola bastão ou PEI texturizado.
+- Os outros pontos (rolamento, mesa e eixos sob carga de pontaria) trabalham com tensões baixas, abaixo de 5 MPa.
+
+### Dica de artilheiro (para eliminar a folga dos dentes)
+
+Toda engrenagem tem folga. Para a leitura ser repetível, **sempre chegue no ângulo girando no mesmo sentido**.
+Por exemplo, sempre subindo. Se passou, volte meia volta e chegue de novo pelo mesmo lado. É assim que se aponta
+artilharia de verdade. Na elevação, o próprio peso do cano já encosta os dentes sempre do mesmo lado.
+
 ## Peças (troque `PARTE` no Customizer)
 
 Cada peça já sai na orientação de impressão.
