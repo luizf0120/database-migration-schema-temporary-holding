@@ -157,15 +157,15 @@ A estimativa usa volume e área de cada STL (±15%).
 
 | Peça | Maciço | Típico |
 |---|---|---|
-| base (anel oco, saia com 10 projéteis, plataforma) | 436 g | **~211 g** |
-| mesa (coroa com janelas) | 121 g | **~81 g** |
-| carro | 118 g | ~71 g |
+| base (anel oco, saia com 10 projéteis, plataforma) | 445 g | **~217 g** |
+| mesa (coroa de 120 dentes com janelas) | 172 g | **~101 g** |
+| carro | 134 g | ~80 g |
 | 2 anéis de pista | 52 g | ~44 g |
-| coroa de elevação | 74 g | ~39 g |
+| coroa de elevação (120 dentes) | 129 g | ~66 g |
 | culatra + cano | 84 g | ~61 g |
 | 10 projéteis | 28 g | ~17 g |
 | todo o resto (roscas, manivelas, eixos, rebites, travas…) | 122 g | ~101 g |
-| **Total impresso** | **~1035 g** | **~625 g** |
+| **Total impresso** | **~1170 g** | **~690 g** |
 | + BBs e mola | | ~11 g |
 
 Antes desta revisão, a base e a mesa eram maciças: 651 g + 209 g (~313 g no típico).
