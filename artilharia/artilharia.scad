@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_az, ponteiro_el, pino_pivo]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_az, ponteiro_el, pino_pivo]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -132,6 +132,12 @@ L_rosca_ra = 24;
 esp_mancal_ra = 5;
 // estado mostrado na montagem: 0 = descansado, 1 = armado e PRONTO
 ARMADO = 1;
+
+/* [Projeteis] */
+L_corpo_proj = 13;   // corpo cilindrico
+L_ogiva_proj = 9;    // ogiva tangente curta
+folga_proj   = 0.3;  // folga diametral no cano (0,15 por lado nas cintas)
+n_proj       = 6;    // quantos aparecem no porta-municao da montagem
 
 // =====================================================================
 //  GRANDEZAS DERIVADAS (nao mexer)
@@ -255,6 +261,7 @@ echo(str("=== esferas de ", d_esfera, " mm na pista: ate ", n_esferas, " (use ~"
 echo(str("=== LANCADOR: curso do pistao ", p_trava, " mm, mola ", mola_d, "x", mola_L,
          " mm comprimida de ", mola_L - (x_s - 3 - x_tampa), " a ", mola_L - (x_s - 3 - p_trava - x_tampa),
          " mm; ", z_ra, " voltas de manivela por disparo"));
+echo(str("=== PROJETIL: D", d_proj_e, " x ", L_corpo_proj + L_ogiva_proj, " mm (cano D", d_alma, ")"));
 echo(str("=== eixo az = ", L_eixo_az, " mm, eixo el = ", L_eixo_el, " mm, munhao = ", L_munhao, " mm"));
 
 // =====================================================================
@@ -835,6 +842,44 @@ module gatilho() {
     }
 }
 
+// ---- PROJETIL (estilo granada de morteiro): cilindro curto + ogiva tangente.
+//      Duas cintas de guia (frente e tras) com 0,15 mm de folga por lado; o meio e
+//      rebaixado 0,4 mm, so as cintas tocam o cano: desliza leve e nao balanca.
+//      Base plana (o pistao empurra) com chanfro para entrar no funil do cano.
+d_proj_e = d_alma - folga_proj;
+module projetil() {
+    R   = d_proj_e/2;
+    Lc  = L_corpo_proj;
+    Ln  = L_ogiva_proj;
+    rho = (R*R + Ln*Ln)/(2*R);                    // raio da ogiva tangente
+    r_m = 1.0;                                    // ponta achatada (meplat)
+    x_m = sqrt(rho*rho - pow(rho - R + r_m, 2));  // onde a ogiva chega ao meplat
+    ogiva = [for (i = [0:24]) let(x = x_m*i/24) [sqrt(rho*rho - x*x) + R - rho, Lc + x]];
+    rotate_extrude($fn = 72) polygon(concat(
+        [[0, 0], [R - 0.7, 0], [R, 0.7],                 // base + chanfro
+         [R, 3.5], [R - 0.4, 3.9],                       // cinta traseira -> rebaixo
+         [R - 0.4, Lc - 3.9], [R, Lc - 3.5]],            // rebaixo -> cinta dianteira
+        ogiva, [[0, Lc + x_m]]));
+}
+L_proj = L_corpo_proj + L_ogiva_proj;
+
+// ---- PORTA-MUNICAO: bandeja com n_proj projeteis em pe (fica ao lado do canhao)
+module porta_projeteis() {
+    nx = ceil(n_proj/2); passo = d_proj_e + 5;
+    difference() {
+        translate([-passo/2, -passo/2, 0]) cube([nx*passo, 2*passo, 10]);
+        for (i = [0:n_proj-1]) translate([(i % nx)*passo, floor(i/nx)*passo, 3])
+            cylinder(d = d_proj_e + 0.6, h = 10);
+        translate([nx*passo/2 - passo/2, -passo/2 + 0.6, 5]) rotate([90, 0, 0]) linear_extrude(1, convexity = 6)
+            text("MUNICAO", size = 4, font = fonte, halign = "center", valign = "center", $fn = 24);
+    }
+}
+module porta_montado() {
+    nx = ceil(n_proj/2); passo = d_proj_e + 5;
+    color("DarkOliveGreen") porta_projeteis();
+    for (i = [0:n_proj-1]) translate([(i % nx)*passo, floor(i/nx)*passo, 3]) color("Goldenrod") projetil();
+}
+
 // ---- SOQUETE (vareta para empurrar a bolinha cano abaixo, como nos canhoes antigos)
 module soquete() {
     cylinder(d = d_alma - 2, h = 150);
@@ -932,6 +977,8 @@ module conjunto_elevacao() {  // tudo que gira com o cano (origem no munhao)
 }
 
 module montagem() {
+    // porta-municao ao lado do canhao (alem da perna -Y)
+    translate([-20, -(r_perna + 30), 0]) porta_montado();
     color("DarkOliveGreen") base();
     color("Silver") translate([0, 0, h_base - rol_608[2]]) difference() {
         cylinder(d = rol_608[0], h = rol_608[2]);
@@ -975,6 +1022,8 @@ else if (PARTE == "gatilho")     translate([0, 0, -(z_b + 1)]) gatilho();
 else if (PARTE == "tampa")       translate([0, 0, -(x_tr - 3)]) rotate([0, -90, 0]) translate([0, 0, -z_b]) tampa();
 else if (PARTE == "amortecedor") translate([0, 0, -x_s]) rotate([0, -90, 0]) translate([0, 0, -z_b]) amortecedor();
 else if (PARTE == "soquete")     soquete();
+else if (PARTE == "projetil")    projetil();
+else if (PARTE == "porta_projeteis") porta_projeteis();
 else if (PARTE == "eixo_pinhao") translate([0, 0, f_eixo/2]) rotate([90, 0, 0]) eixo_hex(f_eixo, pi_z0, pi_z1, [pi_g2, pi_g1], dc_6);
 else if (PARTE == "eixo_armar")  translate([0, 0, f_eixo/2]) rotate([90, 0, 0]) eixo_hex(f_eixo, ra_z0, ra_z1, [ra_g1, ra_g2, ra_g3], dc_6);
 else if (PARTE == "cano")        translate([0, 0, x_soq + 10 + L_cano]) rotate([0, 90, 0]) translate([0, 0, -z_b]) cano();

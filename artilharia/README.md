@@ -70,6 +70,30 @@ canhão antigo, e rola até o pistão. Com o cano na horizontal, empurre com o `
 |---|---|
 | ![repouso](corte_repouso.png) | ![armado](corte_armado.png) |
 
+## Projéteis
+
+Formato de granada de morteiro: **corpo cilíndrico curto + ogiva tangente curta** (Ø12,5 × 22 mm), com a ponta
+levemente achatada e base plana chanfrada. A base é onde o pistão empurra, e o chanfro ajuda a entrar no funil do cano.
+
+- **Desliza sem vibrar:** tem **duas cintas de guia**, na frente e atrás, com 0,15 mm de folga por lado na alma de 12,8 mm.
+  O meio é rebaixado 0,4 mm, então só as cintas tocam o cano. Com pouco atrito e dois apoios afastados, ele não
+  "dança" no tubo e sai alinhado.
+- **Caminho conferido no CGAL:** o projétil passa livre apoiado no pistão armado, sem tocar no dente do gatilho,
+  depois pelo degrau, pelo funil e por todo o cano.
+- **Porta-munição:** a bandeja com 6 projéteis em pé aparece ao lado do canhão na montagem
+  (`porta_projeteis`, com a palavra MUNICAO gravada).
+
+| Impressão do projétil | Peso | Saída (ideal) | Energia |
+|---|---|---|---|
+| 2 paredes, 15% | 1,2 g | ~12,6 m/s | 0,10 J |
+| **3 paredes, 20% (recomendado)** | **1,7 g** | **~12,3 m/s** | **0,12 J** |
+| maciço | 2,7 g | ~11,5 m/s | 0,18 J |
+
+**Por que a velocidade quase não muda:** o pistão (~7 g) leva quase toda a massa em movimento. Um projétil
+mais pesado sai só um pouco mais devagar, mas com **mais energia**, e sofre menos com o ar. Com atrito, os valores reais
+ficam uns 20–30% abaixo. Os projéteis imprimem em pé, com a ponta para cima e sem suporte.
+Para lixar as cintas, se ficarem justas, gire o projétil entre os dedos com uma lixa 400.
+
 ## Imprimindo em PETG: folgas, encaixes e pontos críticos
 
 ### Folgas (parâmetros no topo do `.scad`)
@@ -156,7 +180,7 @@ Cada peça já sai na orientação de impressão.
 | Base e mesa | `base`, `mesa`, `pino_pivo` (ou M8), `ponteiro_az` |
 | Carro | `carro`, `ponteiro_el`, `roda_el` |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
-| Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `soquete` |
+| Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `soquete`, `projetil` (×6 ou mais), `porta_projeteis` |
 | Pequenas | `punho` ×2, `trava_6` ×11, `trava_8` ×4 (2 do munhão + 2 dos punhos; imprima algumas a mais) |
 
 **Comprar:** 1 rolamento 608, ~52 BBs de 6 mm, 1 mola 1,0×12×100, 6 pés de borracha adesivos de 10 mm e **8 parafusos M3**: 4 × M3×10 (carro),
