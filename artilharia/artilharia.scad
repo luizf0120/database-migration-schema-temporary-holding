@@ -419,10 +419,10 @@ module manivela(R, zc, n = n_tambor) {
                 translate([0, 0, 3]) cylinder(r = 7, h = z_p - 3);
                 translate([R, 0, 3]) cylinder(r = 6.5, h = z_p - 3);
             }
-            translate([R, 0, 0]) cylinder(d = d_pino_p, h = z_p + L_punho + 0.4 + g_canal + 2);
+            translate([R, 0, 0]) pino_punho(z_p);
         }
         translate([0, 0, h_cubo/2]) hex_furo(f_eixo, h_cubo + 2);
-        translate([R, 0, z_p + L_punho + 0.4]) canal(dc_8);
+        translate([R, 0, 0]) fenda_pino_punho(z_p);
         // escala gravada na face externa do tambor
         translate([0, 0, 3 - prof_grav]) linear_extrude(1, convexity = 10) {
             for (i = [0:n-1]) let(a = i*360/n)
@@ -453,12 +453,30 @@ module manivela(R, zc, n = n_tambor) {
 }
 
 // Punho giratorio (desliza no pino da manivela)
-module punho() {
+// Punho em CAPA fechada: encaixa no pino com um clique e nunca mais sai, mas gira solto.
+// O pino tem a ponta bipartida com um dente conico; a capa tem um canal interno.
+// Ao empurrar, as duas metades da ponta se fecham, o dente entra no canal e abre de novo.
+// A face de tras do dente e reta: nao volta. Dente folgado no canal (0,4 mm): gira livre.
+h_capa   = L_punho + 3;              // capa (2 mm de tampa em cima)
+z_dente  = L_punho - 2.2;            // face de tras do dente, medida da base da capa
+module pino_punho(z0) {               // pino com dente (a fenda e cortada a parte)
+    translate([0, 0, 0]) cylinder(d = d_pino_p, h = z0 + 0.2 + z_dente);
+    translate([0, 0, z0 + 0.2 + z_dente]) cylinder(d1 = d_pino_p + 1.4, d2 = d_pino_p - 0.6, h = 3);
+}
+module fenda_pino_punho(z0) {
+    translate([-0.9, -6, z0 + 0.2 + z_dente - 7]) cube([1.8, 12, 12]);
+}
+module punho() {   // capa: origem na base (que fica 0,2 mm acima do braco)
     difference() {
-        cylinder(d = d_punho, h = L_punho);
-        translate([0, 0, -1]) cylinder(d = d_pino_p + 0.5, h = L_punho + 2);
-        for (zz = [0, L_punho]) translate([0, 0, zz])   // chanfros
-            cylinder(d1 = d_pino_p + 2.5, d2 = d_pino_p + 0.2, h = 1.2, center = true);
+        union() {
+            cylinder(d = d_punho, h = h_capa - 1.5);
+            translate([0, 0, h_capa - 1.5]) cylinder(d1 = d_punho, d2 = d_punho - 3, h = 1.5);   // topo arredondado
+        }
+        translate([0, 0, -1]) cylinder(d = d_pino_p + 0.5, h = z_dente + 3.5 + 1);
+        // canal interno onde o dente estala (face de baixo reta, teto a 45 graus)
+        translate([0, 0, z_dente - 0.3]) cylinder(d = d_pino_p + 2.2, h = 3.3);
+        translate([0, 0, z_dente + 3]) cylinder(d1 = d_pino_p + 2.2, d2 = 2, h = (d_pino_p + 0.2)/2);
+        translate([0, 0, -0.01]) cylinder(d1 = d_pino_p + 2.5, d2 = d_pino_p + 0.2, h = 1.2);    // chanfro de entrada
     }
 }
 
@@ -1005,7 +1023,6 @@ rot_rel =  el*z_el + GIRO_MANIVELA_EL;   // giro da rosca de elevacao
 module manivela_montada(R, zc) {
     color("Firebrick") manivela(R, zc);
     color("Black") translate([R, 0, 8.2]) punho();
-    color("DeepSkyBlue") translate([R, 0, 8 + L_punho + 0.4 + 0.1]) trava(dc_8);
 }
 module travas_eixo(zs) for (zc = zs) color("DeepSkyBlue") translate([0, 0, zc + 0.1]) trava(dc_6);
 
