@@ -751,7 +751,8 @@ module soquete() {
 // ---- COROA de elevacao com escala gravada na face externa (origem na face interna)
 module roda_el() {
     difference() {
-        engrenagem_helicoidal(m_el, z_el, h_roda_el, gama_el);
+        // fase: um dente em 90 graus locais (aponta para a rosca quando el = 0)
+        rotate(90 - (360/z_el)*floor(90/(360/z_el))) engrenagem_helicoidal(m_el, z_el, h_roda_el, gama_el);
         hex_furo(f_munhao, 3*h_roda_el);
         for (i = [0:5]) rotate(i*60 + 30) translate([18, 0, -1]) cylinder(d = 10, h = h_roda_el + 2);
         translate([0, 0, h_roda_el - prof_grav]) linear_extrude(1, convexity = 10) escala_el_2d();
