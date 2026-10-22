@@ -1,4 +1,4 @@
-# Canhão de brinquedo v4: pontaria 120:1 (3° por volta), lançador de mola e só 2 itens para comprar
+# Canhão de brinquedo v6: coroas em setor, base em bandeja, pontaria 120:1 (3° por volta) e só 2 itens para comprar
 
 ![montagem](montagem.png)
 
@@ -15,11 +15,24 @@ Todo o resto é impresso: rolamento, rebites, baionetas, pinos, eixos e travas. 
 
 | Eixo | Acionamento | Redução | 1 volta da manivela | Números do tambor | 1 marca do tambor |
 |---|---|---|---|---|---|
-| **Azimute** | rosca sem fim → mesa = coroa de 120 dentes, módulo 1,25 (Ø152) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
-| **Elevação** | rosca sem fim → coroa de 120 dentes, módulo 1 (Ø122) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
+| **Azimute** | rosca sem fim → mesa = setor de coroa (passo de 120 dentes), módulo 1,25 (Ø152) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
+| **Elevação** | rosca sem fim → setor de coroa (passo de 120 dentes), módulo 1 (Ø122) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
+
+| Eixo | Curso útil | Batente | Dentes que sobraram |
+|---|---|---|---|
+| **Azimute** | **−50° a +50°** (giro total de 100°) | ressalto da mesa bate em 2 blocos da base a ±52° | arco de 120° (41 dentes) |
+| **Elevação** | **−20° a +85°** (dá para atirar para baixo) | ressaltos da coroa batem no carro a −22° e +87° | arco de 220° em volta do eixo |
+
+**Por que a coroa não "solta" no fim do curso:** o batente fica **antes** do último dente. No azimute, o setor
+tem dentes até ±60°, mas o batente para a mesa em ±52°. No fim do curso, a rosca ainda está engrenada com
+**8° de dentes de sobra** (cerca de 2,7 dentes) de cada lado. Na elevação, o batente para em −22°/+87°, e a
+rosca continua no meio dos dentes. Se você forçar a manivela no batente, ela só para, porque a rosca não
+consegue pular para fora da coroa.
 
 **Leitura em duas etapas, como num micrômetro:**
-1. **Escala grande** (na mesa e na coroa de elevação): número a cada 10°, traço a cada 5°, ponto a cada 2,5°.
+1. **Escala grande:** número a cada 10°, traço a cada 5°, ponto a cada 2,5°. No azimute, a escala de −50 a +50
+   agora é **fixa na aba da base**, e o ponteiro é a ponta do ressalto da mesa, que passa por cima da parede.
+   Na elevação, a escala continua na coroa.
 2. **Tambor da manivela** (Ø44): o número 0 fica no braço, e os números 1 e 2 a cada 1/3 de volta (cada um vale 1°).
    Os traços médios marcam 0,5° e os curtos 0,1° (30 marcas por volta). Está gravado **"1 VOLTA = 3°"**. A seta do mancal externo é o índice.
 
@@ -175,11 +188,15 @@ pesa são as paredes. Tirar volume ajuda muito no maciço. No típico, o que mai
 - **Para pesar menos:** imprima a base e o carro com **2 paredes e 10–15%** (dá uns 130 g a menos).
 - **Mantenha 4 paredes e 100%** nas peças que trabalham: roscas, pinhão, gatilho, travas e punhos.
 
-### Base
-- **Pés:** não há mais pernas nem pés de borracha. A base é o anel da pista, a saia com as cartucheiras,
-  a plataforma da manivela e o apoio do ponteiro.
-- **Anel da base:** é oco, com paredes de 2 mm e teto em V a 45°, e tem o assento do **anel de pista** com 8 encaixes.
-- **Plataforma da manivela:** tem um vão em V por baixo, que fica 9 mm abaixo da calha da rosca.
+### Base em bandeja (v6)
+- **Mais baixa:** a mesa agora fica a 20 mm da mesa da sala (antes eram ~35 mm). O punho da manivela de azimute fica ~4 mm acima do chão.
+  Centro de gravidade mais baixo = canhão mais estável.
+- **Bandeja:** o setor de dentes da mesa corre **dentro** da base, entre um piso de 3 mm e uma **parede** em volta
+  (2 mm de folga radial). A parede protege os dentes, endurece a base como a borda de uma assadeira, e é nela que ficam os batentes.
+- **Rígida sem ser maciça:** o anel da pista (paredes de 2 mm e teto em V) se liga ao cubo central por 4 raios e à parede por 6 nervuras.
+- **Aba da escala:** só do lado de trás (±62°), com apoio a 45° para imprimir sem suporte.
+- **Sem anel por cima:** a mesa continua só apoiada nas BBs. O peso do cano e do carro a mantém no lugar, e os blocos de batente seguram o giro.
+- **Plataforma da manivela:** tem um vão em V por baixo, e a rosca entra na bandeja por uma janela da parede.
 
 ## Sem nada comprado além das BBs e da mola
 
@@ -210,7 +227,7 @@ Cada peça já sai na orientação de impressão.
 
 | Grupo | Peças |
 |---|---|
-| Base e mesa | `base`, `mesa`, `anel_pista_base`, `anel_pista_mesa`, `pino_pivo`, `ponteiro_az`, `rebite` ×4 |
+| Base e mesa | `base`, `mesa`, `anel_pista_base`, `anel_pista_mesa`, `pino_pivo`, `rebite` ×4 (o `ponteiro_az` saiu: agora o ponteiro faz parte da mesa) |
 | Carro | `carro`, `ponteiro_el`, `roda_el` |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
 | Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `projetil` (×10 para encher as cartucheiras), `porta_projeteis` |

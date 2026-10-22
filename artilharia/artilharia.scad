@@ -662,9 +662,13 @@ module mesa() {
             // Corpo de altura cheia por dentro da parede + ponta que passa por cima dela.
             rotate(180) {
                 translate([r_mesa_corpo - 6, -3.5, 0]) cube([r_parede[0] - 0.3 - (r_mesa_corpo - 6), 7, h_mesa + 3]);
-                hull() {
+                hull() {   // chanfro a 45 graus por dentro da parede
                     translate([r_parede[0] - 4.3, -3.5, h_mesa + 3 - 0.01]) cube([4, 7, 0.01]);
                     translate([r_parede[0] - 4.3, -3.5, h_mesa - 4]) cube([0.01, 7, 7]);
+                    translate([r_parede[0] - 0.4, -3.5, h_mesa - 1]) cube([0.1, 7, 4]);
+                }
+                hull() {   // por cima da parede: fundo plano 0,5 mm acima dela
+                    translate([r_parede[0] - 0.4, -3.5, h_mesa - 1]) cube([0.1, 7, 4]);
                     translate([r_parede[1] + 0.6, -0.3, h_mesa - 1]) cube([0.6, 0.6, 4]);   // ponta da agulha
                 }
             }
