@@ -318,6 +318,14 @@ Todas as peças geram sólido válido. Também conferi:
     Em ±52° o ressalto encosta no batente, e a rosca ainda tem ~8° de dentes de sobra.
   - A rosca de elevação engrena em −20°, 0° e 85°, e os batentes encostam em −22° e +87°.
   - O cano fica livre do carro de −20° a 85°. A manivela de elevação e o volante de armar não se tocam em −20° nem em 85°.
+- **v7.1 (bochechas em treliça, raios finos, capa do volante):**
+  - **Correção:** a STL da `mesa` da v7 estava com defeito. As vigas terminavam exatamente no raio interno do contrapeso,
+    e as duas curvas só se tocavam pela aresta. A malha não fechava e a STL saía **sem a camada grossa**:
+    sem contrapeso, sem pés dos mancais e com as vigas cortadas. Agora as vigas entram 0,5 mm no contrapeso,
+    a malha fecha e eu repeti todas as checagens com a mesa. Se você já baixou a STL da v7, **use a nova**.
+  - Todas as checagens abaixo foram refeitas com as peças da v7.1, e nenhum log acusou malha aberta.
+  - **Capa do volante:** encaixa no pino sem interferência e gira solta. O volante com a capa dá a volta completa
+    sem tocar no cano nem na manivela de elevação, em −20° e em 85°.
 - **v7 (mesa com carro, coroa raiada, base enxuta):** refiz todas as checagens de pontaria com as peças novas.
   - A mesa com o carro gira de −49° a +49° sem tocar na base nem na rosca. Em ±52° só o ressalto-ponteiro encosta no batente;
     o contrapeso passa 1 mm por dentro dos blocos.
