@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, pino_pivo, anel_pista_base, anel_pista_mesa, pino_gatilho, trava_4]
+PARTE = "montagem"; // [montagem, base, mesa, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, punho_armar, pino_pivo, anel_pista_base, anel_pista_mesa, pino_gatilho, trava_4]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -471,24 +471,30 @@ module manivela(R, zc, n = n_tambor) {
 // A face de tras do dente e reta: nao volta. Dente folgado no canal (0,4 mm): gira livre.
 h_capa   = L_punho + 3;              // capa (2 mm de tampa em cima)
 z_dente  = L_punho - 2.2;            // face de tras do dente, medida da base da capa
-module pino_punho(z0) {               // pino com dente (a fenda e cortada a parte)
-    translate([0, 0, 0]) cylinder(d = d_pino_p, h = z0 + 0.2 + z_dente);
-    translate([0, 0, z0 + 0.2 + z_dente]) cylinder(d1 = d_pino_p + 1.4, d2 = d_pino_p - 0.6, h = 3);
+// Os mesmos modulos fazem a capa pequena do volante de armar: d = diametro do pino,
+// L = comprimento util; o dente, o canal e a fenda escalam com k = d/d_pino_p.
+d_pino_ra = 5;  d_punho_ra = 10;  L_punho_ra = 12;
+module pino_punho(z0, d = d_pino_p, L = L_punho) {   // pino com dente (a fenda e cortada a parte)
+    k = d/d_pino_p;  zd = L - 2.2*k;
+    cylinder(d = d, h = z0 + 0.2 + zd);
+    translate([0, 0, z0 + 0.2 + zd]) cylinder(d1 = d + 1.4*k, d2 = d - 0.6*k, h = 3*k);
 }
-module fenda_pino_punho(z0) {
-    translate([-0.9, -6, z0 + 0.2 + z_dente - 7]) cube([1.8, 12, 12]);
+module fenda_pino_punho(z0, d = d_pino_p, L = L_punho) {
+    k = d/d_pino_p;  zd = L - 2.2*k;
+    translate([-0.9*k, -6, z0 + 0.2 + zd - 7*k]) cube([1.8*k, 12, 12]);
 }
-module punho() {   // capa: origem na base (que fica 0,2 mm acima do braco)
+module punho(d = d_pino_p, D = d_punho, L = L_punho) {   // capa: origem na base (que fica 0,2 mm acima do braco)
+    k = d/d_pino_p;  hc = L + 3*k;  zd = L - 2.2*k;
     difference() {
         union() {
-            cylinder(d = d_punho, h = h_capa - 1.5);
-            translate([0, 0, h_capa - 1.5]) cylinder(d1 = d_punho, d2 = d_punho - 3, h = 1.5);   // topo arredondado
+            cylinder(d = D, h = hc - 1.5*k);
+            translate([0, 0, hc - 1.5*k]) cylinder(d1 = D, d2 = D - 3*k, h = 1.5*k);   // topo arredondado
         }
-        translate([0, 0, -1]) cylinder(d = d_pino_p + 0.5, h = z_dente + 3.5 + 1);
+        translate([0, 0, -1]) cylinder(d = d + 0.5, h = zd + 3.5*k + 1);
         // canal interno onde o dente estala (face de baixo reta, teto a 45 graus)
-        translate([0, 0, z_dente - 0.3]) cylinder(d = d_pino_p + 2.2, h = 3.3);
-        translate([0, 0, z_dente + 3]) cylinder(d1 = d_pino_p + 2.2, d2 = 2, h = (d_pino_p + 0.2)/2);
-        translate([0, 0, -0.01]) cylinder(d1 = d_pino_p + 2.5, d2 = d_pino_p + 0.2, h = 1.2);    // chanfro de entrada
+        translate([0, 0, zd - 0.3]) cylinder(d = d + 2.2*k, h = 3.3*k);
+        translate([0, 0, zd + 3*k]) cylinder(d1 = d + 2.2*k, d2 = 2*k, h = (d + 0.2)/2);
+        translate([0, 0, -0.01]) cylinder(d1 = d + 2.5*k, d2 = d + 0.2, h = 1.2*k);    // chanfro de entrada
     }
 }
 
@@ -664,6 +670,7 @@ r_aro_az = rf_az - 6;           // aro dentado: 6 mm abaixo do pe do dente
 cp_meio  = 15;                  // contrapeso: de 180-cp_meio a 180+cp_meio graus locais
 r_cp     = [r_copo[1] - 0.5, r_parede[0] - 1.5];
 raios_az = [45, 90, 135, 225, 270, 315];
+h_raio_az = 4;                  // espessura dos raios (cubo, aro, vigas e contrapeso ficam com h_mesa)
 module mesa() {
     passo = 360/z_az;
     dentes = [for (k = [-round(setor_az/passo):round(setor_az/passo)]) (k + z_az) % z_az];
@@ -676,10 +683,18 @@ module mesa() {
             linear_extrude(h_copo, convexity = 6) {
                 difference() { circle(r = r_copo[1], $fn = 180); circle(r = r_copo[0], $fn = 180); }   // copo do anel
                 arco(r_copo[1] - 0.5, r_aro_az + 0.5, -setor_az - 1.5, setor_az + 1.5);          // liga o aro ao copo
-                for (a = raios_az) rotate(a) translate([0, -3]) square([r_copo[0] + 1, 6]);      // raios
                 // trilho que amarra os 3 pes dos mancais de elevacao (mantem a rosca alinhada)
                 translate([-x_ext_el - esp_mancal_ext, y_roda + 4])
                     square([x_ext_el + esp_mancal_ext + x_mancal_el + esp_mancal_el, 3]);
+            }
+            // raios FINOS (h_raio_az) do cubo ao copo, com cantos arredondados
+            linear_extrude(h_raio_az, convexity = 6) intersection() {
+                circle(r = r_copo[1] - 0.5, $fn = 180);
+                offset(r = -2) offset(delta = 2) union() {
+                    for (a = raios_az) rotate(a) translate([0, -4]) square([r_copo[0] + 1, 8]);
+                    circle(r = 15);
+                    difference() { circle(r = r_copo[1], $fn = 180); circle(r = r_copo[0], $fn = 180); }
+                }
             }
             linear_extrude(h_mesa, convexity = 6) {
                 circle(r = 15);                                                                // cubo
@@ -718,14 +733,52 @@ module mesa() {
 // ---- CARRO: bochechas + 3 mancais da rosca de elevacao (origem no topo da mesa).
 //      Faz parte da peca "mesa": as bochechas e os mancais nascem direto das vigas
 //      e dos pes da mesa (sem placa e sem rebites).
-module perfil_bochecha(com_braco) {
-    hull() {
-        translate([-20, 0]) square([50, h_placa]);
-        translate([0, H_t]) circle(r = 16);
+module contorno_bochecha() hull() {
+    translate([-20, 0]) square([50, h_placa]);
+    translate([0, H_t]) circle(r = 16);
+}
+// Bochecha em TRELICA: moldura de 5 mm + diagonais de 4,5 mm a 45 graus. Todas as bordas
+// das janelas ficam a 45 graus ou em pe, entao imprime sem suporte.
+// Macicos: o pe (8 mm), o cubo do munhao (raio ~22 mm em volta do eixo) e, na bochecha
+// da direita, um losango sob o batente de elevacao e as faixas onde encostam as almas
+// dos mancais de elevacao.
+z_teto_boch = H_t - 22;
+braco_ponteiro = [[-17, H_t - 52], [x_pont_el + 3, H_t - 5], [x_pont_el - 4, H_t - 5],
+                  [x_pont_el - 4, H_t + 5], [-6, H_t + 14]];
+module janelas_bochecha(com_braco) {
+    p = 24;  w = 4.5;
+    offset(r = 1.5) offset(delta = -1.5) difference() {
+        intersection() {
+            offset(delta = -5) contorno_bochecha();
+            polygon([[-80, 8], [80, 8], [80, z_teto_boch - 80], [0, z_teto_boch], [-80, z_teto_boch - 80]]);
+        }
+        for (sg = [-1, 1], k = [-6:6]) translate([5, 8]) rotate(45*sg) translate([-200, k*p - w/2]) square([400, w]);
+        if (com_braco) {
+            for (x0 = [-x_mancal_el - esp_mancal_el, x_mancal_el])
+                translate([x0 - 1, 0]) square([esp_mancal_el + 2, z_rosca_el - 4]);
+            translate([0, H_t - 30]) rotate(45) square(17, center = true);   // sob o batente (r 26..34, embaixo)
+        }
     }
-    if (com_braco)  // braco inclinado (>45 graus, imprime sem suporte) que segura o ponteiro
-        polygon([[-17, H_t - 52], [x_pont_el + 3, H_t - 5], [x_pont_el - 4, H_t - 5],
-                 [x_pont_el - 4, H_t + 5], [-6, H_t + 14]]);
+}
+// janelas do braco do ponteiro: faixas paralelas a borda de baixo dele (46 graus)
+module janelas_braco() {
+    d = braco_ponteiro[1] - braco_ponteiro[0];
+    offset(r = 1.5) offset(delta = -1.5) intersection() {
+        offset(delta = -4.5) polygon(braco_ponteiro);
+        translate([x_pont_el + 8, 0]) square([-21 - (x_pont_el + 8), 200]);
+        translate(braco_ponteiro[0]) rotate(atan2(d[1], d[0]))
+            for (f = [[6, 14], [19, 27], [32, 40]]) translate([-200, -f[1]]) square([400, f[1] - f[0]]);
+    }
+}
+module perfil_bochecha(com_braco) {
+    difference() {
+        union() {
+            contorno_bochecha();
+            if (com_braco) polygon(braco_ponteiro);   // braco inclinado que segura o ponteiro
+        }
+        janelas_bochecha(com_braco);
+        if (com_braco) janelas_braco();
+    }
 }
 
 module carro() {
@@ -931,10 +984,10 @@ module volante_armar() {
             cylinder(r = r_volante - 0.8, h = 8, $fn = 60);
             for (i = [0:17]) rotate(i*20) translate([r_volante - 1.2, 0, 0]) cylinder(r = 1.2, h = 8, $fn = 12);
             cylinder(r = 7, h = h_cubo);
-            translate([8.5, 0, 0]) cylinder(d = 6, h = 8 + 12);            // pino para girar com o dedo
-            translate([8.5, 0, 8 + 12]) sphere(d = 6, $fn = 16);
+            translate([8.5, 0, 0]) pino_punho(8, d_pino_ra, L_punho_ra);   // pino da capa giratoria
         }
         translate([0, 0, h_cubo/2]) hex_furo(f_eixo, h_cubo + 2);
+        translate([8.5, 0, 0]) fenda_pino_punho(8, d_pino_ra, L_punho_ra);
         translate([0, 0, 8 - prof_grav]) linear_extrude(1, convexity = 6)  // seta do sentido de armar
             rotate(200) translate([-1.5, -9.5]) polygon([[0, 0], [3, 0], [3, 4], [5, 4], [1.5, 7], [-2, 4], [0, 4]]);
     }
@@ -1042,6 +1095,7 @@ r_aro_el   = rf_el - 6.5;   // aro de 6,5 mm abaixo do pe do dente
 r_cubo_el  = 14;
 r_faixa_el = 39;            // faixa dos numeros: de r_faixa_el ate o aro
 esp_faixa_el = 2.4;
+esp_raio_el  = 4;   // espessura dos raios (o aro e o cubo ficam com h_roda_el)
 raios_el   = [105, 147, 229];   // raios intermediarios (graus locais)
 module contorno_roda_el() offset(r = 3) offset(delta = -3) union() {
     arco(0, rp_el + 5, setor_el[0], setor_el[1]);
@@ -1051,7 +1105,7 @@ module raios_el_2d() {
     rotate(setor_el[0]) translate([0, -1]) square([r_aro_el + 1, 10]);   // bordas do setor
     rotate(setor_el[1]) translate([0, -9]) square([r_aro_el + 1, 10]);
     for (f = fases_batente()) rotate(f) translate([0, -4.5]) square([r_aro_el + 1, 9]);
-    for (a = raios_el) rotate(a) translate([0, -3.5]) square([r_aro_el + 1, 7]);
+    for (a = raios_el) rotate(a) translate([0, -4]) square([r_aro_el + 1, 8]);
 }
 module roda_el() {
     difference() {
@@ -1062,13 +1116,23 @@ module roda_el() {
                     rotate(90 - (360/z_el)*floor(90/(360/z_el))) engrenagem_helicoidal(m_el, z_el, h_roda_el, gama_el);
                     translate([0, 0, -1]) linear_extrude(h_roda_el + 2, convexity = 4) contorno_roda_el();
                 }
-                translate([0, 0, -1]) linear_extrude(h_roda_el + 2, convexity = 10)
-                    offset(r = 2) offset(delta = -2) difference() {
-                        circle(r = r_aro_el, $fn = 180);
-                        circle(r = r_cubo_el);
-                        raios_el_2d();
-                    }
+                // tudo entre o cubo e o aro sai; ficam com espessura cheia so os apoios dos ressaltos
+                translate([0, 0, -1]) linear_extrude(h_roda_el + 2, convexity = 10) difference() {
+                    circle(r = r_aro_el, $fn = 180);
+                    circle(r = r_cubo_el);
+                    for (f = fases_batente()) arco(23, 37, f - 8, f + 8);
+                }
             }
+            // raios FINOS (esp_raio_el), rente a face externa, com cantos arredondados no aro e no cubo
+            translate([0, 0, h_roda_el - esp_raio_el]) linear_extrude(esp_raio_el, convexity = 10)
+                intersection() {
+                    contorno_roda_el();
+                    offset(r = -2) offset(delta = 2) union() {
+                        raios_el_2d();
+                        circle(r = r_cubo_el);
+                        difference() { circle(r = rp_el, $fn = 180); circle(r = r_aro_el, $fn = 180); }
+                    }
+                }
             // faixa fina dos numeros, rente a face externa (imprime direto na mesa)
             translate([0, 0, h_roda_el - esp_faixa_el]) linear_extrude(esp_faixa_el, convexity = 4)
                 intersection() {
@@ -1151,7 +1215,7 @@ module conjunto_elevacao() {  // tudo que gira com o cano (origem no munhao)
             travas_eixo([ra_g1, ra_g2, ra_g3]);
         }
         translate([x_g - x_man_ra, y_ra, z_ra_eixo]) rotate([0, -90, 0]) rotate(-th_arm*z_ra)
-            color("Firebrick") volante_armar();
+            { color("Firebrick") volante_armar(); color("Black") translate([8.5, 0, 8.2]) punho(d_pino_ra, d_punho_ra, L_punho_ra); }
         // coroa de elevacao + munhao
         color("Goldenrod") translate([0, y_roda - h_roda_el/2, 0]) rotate([-90, 0, 0]) roda_el();
         rotate([-90, 0, 0]) {
@@ -1215,6 +1279,7 @@ else if (PARTE == "manivela_el") manivela(R_manivela_el, z_el);
 else if (PARTE == "trava_6")     trava(dc_6);
 else if (PARTE == "trava_8")     trava(dc_8);
 else if (PARTE == "punho")       punho();
+else if (PARTE == "punho_armar") punho(d_pino_ra, d_punho_ra, L_punho_ra);
 else if (PARTE == "eixo_az")     translate([0, 0, f_eixo/2]) rotate([90, 0, 0])
                                      eixo_hex(f_eixo, az_z0, az_z1, [az_g1, az_g2, az_g3], dc_6);
 else if (PARTE == "eixo_el")     translate([0, 0, f_eixo/2]) rotate([90, 0, 0])
