@@ -298,3 +298,10 @@ Todas as peças geram sólido válido. Também conferi:
     Em ±52° o ressalto encosta no batente, e a rosca ainda tem ~8° de dentes de sobra.
   - A rosca de elevação engrena em −20°, 0° e 85°, e os batentes encostam em −22° e +87°.
   - O cano fica livre do carro de −20° a 85°. A manivela de elevação e o volante de armar não se tocam em −20° nem em 85°.
+- **v7 (mesa com carro, coroa raiada, base enxuta):** refiz todas as checagens de pontaria com as peças novas.
+  - A mesa com o carro gira de −49° a +49° sem tocar na base nem na rosca. Em ±52° só o ressalto-ponteiro encosta no batente;
+    o contrapeso passa 1 mm por dentro dos blocos.
+  - A rosca de azimute engrena no aro dentado, e a de elevação na coroa raiada (−20°, 0° e 85°). Os batentes encostam em −23° e 88°.
+  - O cano fica livre da mesa com carro de −20° a 85°. As manivelas e o volante não se tocam.
+  - A varredura completa (azimute de −50° a +50°, com elevação em −20° e 85°) deu livre.
+  - Os anéis de pista assentam na base e no copo novo, e os 10 projéteis entram nos casulos.
