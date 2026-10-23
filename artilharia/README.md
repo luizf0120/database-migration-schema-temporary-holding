@@ -1,4 +1,4 @@
-# Canhão de brinquedo v6: coroas em setor, base em bandeja, pontaria 120:1 (3° por volta) e só 2 itens para comprar
+# Canhão de brinquedo v7: mesa e carro numa peça só, coroas vazadas, base enxuta, pontaria 120:1 (3° por volta) e só 2 itens para comprar
 
 ![montagem](montagem.png)
 
@@ -9,7 +9,7 @@ Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `ca
 - **~52 BBs de airsoft de 6 mm**: são as esferas do rolamento da mesa.
 - **1 mola de compressão 1,0 × 12 × 100 mm**.
 
-Todo o resto é impresso: rolamento, rebites, baionetas, pinos, eixos e travas. Não há nenhum parafuso nem rosca em plástico para espanar.
+Todo o resto é impresso: rolamento, baionetas, pinos, eixos e travas. Não há nenhum parafuso nem rosca em plástico para espanar.
 
 ## Pontaria
 
@@ -170,35 +170,68 @@ A estimativa usa volume e área de cada STL (±15%).
 
 | Peça | Maciço | Típico |
 |---|---|---|
-| base em bandeja (anel oco, piso, parede, saia com 10 projéteis, plataforma) | 378 g | **~218 g** |
-| mesa (setor de coroa com janelas) | 136 g | **~81 g** |
-| carro | 134 g | ~80 g |
+| base (bandeja com janelas, 10 casulos de projétil, plataforma vazada) | 250 g | **~177 g** |
+| mesa **com o carro** (aro dentado, copo fino, raios, contrapeso, bochechas) | 182 g | **~134 g** |
 | 2 anéis de pista | 52 g | ~44 g |
-| setor de elevação (−20° a +85°) | 83 g | ~44 g |
+| setor de elevação raiado (−20° a +85°) | 55 g | ~38 g |
 | culatra + cano | 84 g | ~61 g |
 | 10 projéteis | 28 g | ~17 g |
-| todo o resto (roscas, manivelas, eixos, rebites, travas…) | 122 g | ~101 g |
-| **Total impresso** | **~1016 g** | **~645 g** |
+| todo o resto (roscas, manivelas, eixos, travas…) | 120 g | ~99 g |
+| **Total impresso** | **~772 g** | **~569 g** |
 | + BBs e mola | | ~11 g |
 
-Comparando com a v5 (coroas inteiras): **−154 g maciço e −45 g no típico**. A mesa perdeu 20 g e a coroa de elevação 22 g.
-A base pesa o mesmo no típico, porque o piso e a parede da bandeja gastam o que a altura menor economizou.
-Em troca, ela é **15 mm mais baixa e mais rígida**, então o canhão fica mais estável. Esse peso embaixo é útil: é lastro.
+Comparando com a v6: **−244 g maciço e −76 g no típico** (−12%). Desde a v5, com as coroas inteiras, foram −398 g e −121 g.
+De onde saiu o peso da v7:
+- **Base, −41 g:** saia → casulos; piso com janelas; plataforma da manivela vazada.
+- **Mesa + carro, −28 g:** sem a placa do carro, sem rebites e sem o disco cheio da mesa.
+- **Coroa de elevação, −6 g:** raios no lugar do disco.
+
+No maciço a queda é bem maior (−32%), porque o miolo que saiu era volume puro.
 
 **Por que o "típico" cai menos que o "maciço":** na impressão FDM, o miolo já é preenchimento ralo, e quem
 pesa são as paredes. Tirar volume ajuda muito no maciço. No típico, o que mais pesa é a área de superfície.
-- **Para pesar menos:** imprima a base e o carro com **2 paredes e 10–15%** (dá uns 130 g a menos).
+- **Para pesar menos:** imprima a base com **2 paredes e 10–15%**. Ela quase não leva esforço.
 - **Mantenha 4 paredes e 100%** nas peças que trabalham: roscas, pinhão, gatilho, travas e punhos.
 
-### Base em bandeja (v6)
+### Base em bandeja (v6, enxugada na v7)
 - **Mais baixa:** a mesa agora fica a 20 mm da mesa da sala (antes eram ~35 mm). O punho da manivela de azimute fica ~4 mm acima do chão.
   Centro de gravidade mais baixo = canhão mais estável.
-- **Bandeja:** o setor de dentes da mesa corre **dentro** da base, entre um piso de 3 mm e uma **parede** em volta
+- **Bandeja:** o setor de dentes da mesa corre **dentro** da base, cercado por uma **parede**
   (2 mm de folga radial). A parede protege os dentes, endurece a base como a borda de uma assadeira, e é nela que ficam os batentes.
 - **Rígida sem ser maciça:** o anel da pista (paredes de 2 mm e teto em V) se liga ao cubo central por 4 raios e à parede por 6 nervuras.
+  O piso de 3 mm virou só uma moldura: entre as nervuras ele tem **janelas**, porque quem amarra a parede são as nervuras.
+- **Casulos de projétil (v7):** a saia contínua saiu. Cada projétil tem o seu casulo, um bloco preso na parede com
+  1,8 mm de plástico em volta do furo. **Entre um casulo e outro não há nada**, e por baixo fica tudo aberto.
 - **Aba da escala:** só do lado de trás (±62°), com apoio a 45° para imprimir sem suporte.
 - **Sem anel por cima:** a mesa continua só apoiada nas BBs. O peso do cano e do carro a mantém no lugar, e os blocos de batente seguram o giro.
-- **Plataforma da manivela:** tem um vão em V por baixo, e a rosca entra na bandeja por uma janela da parede.
+- **Plataforma da manivela (v7):** agora é vazada. Os **3 mancais descem até o chão** como paredes, os dois de dentro entram na parede
+  da bandeja e **2 trilhos** de 3 × 11 mm amarram os três por baixo da rosca, a 2,75 mm dela. A rosca entra na bandeja por uma janela da parede.
+
+### Mesa e carro numa peça só (v7)
+A mesa giratória e o carro (bochechas e mancais da elevação) agora saem **juntos**, numa impressão.
+Some a placa do carro, que ficava em cima da mesa e repetia o mesmo papel, e somem os 4 rebites.
+- **Grosso (12 mm) só onde trabalha:**
+  - o **cubo** do pino pivô;
+  - o **aro dentado** (6 mm abaixo do pé do dente);
+  - as **2 vigas** que continuam as bochechas para baixo e vão de um lado do copo ao outro;
+  - os **pés dos 3 mancais** da elevação, amarrados por um trilho para a rosca não desalinhar;
+  - o **contrapeso**.
+- **Fino (9,2 mm) no resto:** o **copo** que abraça o anel de pista (1,6 mm de parede e 3,2 mm de teto) e **6 raios** de 6 mm ligando o cubo ao copo.
+  O aro dentado se apoia no copo por uma alma do mesmo setor.
+- **Contrapeso atrás:** um arco de **30°** (de 165° a 195°, do lado oposto aos dentes) que corre rente à parede da base, com 1,5 mm de folga.
+  Ele carrega o **ponteiro** e o ressalto que bate nos batentes, fecha a estrutura do lado de trás e equilibra um pouco o aro dentado da frente.
+  Assim a carga sobre as BBs fica mais uniforme e a mesa gira mais macia.
+- **Impressão:** fundo na mesa da impressora e bochechas para cima, como era o carro. A única ponte é o teto do copo, com 11 mm de vão.
+  Altura total ~141 mm, então cabe nas Creality comuns.
+
+### Coroa de elevação raiada (v7)
+O aro dentado e o cubo continuam com 10 mm. Entre eles há **7 raios grossos** (7 a 10 mm):
+- **2 nas bordas** do setor;
+- **1 embaixo de cada ressalto de batente**, que leva a pancada se você forçar a manivela no fim do curso;
+- **3 intermediários**.
+
+O resto é janela. Só onde ficam os números da escala sobra uma **faixa fina de 2,4 mm**, rente à face de fora,
+que imprime direto na mesa da impressora e mantém a gravação legível.
 
 ## Sem nada comprado além das BBs e da mola
 
@@ -215,13 +248,10 @@ As **BBs de 6 mm** rolam entre eles.
 ### Sem parafusos
 | Onde era parafuso | Agora | Por que não espana |
 |---|---|---|
-| Carro → mesa (4) | **`rebite`** de pressão: haste bipartida com dente que estala num rebaixo por baixo da mesa | trabalha ao cisalhamento e não tem rosca |
+| Carro → mesa (4) | **nada**: desde a v7, carro e mesa são uma peça só | não há junta |
 | Tampa traseira (2) | **baioneta em J**: encaixe, empurre, gire 30° e solte. A mola puxa os ressaltos para o entalhe | é a própria mola que trava a tampa |
 | Cano (1) | **baioneta**: encaixe até o colar e gire 30°. Há um aperto de 0,05 mm no fim do curso | o cano quase não leva esforço: a pancada fica no degrau da culatra |
 | Pivô do gatilho (1) | **`pino_gatilho`** de Ø4 com **`trava_4`** | o pino só leva cisalhamento (~27 N) |
-
-**Desmontar os rebites:** tire a mesa da base, porque ela só está apoiada nas BBs. Aperte as duas pernas do rebite
-por baixo com um alicate de bico e empurre para cima.
 
 ## Peças (troque `PARTE` no Customizer)
 
@@ -229,22 +259,22 @@ Cada peça já sai na orientação de impressão.
 
 | Grupo | Peças |
 |---|---|
-| Base e mesa | `base`, `mesa`, `anel_pista_base`, `anel_pista_mesa`, `pino_pivo`, `rebite` ×4 (o `ponteiro_az` saiu: agora o ponteiro faz parte da mesa) |
-| Carro | `carro`, `ponteiro_el`, `roda_el` |
+| Base e mesa | `base`, `mesa` (já com o carro), `anel_pista_base`, `anel_pista_mesa`, `pino_pivo` |
+| Elevação | `roda_el`, `ponteiro_el` |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
 | Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `projetil` (×10 para encher as cartucheiras), `porta_projeteis` |
 | Pequenas | `punho` ×2 (capas de encaixe), `trava_4` ×1, `trava_6` ×11, `trava_8` ×2 (imprima algumas a mais de cada) |
 
 **Comprar:** ~52 BBs de 6 mm e 1 mola 1,0×12×100. Mais nada.
 
-**Imprima os anéis de pista e os rebites com 4 paredes e 100%.**
+**Imprima os anéis de pista com 4 paredes e 100%.** O `carro` e o `rebite` não existem mais: o carro faz parte da `mesa`.
 
 ## Montagem (resumo)
 
 1. **Rolamento:** encaixe o `anel_pista_base` na base (canal para cima, dentes nos rasgos) e o `anel_pista_mesa`
    embaixo da mesa (canal para baixo). Espalhe ~52 BBs no canal e pouse a mesa. Passe o `pino_pivo` pelo centro.
 2. **Rosca de azimute:** passe o eixo pelos 3 mancais, depois encaixe as travas e a manivela.
-3. **Carro:** encaixe o carro na mesa com os 4 rebites (empurre até estalar) e monte a rosca de elevação.
+3. **Rosca de elevação:** o carro já vem na mesa. Passe o eixo pelos 3 mancais e encaixe as travas e a manivela.
 4. **Lançador:**
    - Ponha o `amortecedor` no fundo (frente) do cilindro.
    - Encaixe o cano no soquete, empurre até o colar e gire 30°.
