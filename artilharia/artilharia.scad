@@ -1131,7 +1131,7 @@ module roda_el() {
                     offset(r = -2) offset(delta = 2) union() {
                         raios_el_2d();
                         circle(r = r_cubo_el);
-                        difference() { circle(r = rp_el, $fn = 180); circle(r = r_aro_el, $fn = 180); }
+                        difference() { circle(r = rf_el - 0.5, $fn = 180); circle(r = r_aro_el, $fn = 180); }   // so para arredondar a raiz dos raios
                     }
                 }
             // faixa fina dos numeros, rente a face externa (imprime direto na mesa)
