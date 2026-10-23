@@ -984,10 +984,11 @@ module volante_armar() {
             cylinder(r = r_volante - 0.8, h = 8, $fn = 60);
             for (i = [0:17]) rotate(i*20) translate([r_volante - 1.2, 0, 0]) cylinder(r = 1.2, h = 8, $fn = 12);
             cylinder(r = 7, h = h_cubo);
-            translate([8.5, 0, 0]) pino_punho(8, d_pino_ra, L_punho_ra);   // pino da capa giratoria
+            translate([8.5, 0, 0]) cylinder(d = d_punho_ra, h = h_cubo);     // assento da capa (acima do cubo)
+            translate([8.5, 0, 0]) pino_punho(h_cubo, d_pino_ra, L_punho_ra); // pino da capa giratoria
         }
         translate([0, 0, h_cubo/2]) hex_furo(f_eixo, h_cubo + 2);
-        translate([8.5, 0, 0]) fenda_pino_punho(8, d_pino_ra, L_punho_ra);
+        translate([8.5, 0, 0]) fenda_pino_punho(h_cubo, d_pino_ra, L_punho_ra);
         translate([0, 0, 8 - prof_grav]) linear_extrude(1, convexity = 6)  // seta do sentido de armar
             rotate(200) translate([-1.5, -9.5]) polygon([[0, 0], [3, 0], [3, 4], [5, 4], [1.5, 7], [-2, 4], [0, 4]]);
     }
@@ -1215,7 +1216,7 @@ module conjunto_elevacao() {  // tudo que gira com o cano (origem no munhao)
             travas_eixo([ra_g1, ra_g2, ra_g3]);
         }
         translate([x_g - x_man_ra, y_ra, z_ra_eixo]) rotate([0, -90, 0]) rotate(-th_arm*z_ra)
-            { color("Firebrick") volante_armar(); color("Black") translate([8.5, 0, 8.2]) punho(d_pino_ra, d_punho_ra, L_punho_ra); }
+            { color("Firebrick") volante_armar(); color("Black") translate([8.5, 0, h_cubo + 0.2]) punho(d_pino_ra, d_punho_ra, L_punho_ra); }
         // coroa de elevacao + munhao
         color("Goldenrod") translate([0, y_roda - h_roda_el/2, 0]) rotate([-90, 0, 0]) roda_el();
         rotate([-90, 0, 0]) {
