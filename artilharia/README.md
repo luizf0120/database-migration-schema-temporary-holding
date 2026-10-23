@@ -1,4 +1,4 @@
-# Canhão de brinquedo v7: mesa e carro numa peça só, coroas vazadas, base enxuta, pontaria 120:1 (3° por volta) e só 2 itens para comprar
+# Canhão de brinquedo v7.1: mesa e carro numa peça só, coroas e bochechas vazadas, base enxuta, pontaria 120:1 (3° por volta) e só 2 itens para comprar
 
 ![montagem](montagem.png)
 
@@ -62,7 +62,7 @@ canhão antigo, e rola até o pistão. Com o cano na horizontal, empurre com o `
 
 ### Como funciona
 
-1. **Armar:** o **volante de armar** (Ø28, com pino para girar com o dedo) fica atrás, na esquerda, com o eixo paralelo ao cano.
+1. **Armar:** o **volante de armar** (Ø28, com uma capa de clique que gira solta, igual à das manivelas) fica atrás, na esquerda, com o eixo paralelo ao cano.
    Ele gira uma **rosca sem fim
    (16:1, autotravante)**, que gira uma coroa e um **pinhão "mutilado"**. Esse pinhão tem 8 dentes de um lado e é liso do outro,
    como o setor de um gearbox de airsoft. O pinhão puxa a **cremalheira** que fica no topo do pistão, comprimindo a mola.
@@ -171,22 +171,22 @@ A estimativa usa volume e área de cada STL (±15%).
 | Peça | Maciço | Típico |
 |---|---|---|
 | base (bandeja com janelas, 10 casulos de projétil, plataforma vazada) | 250 g | **~177 g** |
-| mesa **com o carro** (aro dentado, copo fino, raios, contrapeso, bochechas) | 182 g | **~134 g** |
+| mesa **com o carro** (aro dentado, copo, raios finos, contrapeso, bochechas em treliça) | 148 g | **~124 g** |
 | 2 anéis de pista | 52 g | ~44 g |
-| setor de elevação raiado (−20° a +85°) | 55 g | ~38 g |
+| setor de elevação raiado (−20° a +85°) | 43 g | ~33 g |
 | culatra + cano | 84 g | ~61 g |
 | 10 projéteis | 28 g | ~17 g |
-| todo o resto (roscas, manivelas, eixos, travas…) | 120 g | ~99 g |
-| **Total impresso** | **~772 g** | **~569 g** |
+| todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 122 g | ~101 g |
+| **Total impresso** | **~726 g** | **~556 g** |
 | + BBs e mola | | ~11 g |
 
-Comparando com a v6: **−244 g maciço e −76 g no típico** (−12%). Desde a v5, com as coroas inteiras, foram −398 g e −121 g.
-De onde saiu o peso da v7:
+Comparando com a v6: **−290 g maciço e −89 g no típico** (−14%). Desde a v5, com as coroas inteiras, foram −444 g e −134 g.
+De onde saiu o peso (no típico):
 - **Base, −41 g:** saia → casulos; piso com janelas; plataforma da manivela vazada.
-- **Mesa + carro, −28 g:** sem a placa do carro, sem rebites e sem o disco cheio da mesa.
-- **Coroa de elevação, −6 g:** raios no lugar do disco.
+- **Mesa + carro, −39 g:** sem a placa do carro, sem rebites, sem o disco cheio da mesa; raios finos e bochechas em treliça (v7.1).
+- **Coroa de elevação, −10 g:** raios no lugar do disco, e raios finos na espessura (v7.1).
 
-No maciço a queda é bem maior (−32%), porque o miolo que saiu era volume puro.
+No maciço a queda é bem maior (−29%), porque o miolo que saiu era volume puro.
 
 **Por que o "típico" cai menos que o "maciço":** na impressão FDM, o miolo já é preenchimento ralo, e quem
 pesa são as paredes. Tirar volume ajuda muito no maciço. No típico, o que mais pesa é a área de superfície.
@@ -216,8 +216,17 @@ Some a placa do carro, que ficava em cima da mesa e repetia o mesmo papel, e som
   - as **2 vigas** que continuam as bochechas para baixo e vão de um lado do copo ao outro;
   - os **pés dos 3 mancais** da elevação, amarrados por um trilho para a rosca não desalinhar;
   - o **contrapeso**.
-- **Fino (9,2 mm) no resto:** o **copo** que abraça o anel de pista (1,6 mm de parede e 3,2 mm de teto) e **6 raios** de 6 mm ligando o cubo ao copo.
-  O aro dentado se apoia no copo por uma alma do mesmo setor.
+- **Fino no resto:**
+  - o **copo** que abraça o anel de pista (9,2 mm de altura, 1,6 mm de parede e 3,2 mm de teto);
+  - **6 raios** de 8 × **4 mm** ligando o cubo ao copo. São rasos, rentes ao fundo, e ficam bem mais finos que o aro, olhando pela face dos dentes.
+    Eles só centralizam o cubo: o peso do cano vai das bochechas para as vigas e das vigas direto para o copo.
+  - O aro dentado se apoia no copo por uma alma do mesmo setor.
+- **Bochechas em treliça (v7.1):**
+  - **Treliça:** moldura de 5 mm e diagonais de 4,5 mm a 45°, formando losangos. Todas as bordas das janelas ficam a 45° ou em pé, então a bochecha imprime em pé sem suporte.
+  - **Maciço:** só o pé, o **bloco do munhão** (uns 22 mm em volta do eixo) e um **losango embaixo do batente** de elevação.
+  - **Bochecha da direita:** também é maciça nas faixas onde encostam as almas dos mancais.
+  - **Braço do ponteiro:** tem 3 janelas inclinadas, paralelas à borda de baixo dele (46°).
+  - Uma treliça trabalha à tração e à compressão, então perde pouca rigidez no plano da bochecha, que é onde o cano pesa.
 - **Contrapeso atrás:** um arco de **30°** (de 165° a 195°, do lado oposto aos dentes) que corre rente à parede da base, com 1,5 mm de folga.
   Ele carrega o **ponteiro** e o ressalto que bate nos batentes, fecha a estrutura do lado de trás e equilibra um pouco o aro dentado da frente.
   Assim a carga sobre as BBs fica mais uniforme e a mesa gira mais macia.
@@ -225,13 +234,24 @@ Some a placa do carro, que ficava em cima da mesa e repetia o mesmo papel, e som
   Altura total ~141 mm, então cabe nas Creality comuns.
 
 ### Coroa de elevação raiada (v7)
-O aro dentado e o cubo continuam com 10 mm. Entre eles há **7 raios grossos** (7 a 10 mm):
+O aro dentado e o cubo continuam com 10 mm. Entre eles há **7 raios** largos (8 a 10 mm) e **finos na espessura: 4 mm** (v7.1),
+rentes à face da escala, com cantos arredondados onde encontram o aro e o cubo:
 - **2 nas bordas** do setor;
 - **1 embaixo de cada ressalto de batente**, que leva a pancada se você forçar a manivela no fim do curso;
 - **3 intermediários**.
 
 O resto é janela. Só onde ficam os números da escala sobra uma **faixa fina de 2,4 mm**, rente à face de fora,
 que imprime direto na mesa da impressora e mantém a gravação legível.
+Os **ressaltos de batente** ficam sobre pastilhas com os 10 mm cheios, porque é por eles que passa a pancada do fim de curso.
+
+### Capa de clique no volante de armar (v7.1)
+É a mesma ideia da capa das manivelas, em tamanho menor:
+- **Pino:** de Ø5, bipartido, com dente cônico.
+- **Capa:** de Ø10 × 14 mm, com um canal interno.
+
+Você empurra a capa, o dente estala no canal e ela **não sai mais, mas gira solta**, com 0,25 mm de folga.
+A capa assenta num ressalto de 2 mm, acima do cubo do volante, e não passa da borda dele (Ø28).
+Peça: `punho_armar` (imprima em pé, com a tampa para cima).
 
 ## Sem nada comprado além das BBs e da mola
 
@@ -263,7 +283,7 @@ Cada peça já sai na orientação de impressão.
 | Elevação | `roda_el`, `ponteiro_el` |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
 | Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `projetil` (×10 para encher as cartucheiras), `porta_projeteis` |
-| Pequenas | `punho` ×2 (capas de encaixe), `trava_4` ×1, `trava_6` ×11, `trava_8` ×2 (imprima algumas a mais de cada) |
+| Pequenas | `punho` ×2 e `punho_armar` ×1 (capas de encaixe), `trava_4` ×1, `trava_6` ×11, `trava_8` ×2 (imprima algumas a mais de cada) |
 
 **Comprar:** ~52 BBs de 6 mm e 1 mola 1,0×12×100. Mais nada.
 
@@ -280,7 +300,7 @@ Cada peça já sai na orientação de impressão.
    - Encaixe o cano no soquete, empurre até o colar e gire 30°.
    - Coloque o pistão **por trás**, com a quilha no rasgo de cima, e a mola dentro dele.
    - Feche a `tampa`: encaixe os ressaltos, empurre, gire 30° e solte.
-   - Monte o pinhão, a coroa e o eixo, depois a rosca de armar e o volante.
+   - Monte o pinhão, a coroa e o eixo, depois a rosca de armar e o volante. Estale a `punho_armar` no pino do volante.
    - Por último, o gatilho: passe o `pino_gatilho` por cima da orelha e prenda com a `trava_4` por baixo.
 5. **Cano no carro:** coloque a culatra entre as bochechas e a coroa de elevação do lado de fora. Passe o eixo do munhão e as travas.
 
