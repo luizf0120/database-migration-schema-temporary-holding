@@ -171,22 +171,22 @@ A estimativa usa volume e área de cada STL (±15%).
 | Peça | Maciço | Típico |
 |---|---|---|
 | base (bandeja com janelas, 10 casulos de projétil, plataforma vazada) | 250 g | **~177 g** |
-| mesa **com o carro** (aro dentado, copo, raios finos, contrapeso, bochechas em treliça) | 148 g | **~124 g** |
+| mesa **com o carro** (aro dentado, copo, raios finos, contrapeso, bochechas em treliça) | 179 g | **~136 g** |
 | 2 anéis de pista | 52 g | ~44 g |
 | setor de elevação raiado (−20° a +85°) | 43 g | ~33 g |
 | culatra + cano | 84 g | ~61 g |
 | 10 projéteis | 28 g | ~17 g |
 | todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 122 g | ~101 g |
-| **Total impresso** | **~726 g** | **~556 g** |
+| **Total impresso** | **~757 g** | **~568 g** |
 | + BBs e mola | | ~11 g |
 
-Comparando com a v6: **−290 g maciço e −89 g no típico** (−14%). Desde a v5, com as coroas inteiras, foram −444 g e −134 g.
+Comparando com a v6: **−259 g maciço e −77 g no típico** (−12%). Desde a v5, com as coroas inteiras, foram −413 g e −122 g.
 De onde saiu o peso (no típico):
 - **Base, −41 g:** saia → casulos; piso com janelas; plataforma da manivela vazada.
-- **Mesa + carro, −39 g:** sem a placa do carro, sem rebites, sem o disco cheio da mesa; raios finos e bochechas em treliça (v7.1).
+- **Mesa + carro, −27 g:** sem a placa do carro, sem rebites, sem o disco cheio da mesa; raios finos e bochechas em treliça (v7.1).
 - **Coroa de elevação, −10 g:** raios no lugar do disco, e raios finos na espessura (v7.1).
 
-No maciço a queda é bem maior (−29%), porque o miolo que saiu era volume puro.
+No maciço a queda é bem maior (−25%), porque o miolo que saiu era volume puro.
 
 **Por que o "típico" cai menos que o "maciço":** na impressão FDM, o miolo já é preenchimento ralo, e quem
 pesa são as paredes. Tirar volume ajuda muito no maciço. No típico, o que mais pesa é a área de superfície.

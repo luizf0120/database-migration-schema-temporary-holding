@@ -698,8 +698,8 @@ module mesa() {
             }
             linear_extrude(h_mesa, convexity = 6) {
                 circle(r = 15);                                                                // cubo
-                intersection() {   // vigas sob as bochechas, de um lado do copo ao outro
-                    circle(r = r_copo[1] - 0.5, $fn = 180);
+                intersection() {   // vigas sob as bochechas, de um lado do copo ao outro (entram 0,5 no contrapeso)
+                    circle(r = r_copo[1], $fn = 180);
                     for (y0 = [y_boch_in, -y_boch_out]) translate([-100, y0]) square([200, esp_bochecha]);
                 }
                 // pes dos mancais da rosca de elevacao, presos na viga da direita
