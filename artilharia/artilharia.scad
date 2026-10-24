@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, punho_armar, pino_pivo, anel_pista_base, anel_pista_mesa, pino_gatilho, trava_4]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_pista_base, anel_pista_mesa, pino_gatilho, trava_4]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -217,10 +217,7 @@ z_topo_parede = z_deck - 1.5;
 r_aba     = r_parede[1] + 12;               // aba com a escala de azimute (so atras)
 r_mesa_corpo = r_anel_p[1] + 3.5;           // fora do setor dentado a mesa so cobre a pista
 // ponteiros
-r_pont_az = ra_az + 4.5;                   // furo do ponteiro na base
 x_pont_el = -(ra_el + 4);                  // furo do ponteiro na bochecha
-h_pont_az = z_deck + 0.8 + 1.5 - h_base;   // agulha 0,8 mm acima da mesa
-c_pont_az = r_pont_az - (r_esc_az + 0.5);  // ponta logo alem das marcas
 h_pont_el = y_roda + h_roda_el/2 + 0.5 + 1.5 - y_boch_out; // agulha 0,5 mm da face da coroa
 c_pont_el = -x_pont_el - (r_esc_el + 0.5);
 
@@ -621,12 +618,10 @@ module base() {
             // PILAR DO PONTEIRO (atras, angulo 180): coluna colada na parede, do chao ate um pouco
             // acima da mesa, com a agulha que aponta para a escala gravada na mesa. E tambem o
             // BATENTE de azimute: os ressaltos das pontas da faixa da mesa encostam nele em +-52 graus.
+            // (a agulha e a peca ponteiro_az, que encaixa num furo no topo do pilar DEPOIS que a
+            //  mesa esta no lugar: se fosse inteirica com a base, a faixa da mesa nao passaria por ela)
             rotate(180 - a_pilar) rotate_extrude(angle = 2*a_pilar, $fn = 180)
-                translate([r_pilar, 0]) square([r_parede[0] + 0.5 - r_pilar, z_mesa + h_mesa + 1.5]);
-            hull() {   // agulha: sai do pilar e para 0,5 mm acima da faixa da mesa
-                rotate(180) translate([r_pilar - 0.01, -2, z_mesa + h_mesa + 0.5]) cube([0.01, 4, 1]);
-                rotate(180) translate([r_ponta_az, -0.3, z_mesa + h_mesa + 0.5]) cube([0.6, 0.6, 1]);
-            }
+                translate([r_pilar, 0]) square([r_parede[0] + 0.5 - r_pilar, z_topo_pilar]);
             cylinder(r = 15, h = h_base);                                            // cubo do pino pivo
             difference() { cylinder(r = r_anel[1], h = h_base, $fn = 180);           // anel macico da pista
                            translate([0, 0, -1]) cylinder(r = r_anel[0], h = h_base + 2, $fn = 180); }
@@ -645,6 +640,7 @@ module base() {
                 translate([x0, -(y_ext_az + esp_mancal_ext), 0]) cube([3, y_ext_az + esp_mancal_ext + y_mancal_az + esp_mancal_az, h_trilho_az]);
         }
         rebaixo_anel(h_base, -1, h_dente_inf);   // assento do anel de pista de baixo (com encaixes)
+        translate([-r_furo_pont, 0, z_topo_pilar]) furo_ponteiro(7);              // furo do ponteiro_az
         furos_cartucheira();
         // janelas no piso da bandeja, entre as nervuras (a parede fica presa pelas nervuras)
         translate([0, 0, -1]) linear_extrude(h_piso + 1.01, convexity = 8) offset(r = 2) offset(delta = -2)
@@ -686,6 +682,9 @@ r_pilar  = r_faixa_az[1] + 1;   // face interna do pilar do ponteiro (base)
 a_pilar  = 4/(r_pilar + 2)*180/PI;   // pilar de ~8 mm de largura
 r_ponta_az = r_faixa_az[1] - 3.5;    // ponta da agulha
 a_ress   = 6;                   // largura angular de cada ressalto de batente
+z_topo_pilar = z_mesa + h_mesa + 0.5;   // topo do pilar: a agulha do ponteiro_az fica 0,5 mm acima da faixa
+r_furo_pont  = (r_pilar + r_parede[0])/2;   // furo quadrado do ponteiro_az no topo do pilar
+c_pont_az    = r_furo_pont - r_ponta_az;    // alcance da agulha
 module mesa() {
     passo = 360/z_az;
     dentes = [for (k = [-round(setor_az/passo):round(setor_az/passo)]) (k + z_az) % z_az];
@@ -1305,6 +1304,7 @@ module montagem() {
             translate([R_pista, 0, z_esf]) sphere(d = d_esfera, $fn = 16);
 
     acion_az(rot_raz);
+    color("Red") translate([-r_furo_pont, 0, z_topo_pilar]) ponteiro(1.5, c_pont_az);   // ponteiro de azimute (encaixa no pilar)
 
     // tudo que gira com a mesa
     rotate([0, 0, az]) {
@@ -1363,6 +1363,7 @@ else if (PARTE == "eixo_el")     translate([0, 0, f_eixo/2]) rotate([90, 0, 0])
 else if (PARTE == "eixo_munhao") translate([0, 0, f_munhao/2]) rotate([90, 0, 0])
                                      eixo_hex(f_munhao, mu_z0, mu_z1, [mu_g1, mu_g2], dc_8);
 else if (PARTE == "ponteiro_el") translate([0, 0, 2]) rotate([90, 0, 0]) ponteiro(h_pont_el, c_pont_el);
+else if (PARTE == "ponteiro_az") translate([0, 0, 2]) rotate([90, 0, 0]) ponteiro(1.5, c_pont_az);
 else if (PARTE == "pino_pivo")   pino_pivo();
 else if (PARTE == "anel_pista_base") translate([0, 0, t_anel + h_dente_inf]) rotate([180, 0, 0]) anel_pista(h_dente_inf);  // canal para baixo, dentes para cima
 else if (PARTE == "anel_pista_mesa") translate([0, 0, t_anel + h_dente_sup]) rotate([180, 0, 0]) anel_pista(h_dente_sup);

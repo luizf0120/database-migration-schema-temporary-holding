@@ -360,7 +360,7 @@ Cada peça já sai na orientação de impressão.
 | Grupo | Peças |
 |---|---|
 | Base e mesa | `base`, `mesa`, `anel_pista_base`, `anel_pista_mesa`, `pino_pivo` |
-| Carro | `carro`, `roda_el`, `ponteiro_el` |
+| Carro | `carro`, `roda_el`, `ponteiro_el`, `ponteiro_az` (encaixa no pilar da base) |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
 | Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `porta_projeteis` |
 | Projéteis (×10) | `projetil_corpo` e `projetil_meio` na cor principal; `projetil_anel` e `projetil_ponta` na cor 2 (o `projetil` inteiro continua disponível, numa cor só) |
@@ -370,22 +370,111 @@ Cada peça já sai na orientação de impressão.
 
 **Imprima os anéis de pista com 4 paredes e 100%.**
 
-## Montagem (resumo)
+## Montagem passo a passo
 
-1. **Rolamento:** encaixe o `anel_pista_base` na base (canal para cima, dentes nos rasgos) e o `anel_pista_mesa`
-   embaixo da mesa (canal para baixo). Espalhe ~52 BBs no canal e pouse a mesa. Passe o `pino_pivo` pelo centro.
-2. **Rosca de azimute:** passe o eixo pelos 3 mancais, depois encaixe as travas e a manivela.
-3. **Carro:** ponha o `pino_pivo` na mesa (a cabeça entra no rebaixo da espiga). Passe **epóxi** no assento e na espiga,
-   encaixe o carro com o cano para o lado dos dentes (o pino de posição só deixa entrar assim), aperte e deixe curar.
-   Depois passe o eixo da rosca de elevação pelos 3 mancais e encaixe as travas e a manivela.
-4. **Lançador:**
-   - Ponha o `amortecedor` no fundo (frente) do cilindro.
-   - Encaixe o cano no soquete, empurre até o colar e gire 30°.
-   - Coloque o pistão **por trás**, com a quilha no rasgo de cima, e a mola dentro dele.
-   - Feche a `tampa`: encaixe os ressaltos, empurre, gire 30° e solte.
-   - Monte o pinhão, a coroa e o eixo, depois a rosca de armar e o volante. Estale a `punho_armar` no pino do volante.
-   - Por último, o gatilho: passe o `pino_gatilho` por cima da orelha e prenda com a `trava_4` por baixo.
-5. **Cano no carro:** coloque a culatra entre as bochechas e a coroa de elevação do lado de fora. Passe o eixo do munhão e as travas.
+**Material:**
+- ~52 BBs de 6 mm e a mola;
+- **epóxi** de 5 ou 10 min (para o carro);
+- **cola instantânea** (para o anel de cima e os projéteis);
+- vaselina ou graxa de silicone;
+- lixa 220 e 400, estilete, alicate de bico e uma chave de fenda pequena.
+
+**Regra de ouro:** monte tudo **a seco** antes de colar qualquer coisa. Se um eixo ou encaixe estiver duro, lixe o furo
+(lixa enrolada num palito) ou passe uma broca do tamanho com a mão. **Não force**: PETG trinca quando forçado.
+
+**Lados:** "direita" e "esquerda" são **olhando o canhão de frente** (pela boca do cano).
+- **Direita:** a bochecha com o braço do ponteiro de elevação e a coroa de elevação.
+- **Esquerda:** o gatilho, a coroa de armar e o volante.
+
+### 0. Teste de folgas (antes de imprimir o resto)
+Imprima primeiro a placa das peças pequenas. Passe o `eixo_el` na `rosca_el` e estale uma `trava_6` num canal do eixo.
+Se a rosca entrar sem forçar e a trava estalar e ficar firme, as folgas estão certas para a sua impressora.
+
+### 1. Base: rosca de azimute e anel de baixo
+1. **Rosca:** deite a `rosca_az` na calha, entre os dois mancais de dentro.
+2. **Eixo:** passe o `eixo_az` pelo lado da manivela, atravessando o mancal externo, o mancal de dentro, a rosca e o outro mancal.
+3. **Travas:** encaixe uma `trava_6` no canal da ponta, depois do último mancal, e outra no canal logo depois do mancal externo.
+   Para encaixar, encoste a boca da trava no canal e empurre de lado até estalar.
+4. **Manivela:** ponha a `manivela_az` no sextavado, com o tambor virado para o mancal, e a 3ª trava no canal de fora.
+   Estale o `punho` no pino. Ele tem que girar solto.
+5. **Anel de baixo:** encaixe o `anel_pista_base` no rebaixo da base, com o **canal para cima** e os 8 dentes nos rasgos.
+6. **Confira:** gire a manivela. A rosca tem que girar inteira, sem raspar.
+
+### 2. Mesa e carro (colados)
+1. **Pino pivô:** ponha o `pino_pivo` no furo central da mesa, de cima para baixo. A cabeça entra no rebaixo da espiga.
+2. **Teste a seco:** encaixe o carro no assento da mesa. Só entra de um jeito, com o cano para o lado dos dentes.
+3. **Colagem:**
+   - lixe as faces (assento, espiga e o fundo do disco do carro) e limpe com álcool;
+   - passe **epóxi** no assento e na espiga, encaixe o carro e aperte;
+   - limpe o excesso e deixe curar o tempo da embalagem, com a mesa deitada.
+4. **Anel de cima:**
+   - vire a mesa de cabeça para baixo e encaixe o `anel_pista_mesa` no rebaixo de baixo dela, com o **canal para fora** e os dentes nos rasgos;
+   - prenda com **3 ou 4 gotinhas de cola instantânea** nos dentes.
+   - **Por que colar o anel:** na hora de descer a mesa, a coroa já engrena na rosca antes do anel entrar nos rasgos. Aí não dá mais para girar a mesa e achar os rasgos.
+
+### 3. Rolamento e descida da mesa
+1. Passe uma camada fina de **vaselina** no canal do anel de baixo e distribua as **52 BBs** por igual.
+2. **Ponteiro fora:** o `ponteiro_az` **ainda não vai**. Ele encaixa depois, senão a faixa da escala bate nele.
+3. **Posição:** segure a mesa com o carro em cima da base, com:
+   - a **faixa da escala virada para trás**, de modo que o **pilar da base fique entre os dois ressaltos** das pontas da faixa;
+   - os **dentes na frente**, sobre a rosca;
+   - o **pino pivô** sobre o furo do centro.
+4. **Desça devagar.** Quando os dentes tocarem a rosca, gire **de leve** a manivela de azimute para um lado e para o outro até eles entrarem.
+   Deixe a mesa pousar nas BBs.
+5. **Ponteiro:** encaixe o `ponteiro_az` no furo quadrado do topo do pilar, com a agulha virada para a escala.
+6. **Confira:**
+   - gire a manivela de azimute de ponta a ponta: tem que ir de −50° a +50° liso e parar firme em ±52°, no pilar;
+   - **a mesa não pode raspar na parede da base em nenhum ponto.**
+
+### 4. Elevação
+1. **Rosca:** coloque a `rosca_el` entre os dois mancais de dentro do carro.
+2. **Eixo:** passe o `eixo_el` por trás, atravessando o mancal externo, o mancal de trás, a rosca e o mancal da frente.
+3. **Travas:** ponha uma `trava_6` na ponta da frente e outra depois do mancal externo.
+4. **Manivela:** coloque a `manivela_el` no eixo, a 3ª trava e estale o `punho`.
+
+### 5. Lançador (monte fora do canhão)
+1. **Amortecedor:** empurre o `amortecedor` pela boca de trás da culatra até o fundo do cilindro, encostado no degrau da frente.
+2. **Cano:** encaixe o `cano` no soquete da frente, alinhando os ressaltos com as entradas laterais.
+   Empurre até o colar e gire 30°.
+3. **Pistão e mola:** coloque o `pistao` **por trás**, com a quilha (a cremalheira) no rasgo de cima, e a mola dentro dele.
+4. **Tampa:** encaixe os ressaltos da `tampa` nas entradas, empurre (comprimindo a mola), gire 30° e solte.
+   A mola puxa a tampa para o entalhe e ela trava.
+5. **Pinhão e coroa:**
+   - com o **pistão todo para a frente**, ponha o `pinhao_armar` entre as duas placas, com a **parte lisa virada para a cremalheira**;
+   - passe o `eixo_pinhao` e ponha a `coroa_armar` do lado de fora da placa esquerda. Escolha a posição no sextavado em que a **faixa PRONTO gravada fica bem embaixo da seta** do mancal;
+   - prenda com as 2 travas.
+6. **Rosca de armar e volante:**
+   - ponha a `rosca_armar` entre os dois mancais de trás, passe o `eixo_armar` e encaixe as travas;
+   - coloque o `volante_armar` atrás, com a última trava, e estale a `punho_armar` no pino.
+7. **Gatilho:**
+   - encaixe o `gatilho` por baixo da orelha, com o dente entrando na janela do cilindro;
+   - passe o `pino_gatilho` de cima para baixo e prenda com a `trava_4` por baixo;
+   - a lâmina de mola tem que encostar no cilindro e empurrar o dente para dentro.
+8. **Teste do lançador:**
+   - gire o volante no sentido da seta: o pistão recua, o gatilho estala e a faixa **PRONTO** passa sob a seta;
+   - aperte o botão do gatilho: o pistão dispara;
+   - repita algumas vezes **sem projétil** e sem forçar.
+
+### 6. Cano no carro
+1. **Culatra:** apoie a culatra entre as bochechas.
+2. **Coroa:** ponha a `roda_el` do lado de fora da bochecha direita, com a escala para fora e os ressaltos de batente para dentro. Encoste os dentes na rosca de elevação.
+3. **Munhão:** passe o `eixo_munhao` pela direita, atravessando a coroa, a bochecha, a culatra e a outra bochecha.
+   Gire de leve a manivela de elevação para os dentes entrarem. Prenda com as 2 `trava_8`.
+4. **Ponteiro de elevação:** encaixe o `ponteiro_el` no furo quadrado do braço da bochecha direita.
+5. **Confira:** suba e desça de −20° a 85°. Nas pontas, os ressaltos da coroa encostam no batente da bochecha.
+
+### 7. Projéteis
+1. **Ordem, de baixo para cima:** corpo (cor 1), anel (cor 2), meio (cor 1) e ponta (cor 2).
+2. **Teste a seco:** o pino do corpo atravessa o anel e entra no meio; o pino do meio entra na ponta.
+3. **Colagem:** uma gota pequena de cola instantânea em cada pino.
+   Gire o projétil entre os dedos para a cola espalhar e **limpe o que sair**, para não colar a cinta de guia.
+4. **Teste no cano:** cada projétil tem que deslizar no cano sem enroscar. Se ficar justo, passe lixa 400 na cinta, girando.
+
+### 8. Atirar
+1. **Mira:** aponte com as duas manivelas. Chegue sempre no ângulo **girando no mesmo sentido**, por causa da folga dos dentes.
+2. **Armar:** gire o volante de armar até a faixa **PRONTO** ficar sob a seta (16 voltas por ciclo completo).
+3. **Carregar:** ponha um projétil na boca do cano, com a **base para dentro**, e empurre com o `soquete` até encostar no pistão.
+4. **Disparar:** aperte o botão do gatilho.
 
 ## Verificações feitas (CGAL)
 
