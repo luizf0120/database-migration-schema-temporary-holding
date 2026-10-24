@@ -1,4 +1,4 @@
-# Canhão de brinquedo v8: carro preso na mesa por cunhas, projéteis em 2 cores, coroas e bochechas vazadas, base enxuta, pontaria 120:1 (3° por volta) e só 2 itens para comprar
+# Canhão de brinquedo v9: carro colado no centro da mesa, escala na mesa, projéteis em 2 cores, coroas e bochechas vazadas, base enxuta, pontaria 120:1 (3° por volta) e só 2 itens para comprar
 
 ![montagem](montagem.png)
 
@@ -20,7 +20,7 @@ Todo o resto é impresso: rolamento, baionetas, pinos, eixos e travas. Não há 
 
 | Eixo | Curso útil | Batente | Dentes que sobraram |
 |---|---|---|---|
-| **Azimute** | **−50° a +50°** (giro total de 100°) | ressalto da mesa bate em 2 blocos da base a ±52° | arco de 120° (41 dentes) |
+| **Azimute** | **−50° a +50°** (giro total de 100°) | os ressaltos das pontas da faixa da mesa batem no pilar do ponteiro a ±52° | arco de 120° (41 dentes) |
 | **Elevação** | **−20° a +85°** (dá para atirar para baixo) | ressaltos da coroa batem no carro a −22° e +87° | arco de 220° em volta do eixo |
 
 **Por que a coroa não "solta" no fim do curso:** o batente fica **antes** do último dente. No azimute, o setor
@@ -31,7 +31,7 @@ consegue pular para fora da coroa.
 
 **Leitura em duas etapas, como num micrômetro:**
 1. **Escala grande:** número a cada 10°, traço a cada 5°, ponto a cada 2,5°. No azimute, a escala de −50 a +50
-   agora é **fixa na aba da base**, e o ponteiro é a ponta do ressalto da mesa, que passa por cima da parede.
+   fica **gravada na mesa** (na faixa de trás) e gira com ela. O **ponteiro é fixo na base**, num pilar atrás.
    Na elevação, a escala continua na coroa.
 2. **Tambor da manivela** (Ø44): o número 0 fica no braço, e os números 1 e 2 a cada 1/3 de volta (cada um vale 1°).
    Os traços médios marcam 0,5° e os curtos 0,1° (30 marcas por volta). Está gravado **"1 VOLTA = 3°"**. A seta do mancal externo é o índice.
@@ -148,8 +148,7 @@ Para lixar as cintas, se ficarem justas, gire o projétil entre os dedos com uma
 | `folga_desl` | 0,25 mm (Ø) | pistão no cilindro; quilha no rasgo (0,2 mm por lado) | 0,35 |
 | `folga_ax` | 0,15 mm | **rosca encostada nos mancais** (sem jogo axial) | 0,25 |
 | `folga_dente` | **0,20 mm** (v8; era 0,12) | entre os dentes (backlash). Cobre o "pé de elefante" e a dilatação do PETG | 0,25 |
-| `folga_or` | 0,15 mm por lado | orelha da mesa no garfo do carro | 0,20 |
-| janela da cunha | 0,2 mm por lado | cunha de 4,6 mm na janela de 5 mm | — |
+| `folga_cola_c` | 0,2 mm por lado | encaixe colado do carro na mesa (espaço para a cola) | — |
 | `folga_cola` | 0,35 mm (Ø) | pinos de centragem do projétil | — |
 
 Teste antes de imprimir tudo: imprima `trava_6`, `eixo_el`, `rosca_el` e `manivela_el`.
@@ -244,56 +243,55 @@ pesa são as paredes. Tirar volume ajuda muito no maciço. No típico, o que mai
   O piso de 3 mm virou só uma moldura: entre as nervuras ele tem **janelas**, porque quem amarra a parede são as nervuras.
 - **Casulos de projétil (v7):** a saia contínua saiu. Cada projétil tem o seu casulo, um bloco preso na parede com
   1,8 mm de plástico em volta do furo. **Entre um casulo e outro não há nada**, e por baixo fica tudo aberto.
-- **Aba da escala:** só do lado de trás (±62°), com apoio a 45° para imprimir sem suporte.
+- **Pilar do ponteiro (v9):** atrás, colado na parede. Leva a agulha da escala de azimute e é o batente.
 - **Sem anel por cima:** a mesa continua só apoiada nas BBs. O peso do cano e do carro a mantém no lugar, e os blocos de batente seguram o giro.
 - **Plataforma da manivela (v7):** agora é vazada. Os **3 mancais descem até o chão** como paredes, os dois de dentro entram na parede
   da bandeja e **2 trilhos** de 3 × 11 mm amarram os três por baixo da rosca, a 2,75 mm dela. A rosca entra na bandeja por uma janela da parede.
 
-### Mesa e carro: duas peças presas por cunhas (v8)
-A mesa giratória (a coroa de azimute) e o carro (bochechas e mancais da elevação) voltaram a ser **peças separadas**.
-Elas são presas por **4 orelhas com cunha**, o mesmo princípio da chaveta das máquinas antigas: **aperto total, sem folga e sem parafuso**.
+### Mesa e carro: carro colado no centro da mesa (v9)
+A mesa giratória (a coroa de azimute) e o carro (bochechas e mancais da elevação) são **duas peças**.
+O carro senta **no centro da mesa** e é **colado** ali.
 
-**Como trava:**
-1. A mesa tem **4 orelhas** em pé (9 × 6 mm): duas no **aro dentado** (frente) e duas no **contrapeso** (trás), bem embaixo das bochechas.
-2. O quadro do carro tem **4 garfos**, abertos para fora, que abraçam as orelhas com **0,15 mm por lado**. Os quatro juntos prendem o carro em X e em Y.
-3. Cada orelha tem uma **janela** por onde passa uma **cunha** de 22 mm, inclinada **1:12** (de 3,0 a 4,8 mm de altura).
-   A cunha apoia em cima do garfo e empurra o teto da janela, que tem a mesma inclinação. Isso **puxa o carro para baixo contra a mesa**.
-4. **Por que não solta com os disparos:** com inclinação de 1:12, o atrito do PETG (μ ≈ 0,3) é umas **4 vezes** maior do que o necessário
-   para a cunha ficar parada sozinha (autotravante). E o disparo quase não empurra o carro: a pancada do pistão fecha dentro da culatra.
-5. **Apertar:** empurre cada cunha pela ponta grossa, de fora para dentro, até firmar com o dedo, e dê um toque leve com o cabo de uma chave de fenda.
-   **Soltar:** toque a ponta fina, que fica para o lado de dentro.
-   Cada 1 mm a mais de cunha aperta mais 0,08 mm, então ela compensa a variação da impressão e o desgaste por muito tempo.
+**O encaixe (só para posicionar; quem prende é a cola):**
+- **Assento:** o centro da mesa tem um **assento** de Ø48, com a espessura cheia da mesa.
+- **Espiga:** em cima do assento há uma **espiga retangular** de 30 × 20 × 4 mm e um **pino de posição** de Ø5, fora do centro.
+- **Rebaixo:** o carro tem embaixo um **disco** de Ø48 × 8 mm com o rebaixo dessas duas formas, **0,2 mm de folga por lado** para a cola.
+  Por causa do pino fora do centro, o carro só entra **virado para a frente** (cano para o lado dos dentes).
+- **Ranhuras:** o fundo do disco tem **2 ranhuras de cola** em anel. O excesso de cola escorre para elas, em vez de levantar o carro.
+- **Área colada:** ~2000 mm², somando o anel do assento e as paredes e o topo da espiga.
 
-![corte da cunha](corte_cunha.png)
-
-Corte por uma orelha: a cunha (com o topo inclinado) atravessa a janela e apoia no garfo dos dois lados; as linhas finas são a folga de 0,15 mm.
-
-**Apoios:** o carro só assenta nos 4 cantos, sobre o aro dentado e o contrapeso, logo ao lado das orelhas.
-O cubo central fica 0,3 mm mais baixo de propósito, para o carro não "cavalgar" no meio. Quatro apoios mais quatro cunhas
-dão um conjunto que não balança.
-
-**Economia de material:**
-- **Mesa:** perdeu as vigas e os pés dos mancais. Ficou só com cubo, aro dentado, copo fino, raios finos, contrapeso e orelhas.
-- **Carro:** ganhou um **quadro baixo** de 6 mm (2 trilhos sob as bochechas, 2 travessas, 4 garfos, pés e trilho dos mancais),
-  bem mais leve que as vigas de 12 mm que a mesa tinha.
+**Cola recomendada:** **epóxi** de 5 ou 10 minutos (Araldite). É o melhor para PETG e preenche bem a folga de 0,2 mm.
+Cianoacrilato (Super Bonder) também cola, mas fica quebradiço com as pancadas dos disparos.
+- **Preparo:** lixe as faces com lixa 220 e limpe com álcool.
+- **Colagem:** passe a cola, encaixe, aperte com a mão e deixe curar com o canhão em pé.
+- **Antes de colar:** coloque o `pino_pivo` na mesa. A cabeça dele fica num rebaixo no topo da espiga e some debaixo do carro.
 
 **Mesa:**
-- **Grosso (12 mm):** cubo do pivô, aro dentado (6 mm abaixo do pé do dente), contrapeso e orelhas.
-- **Fino no resto:**
-  - o **copo** que abraça o anel de pista (9,2 mm de altura, 1,6 mm de parede, 3,2 mm de teto);
-  - **6 raios** de 8 × **4 mm**, rasos, bem mais finos que o aro, olhando pela face dos dentes.
-- **Contrapeso atrás:** um arco de **36°** (de 162° a 198°) rente à parede da base, com 1,5 mm de folga.
-  Ele carrega o **ponteiro**, o ressalto dos batentes e as duas orelhas de trás.
+- **Grosso (12 mm):**
+  - o **assento do carro**, com 6 bolsões por baixo para aliviar (teto de 3 mm);
+  - o **aro dentado**, 6 mm abaixo do pé do dente;
+  - a **faixa da escala** atrás.
+- **Fino:**
+  - o **copo** que abraça o anel de pista (9,2 mm);
+  - **6 raios** de 9 × 7 mm. Engrossaram em relação à v8, porque agora levam o peso do carro do centro até o anel das esferas.
+- **Faixa da escala (contrapeso):** um arco de **110°** atrás, do lado oposto aos dentes.
+  - Tem os **graus gravados no topo** e 10 bolsões por baixo, com teto de 2,4 mm.
+  - Faz de **contrapeso** do aro dentado.
+  - Nas duas pontas tem os **ressaltos de batente**.
+
+**Base:**
+- **Pilar do ponteiro:** atrás (no ângulo 180) há um pilar colado na parede da bandeja, com a **agulha** que aponta para a escala da mesa, 0,5 mm acima dela.
+- **Batente:** o pilar é também o **batente de azimute**. Em ±52°, o ressalto da ponta da faixa encosta nele, e a rosca ainda tem dentes de sobra.
+- **O que saiu:** a aba da escala e os 2 blocos de batente antigos.
 
 **Carro:**
-- **Bochechas em treliça:** moldura de 5 mm e diagonais de 4,5 mm a 45° (imprime em pé sem suporte).
-  Maciços só o pé, o bloco do munhão, um losango sob o batente de elevação e, na bochecha da direita, as faixas onde encostam as almas dos mancais.
-- **Braço do ponteiro:** tem 3 janelas inclinadas.
+- **Quadro:** só o disco central, 2 trilhos curtos sob as bochechas e os pés e o trilho dos mancais.
+  Saíram os garfos, as travessas e os trilhos compridos.
+- **Bochechas:** em treliça, como na v7.1.
 
 **Impressão:**
-- **Mesa:** fundo para baixo. A janela das orelhas é uma ponte de 5 mm.
-- **Carro:** quadro para baixo e bochechas para cima.
-- **Cunhas:** **de lado**, para a rampa sair lisa.
+- **Mesa:** fundo para baixo. A espiga e o pino de posição ficam em cima.
+- **Carro:** disco para baixo e bochechas para cima. O rebaixo fica embaixo, como uma ponte de 20 mm.
 
 ### Coroa de elevação raiada (v7)
 O aro dentado e o cubo continuam com 10 mm. Entre eles há **7 raios** largos (8 a 10 mm) e **finos na espessura: 4 mm** (v7.1),
@@ -330,7 +328,7 @@ As **BBs de 6 mm** rolam entre eles.
 ### Sem parafusos
 | Onde era parafuso | Agora | Por que não espana |
 |---|---|---|
-| Carro → mesa (4) | **4 orelhas + garfos + `cunha` 1:12** (v8) | a cunha trabalha à compressão e trava pelo atrito; não há rosca nenhuma |
+| Carro → mesa (4) | **colado no centro** (v9): espiga e pino de posição, com epóxi | a cola trabalha numa área grande (~2000 mm²), sem rosca nenhuma |
 | Tampa traseira (2) | **baioneta em J**: encaixe, empurre, gire 30° e solte. A mola puxa os ressaltos para o entalhe | é a própria mola que trava a tampa |
 | Cano (1) | **baioneta**: encaixe até o colar e gire 30°. Fica justo no fim do curso | o cano quase não leva esforço: a pancada fica no degrau da culatra |
 | Pivô do gatilho (1) | **`pino_gatilho`** de Ø4 com **`trava_4`** | o pino só leva cisalhamento (~27 N) |
@@ -342,7 +340,7 @@ Cada peça já sai na orientação de impressão.
 | Grupo | Peças |
 |---|---|
 | Base e mesa | `base`, `mesa`, `anel_pista_base`, `anel_pista_mesa`, `pino_pivo` |
-| Carro | `carro`, `cunha` ×4, `roda_el`, `ponteiro_el` |
+| Carro | `carro`, `roda_el`, `ponteiro_el` |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
 | Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `porta_projeteis` |
 | Projéteis (×10) | `projetil_corpo` e `projetil_meio` na cor principal; `projetil_anel` e `projetil_ponta` na cor 2 (o `projetil` inteiro continua disponível, numa cor só) |
@@ -350,15 +348,16 @@ Cada peça já sai na orientação de impressão.
 
 **Comprar:** ~52 BBs de 6 mm e 1 mola 1,0×12×100. Mais nada.
 
-**Imprima os anéis de pista e as cunhas com 4 paredes e 100%.**
+**Imprima os anéis de pista com 4 paredes e 100%.**
 
 ## Montagem (resumo)
 
 1. **Rolamento:** encaixe o `anel_pista_base` na base (canal para cima, dentes nos rasgos) e o `anel_pista_mesa`
    embaixo da mesa (canal para baixo). Espalhe ~52 BBs no canal e pouse a mesa. Passe o `pino_pivo` pelo centro.
 2. **Rosca de azimute:** passe o eixo pelos 3 mancais, depois encaixe as travas e a manivela.
-3. **Carro:** encaixe os 4 garfos do carro nas 4 orelhas da mesa. Passe as 4 `cunha` pelas janelas, com a ponta fina para dentro,
-   e empurre até firmar. Depois passe o eixo da rosca de elevação pelos 3 mancais e encaixe as travas e a manivela.
+3. **Carro:** ponha o `pino_pivo` na mesa (a cabeça entra no rebaixo da espiga). Passe **epóxi** no assento e na espiga,
+   encaixe o carro com o cano para o lado dos dentes (o pino de posição só deixa entrar assim), aperte e deixe curar.
+   Depois passe o eixo da rosca de elevação pelos 3 mancais e encaixe as travas e a manivela.
 4. **Lançador:**
    - Ponha o `amortecedor` no fundo (frente) do cilindro.
    - Encaixe o cano no soquete, empurre até o colar e gire 30°.

@@ -715,7 +715,7 @@ module mesa() {
             linear_extrude(h_mesa, convexity = 6) {
                 arco(r_faixa_az[0], r_faixa_az[1], 180 - a_faixa, 180 + a_faixa);
                 for (sg = [-1, 1]) let(a0 = 180 + sg*a_faixa)
-                    arco(r_faixa_az[0], r_pilar + 2.5, min(a0, a0 + sg*a_ress), max(a0, a0 + sg*a_ress));
+                    arco(r_faixa_az[0] + 0.5, r_pilar + 2.5, min(a0 - sg, a0 + sg*a_ress), max(a0 - sg, a0 + sg*a_ress));   // entra 1 grau na faixa (sem aresta coincidente)
             }
         }
         rebaixo_anel(0, 1, h_dente_sup);       // assento do anel de pista de cima (com encaixes)
