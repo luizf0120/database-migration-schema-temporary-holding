@@ -319,6 +319,16 @@ Peça: `punho_armar` (imprima em pé, com a tampa para cima).
 É um **rolamento de verdade**: um **anel menor dentro de um anel maior**, com as BBs **presas** no canal entre os dois.
 É o mesmo tipo de rolamento das mesas giratórias de guindastes e de torres: segura o peso, o esforço de lado e a alavanca do cano.
 
+![rolamento explodido](rolamento_explodido_inteiro.png)
+
+Vista explodida: os 3 anéis são **inteiros (360°)**. De cima para baixo:
+- a metade de cima do anel externo;
+- o anel interno, com os dentes que entram na mesa;
+- as 52 BBs;
+- a metade de baixo do anel externo, com as chavetas que entram na base.
+
+As duas metades se empilham e formam o anel externo; cada uma tem metade do canal em V.
+
 ![corte do rolamento](rolamento_corte.png)
 
 **Corte (da esquerda para a direita):**
