@@ -1,4 +1,4 @@
-# Canhão de brinquedo v10: rolamento de esferas de verdade, carro colado no centro da mesa, escala na mesa, projéteis em 2 cores, coroas e bochechas vazadas, base enxuta, pontaria 120:1 (3° por volta) e só 2 itens para comprar
+# Canhão de brinquedo v11: base de 15 cm, rolamento de esferas de verdade, carro colado no centro da mesa, escala na mesa, projéteis em 2 cores e só 2 itens para comprar
 
 ![montagem](montagem.png)
 
@@ -6,8 +6,33 @@ Arquivo único: [`artilharia.scad`](artilharia.scad), 100% paramétrico, ASCII p
 Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `canhao_completo.zip`.
 
 **Para comprar, só 2 itens:**
-- **~52 BBs de airsoft de 6 mm**: são as esferas do rolamento da mesa.
-- **1 mola de compressão 1,0 × 12 × 100 mm**.
+- **~40 BBs de airsoft de 6 mm** (compre um pacote; sobram muitas): são as esferas do rolamento da mesa.
+- **1 mola de compressão 0,8 × 9 × 75 mm** (fio de 0,8 mm, Ø externo 9 mm, 75 mm de comprimento).
+
+## Tamanho (v11)
+Tudo foi reduzido para **77%** (fator 150/194), para a **base ficar com 15 cm**.
+
+**Medidas do canhão montado:**
+| Medida | Valor |
+|---|---|
+| Base | **Ø15 cm** (16 cm com a manivela de azimute) |
+| Altura com o cano na horizontal | ~17 cm |
+| Altura com o cano a 85° | ~24 cm |
+| Comprimento (cano a 0°) | ~20 cm |
+| Largura | ~16 cm |
+| Eixo do munhão | a 11 cm do chão |
+
+**O que não encolheu (de propósito):**
+- **Folgas:** sairiam 23% menores e os encaixes travariam. No arquivo elas usam `mm_real()` e saem com o valor real.
+- **BBs de 6 mm:** são compradas. O rolamento continua para BB de 6 mm, num raio menor, e agora cabem **40 BBs**.
+- **Mola:** a de 12 mm não cabe mais. A proporcional é a de **0,8 × 9 × 75 mm**, que no AliExpress aparece como "mola de compressão 0,8 x 9 x 75 mm".
+  Ela comprime de 12,8 a 39,8 mm e é mais leve de armar.
+- **Profundidade das gravações** (0,6 mm) e o **texto pequeno** do tambor, para continuarem legíveis.
+
+**Continua igual:** 120:1 e 3° por volta nas duas manivelas, os mesmos cursos e todos os mecanismos.
+
+**Como funciona no arquivo:** o `.scad` continua desenhado em escala 1:1 (base de 194 mm), e toda peça sai multiplicada por `ESCALA` na exportação.
+Nas seções de projeto abaixo, algumas medidas internas ainda estão na escala de desenho. As **folgas** e as **medidas desta seção** são reais.
 
 Todo o resto é impresso: rolamento, baionetas, pinos, eixos e travas. Não há nenhum parafuso nem rosca em plástico para espanar.
 
@@ -15,8 +40,8 @@ Todo o resto é impresso: rolamento, baionetas, pinos, eixos e travas. Não há 
 
 | Eixo | Acionamento | Redução | 1 volta da manivela | Números do tambor | 1 marca do tambor |
 |---|---|---|---|---|---|
-| **Azimute** | rosca sem fim → mesa = setor de coroa (passo de 120 dentes), módulo 1,25 (Ø152) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
-| **Elevação** | rosca sem fim → setor de coroa (passo de 120 dentes), módulo 1 (Ø122) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
+| **Azimute** | rosca sem fim → mesa = setor de coroa (passo de 120 dentes), módulo 0,97 (Ø118) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
+| **Elevação** | rosca sem fim → setor de coroa (passo de 120 dentes), módulo 0,77 (Ø94) | 120 : 1 | **3°** | **1° a cada 1/3 de volta** | 0,1° |
 
 | Eixo | Curso útil | Batente | Dentes que sobraram |
 |---|---|---|---|
@@ -33,7 +58,7 @@ consegue pular para fora da coroa.
 1. **Escala grande:** número a cada 10°, traço a cada 5°, ponto a cada 2,5°. No azimute, a escala de −50 a +50
    fica **gravada na mesa** (na faixa de trás) e gira com ela. O **ponteiro é fixo na base**, num pilar atrás.
    Na elevação, a escala continua na coroa.
-2. **Tambor da manivela** (Ø44): o número 0 fica no braço, e os números 1 e 2 a cada 1/3 de volta (cada um vale 1°).
+2. **Tambor da manivela** (Ø34): o número 0 fica no braço, e os números 1 e 2 a cada 1/3 de volta (cada um vale 1°).
    Os traços médios marcam 0,5° e os curtos 0,1° (30 marcas por volta). Está gravado **"1 VOLTA = 3°"**. A seta do mancal externo é o índice.
 
 Exemplo: o ponteiro está entre o ponto de 32,5° e o traço de 35°, e o tambor mostra "1" mais 3 traços curtos.
@@ -53,7 +78,7 @@ que entra num canal interno da capa. Depois disso ela **não sai mais**, mas **g
 
 *Corte armado: o pistão (laranja) está recuado e a mola (azul) comprimida. A bolinha está carregada e a parte lisa do pinhão encara a cremalheira.*
 
-**Mola (AliExpress):** mola de compressão de aço, **fio 1,0 mm × Ø externo 12 mm × 100 mm**.
+**Mola (AliExpress):** mola de compressão de aço, **fio 0,8 mm × Ø externo 9 mm × 75 mm**.
 Procure por "compression spring 1.0 x 12 x 100". Se só achar mais longa, corte. A mola trabalha dentro do pistão,
 apoiada numa guia na tampa, com pré-carga de ~20 mm e ~55 mm comprimida quando armada (~25–30 N).
 
@@ -62,7 +87,7 @@ canhão antigo, e rola até o pistão. Com o cano na horizontal, empurre com o `
 
 ### Como funciona
 
-1. **Armar:** o **volante de armar** (Ø28, com uma capa de clique que gira solta, igual à das manivelas) fica atrás, na esquerda, com o eixo paralelo ao cano.
+1. **Armar:** o **volante de armar** (Ø22, com uma capa de clique que gira solta, igual à das manivelas) fica atrás, na esquerda, com o eixo paralelo ao cano.
    Ele gira uma **rosca sem fim
    (16:1, autotravante)**, que gira uma coroa e um **pinhão "mutilado"**. Esse pinhão tem 8 dentes de um lado e é liso do outro,
    como o setor de um gearbox de airsoft. O pinhão puxa a **cremalheira** que fica no topo do pistão, comprimindo a mola.
@@ -93,10 +118,10 @@ canhão antigo, e rola até o pistão. Com o cano na horizontal, empurre com o `
 
 ## Projéteis
 
-Formato de granada de morteiro: **corpo cilíndrico curto + ogiva tangente curta** (Ø12,5 × 22 mm), com a ponta
+Formato de granada de morteiro: **corpo cilíndrico curto + ogiva tangente curta** (Ø9,6 × 17 mm), com a ponta
 levemente achatada e base plana chanfrada. A base é onde o pistão empurra, e o chanfro ajuda a entrar no funil do cano.
 
-- **Desliza sem vibrar:** tem **duas cintas de guia**, na frente e atrás, com 0,15 mm de folga por lado na alma de 12,8 mm.
+- **Desliza sem vibrar:** tem **duas cintas de guia**, na frente e atrás, com 0,15 mm de folga por lado na alma de 9,9 mm.
   O meio é rebaixado 0,4 mm, então só as cintas tocam o cano. Com pouco atrito e dois apoios afastados, ele não
   "dança" no tubo e sai alinhado.
 - **Caminho conferido no CGAL:** o projétil passa livre apoiado no pistão armado, sem tocar no dente do gatilho,
@@ -117,8 +142,8 @@ levemente achatada e base plana chanfrada. A base é onde o pistão empurra, e o
   | `projetil_meio` | cor principal | 3,5 mm, o meio da ogiva |
   | `projetil_ponta` | cor 2 | ~3 mm, a ponta |
 
-  - **Encaixes de centragem para colar:** o **pino de Ø5** do corpo atravessa o anel e entra 1,5 mm no meio.
-    O meio tem um **pino de Ø3** que entra na ponta.
+  - **Encaixes de centragem para colar:** o **pino de Ø3,9** do corpo atravessa o anel e entra no meio.
+    O meio tem um **pino de Ø2,3** que entra na ponta.
   - **Folga para a cola:** 0,35 mm no diâmetro, então as partes entram sem forçar e não tem como montar torto.
   - **Cola:** cianoacrilato (Super Bonder) funciona bem em PETG; lixe de leve as faces antes.
     Passe pouca cola, só no pino, para não escorrer na cinta de guia.
@@ -159,10 +184,10 @@ Por isso conferi todos os encaixes e abri os que estavam no limite:
 
 | Encaixe | Antes | Agora | Por quê |
 |---|---|---|---|
-| Espiga do cano no soquete da culatra | Ø20 em Ø20,25 | **Ø20 em Ø20,4** | 0,12 por lado virava interferência |
+| Espiga do cano no soquete da culatra | 0,12 por lado | **0,2 por lado** | 0,12 por lado virava interferência |
 | Ressaltos da baioneta do cano | 0,05 mm de aperto | **justo, sem aperto** | o aperto somado ao degrau das camadas podia travar o giro |
 | Espigão da tampa no cilindro | 0,12 por lado | **0,2 por lado** | a tampa precisa girar 30° com a mola empurrando |
-| Pino do gatilho na orelha da culatra | Ø4 em Ø4,25 | **Ø4 em Ø4,35** | entrava forçado |
+| Pino do gatilho na orelha da culatra | 0,12 por lado | **0,17 por lado** | entrava forçado |
 | Dentes de todas as engrenagens | 0,12 | **0,20** | as primeiras camadas alargam o dente |
 
 Ficaram como estavam, porque já têm folga boa:
@@ -172,7 +197,7 @@ Ficaram como estavam, porque já têm folga boa:
 - os anéis do rolamento nas sedes (0,15) e as BBs no canal (~0,1 de jogo);
 - as capas dos punhos no pino (0,25);
 - os projéteis no cano (0,15) e nos casulos (0,25);
-- o pino pivô: Ø8 justo na mesa (Ø8,3), para servir de guia, e solto na base (Ø8,8).
+- o pino pivô: Ø6,2, justo na mesa (0,15 por lado) para servir de guia e solto na base (0,4 por lado).
 
 Ative a **compensação de "pé de elefante"** no fatiador (Creality Print: ~0,15 mm). Ela importa principalmente nas engrenagens e nos furos que ficam na primeira camada.
 
@@ -253,9 +278,9 @@ A mesa giratória (a coroa de azimute) e o carro (bochechas e mancais da elevaç
 O carro senta **no centro da mesa** e é **colado** ali.
 
 **O encaixe (só para posicionar; quem prende é a cola):**
-- **Assento:** o centro da mesa tem um **assento** de Ø48, com a espessura cheia da mesa.
-- **Espiga:** em cima do assento há uma **espiga retangular** de 30 × 20 × 4 mm e um **pino de posição** de Ø5, fora do centro.
-- **Rebaixo:** o carro tem embaixo um **disco** de Ø48 × 8 mm com o rebaixo dessas duas formas, **0,2 mm de folga por lado** para a cola.
+- **Assento:** o centro da mesa tem um **assento** de Ø37, com a espessura cheia da mesa.
+- **Espiga:** em cima do assento há uma **espiga retangular** de 23 × 15,5 × 3 mm e um **pino de posição** de Ø3,9, fora do centro.
+- **Rebaixo:** o carro tem embaixo um **disco** de Ø37 × 6 mm com o rebaixo dessas duas formas, **0,2 mm de folga por lado** para a cola.
   Por causa do pino fora do centro, o carro só entra **virado para a frente** (cano para o lado dos dentes).
 - **Ranhuras:** o fundo do disco tem **2 ranhuras de cola** em anel. O excesso de cola escorre para elas, em vez de levantar o carro.
 - **Área colada:** ~2000 mm², somando o anel do assento e as paredes e o topo da espiga.
@@ -306,11 +331,11 @@ Os **ressaltos de batente** ficam sobre pastilhas com os 10 mm cheios, porque é
 
 ### Capa de clique no volante de armar (v7.1)
 É a mesma ideia da capa das manivelas, em tamanho menor:
-- **Pino:** de Ø5, bipartido, com dente cônico.
-- **Capa:** de Ø10 × 14 mm, com um canal interno.
+- **Pino:** de Ø3,9, bipartido, com dente cônico.
+- **Capa:** de Ø7,7 × 10,7 mm, com um canal interno.
 
 Você empurra a capa, o dente estala no canal e ela **não sai mais, mas gira solta**, com 0,25 mm de folga.
-A capa assenta num ressalto de 2 mm, acima do cubo do volante, e não passa da borda dele (Ø28).
+A capa assenta num ressalto de 2 mm, acima do cubo do volante, e não passa da borda dele (Ø22).
 Peça: `punho_armar` (imprima em pé, com a tampa para cima).
 
 ## Sem nada comprado além das BBs e da mola
@@ -324,7 +349,7 @@ Peça: `punho_armar` (imprima em pé, com a tampa para cima).
 Vista explodida: os 3 anéis são **inteiros (360°)**. De cima para baixo:
 - a metade de cima do anel externo;
 - o anel interno, com os dentes que entram na mesa;
-- as 52 BBs;
+- as 40 BBs;
 - a metade de baixo do anel externo, com as chavetas que entram na base.
 
 As duas metades se empilham e formam o anel externo; cada uma tem metade do canal em V.
@@ -339,8 +364,8 @@ As duas metades se empilham e formam o anel externo; cada uma tem metade do cana
 **As peças:**
 | Peça | Onde fica | Encaixe |
 |---|---|---|
-| `anel_interno` (Ø98 a Ø112) | preso **na mesa, por cima** | 8 dentes para cima, que entram em rasgos largos da mesa |
-| `anel_externo_baixo` (Ø116 a Ø130) | preso **na base, por baixo** | 8 chavetas na lateral, que descem nos rasgos da parede da sede |
+| `anel_interno` (Ø73 a Ø87) | preso **na mesa, por cima** | 8 dentes para cima, que entram em rasgos largos da mesa |
+| `anel_externo_baixo` (Ø90 a Ø103) | preso **na base, por baixo** | 8 chavetas na lateral, que descem nos rasgos da parede da sede |
 | `anel_externo_cima` | colado em cima do `anel_externo_baixo` | a parede da sede da base centraliza as duas metades |
 
 **Como as BBs ficam presas:**
@@ -353,7 +378,7 @@ As duas metades se empilham e formam o anel externo; cada uma tem metade do cana
   A divisão fica bem no meio do canal. Você põe as BBs com a metade de cima fora e depois fecha.
 - **Vão entre a coroa e a base: 1 mm.** O topo do anel externo fica rente ao topo da base, 1 mm abaixo da mesa.
   O peso da mesa e do canhão passa **todo pelo rolamento**: mesa → anel interno → BBs → anel externo → base.
-- **52 BBs:** sobra ~0,9 mm entre elas, e elas rolam sem raspar uma na outra.
+- **40 BBs:** sobra ~0,9 mm entre elas, e elas rolam sem raspar uma na outra.
 - **Impressão:**
   - todos os flancos do V ficam a 45°, então nenhum anel precisa de suporte;
   - cada anel já sai na posição certa no arquivo;
@@ -365,7 +390,7 @@ As duas metades se empilham e formam o anel externo; cada uma tem metade do cana
 | Carro → mesa (4) | **colado no centro** (v9): espiga e pino de posição, com epóxi | a cola trabalha numa área grande (~2000 mm²), sem rosca nenhuma |
 | Tampa traseira (2) | **baioneta em J**: encaixe, empurre, gire 30° e solte. A mola puxa os ressaltos para o entalhe | é a própria mola que trava a tampa |
 | Cano (1) | **baioneta**: encaixe até o colar e gire 30°. Fica justo no fim do curso | o cano quase não leva esforço: a pancada fica no degrau da culatra |
-| Pivô do gatilho (1) | **`pino_gatilho`** de Ø4 com **`trava_4`** | o pino só leva cisalhamento (~27 N) |
+| Pivô do gatilho (1) | **`pino_gatilho`** de Ø3,1 com **`trava_4`** | o pino só leva cisalhamento (~27 N) |
 
 ## Peças (troque `PARTE` no Customizer)
 
@@ -380,14 +405,14 @@ Cada peça já sai na orientação de impressão.
 | Projéteis (×10) | `projetil_corpo` e `projetil_meio` na cor principal; `projetil_anel` e `projetil_ponta` na cor 2 (o `projetil` inteiro continua disponível, numa cor só) |
 | Pequenas | `punho` ×2 e `punho_armar` ×1 (capas de encaixe), `trava_4` ×1, `trava_6` ×11, `trava_8` ×2 (imprima algumas a mais de cada) |
 
-**Comprar:** ~52 BBs de 6 mm e 1 mola 1,0×12×100. Mais nada.
+**Comprar:** ~40 BBs de 6 mm e 1 mola 0,8 × 9 × 75 mm. Mais nada.
 
 **Imprima os 3 anéis do rolamento com 4 paredes e 100%.**
 
 ## Montagem passo a passo
 
 **Material:**
-- ~52 BBs de 6 mm e a mola;
+- ~40 BBs de 6 mm e a mola;
 - **epóxi** de 5 ou 10 min (para o carro);
 - **cola instantânea** (para o anel de cima e os projéteis);
 - vaselina ou graxa de silicone;
@@ -409,7 +434,7 @@ O fundo do `anel_interno` e o fundo do `anel_externo_baixo` ficam no **mesmo pla
 os dois já ficam na altura certa para as BBs entrarem.
 1. **Anéis na mesa:** ponha o `anel_externo_baixo` deitado na mesa e o `anel_interno` dentro dele, com os dentes para cima.
 2. **Vaselina:** passe uma camada fina nos dois canais. Ela segura as BBs enquanto você monta e deixa o giro macio.
-3. **BBs:** distribua as **52 BBs** no canal entre os dois anéis. Elas assentam sozinhas nos flancos de baixo.
+3. **BBs:** distribua as **40 BBs** no canal entre os dois anéis. Elas assentam sozinhas nos flancos de baixo.
    Espalhe por igual, deixando o mesmo espacinho entre todas.
 4. **Metade de cima:**
    - passe **3 ou 4 gotinhas de cola instantânea** na face de cima do `anel_externo_baixo`, só na borda de fora, longe do canal;
