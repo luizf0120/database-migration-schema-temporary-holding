@@ -325,6 +325,26 @@ As **BBs de 6 mm** rolam entre eles.
   na montagem.
 - **Se gastar:** depois de muito uso, imprima só os dois anéis de novo.
 
+**Conferido com a BB real de 5,95 mm** (corte abaixo: anel de baixo, BB e anel de cima):
+
+![corte do rolamento](rolamento_corte.png)
+
+- Cada anel tem um canal em V de 90°, com **3,4 mm de profundidade** e **6,8 mm de boca**.
+  A BB tem 5,95 mm, então **não cabe inteira num anel só**: ela fica **3,8 mm para fora** do anel de baixo, e o anel de cima pousa por cima dela.
+- **Os anéis não se tocam:** ficam separados por **1,6 mm**. A BB encosta nas **4 faces inclinadas**, 2 em cima e 2 embaixo,
+  1,3 mm para dentro da face de cada anel. É isso que centraliza a mesa.
+- **Na boca do canal**, a BB tem 5,73 mm de largura, contra 6,8 mm de boca. Mesmo com o "pé de elefante" estreitando a boca, ela entra solta.
+- **Quantas BBs:** cabem 60 encostadas umas nas outras. **Com 52 sobra ~0,9 mm entre elas**, e assim elas rolam sem raspar uma na outra.
+- **BB de 6,00 contra 5,95:** com a de 5,95 a mesa fica só 0,07 mm mais baixa. Isso não muda nenhuma folga do canhão.
+- **Montagem:**
+  1. Passe uma camada fina de **vaselina** no canal do anel de baixo. Ela segura as BBs no lugar enquanto você monta, e o giro fica mais macio.
+  2. Distribua as 52 BBs.
+  3. Pouse o **anel de cima sobre as BBs**, com o canal para baixo.
+  4. Só então desça a mesa, encaixando os 8 dentes do anel nos rasgos dela.
+  - Se você puser o anel na mesa e virar a mesa, ele pode cair do rebaixo.
+- **Teste antes de tudo:** imprima só os dois anéis, ponha as BBs, pouse um sobre o outro e gire com a mão.
+  Tem que girar liso, sem raspar face com face.
+
 ### Sem parafusos
 | Onde era parafuso | Agora | Por que não espana |
 |---|---|---|
