@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_pista_base, anel_pista_mesa, pino_gatilho, trava_4]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -90,26 +90,29 @@ d_punho   = 14;
 d_pino_p  = 8;    // pino do punho
 
 /* [Base e rolamento] */
-r_base    = 80;   // raio ate onde a base fica na altura cheia (anel da pista + cubo)
-r_anel    = [49, 65];  // anel da base sob a pista (oco por dentro)
-R_pista   = 57;   // raio da pista das esferas
-d_esfera  = 6;    // BB de airsoft 6 mm
-prof_v    = 3.4;  // profundidade do canal em V (90 graus)
+// ROLAMENTO DE ESFERAS impresso, de CONTATO EM 4 PONTOS (o tipo das mesas giratorias de
+// guindaste): o anel INTERNO (preso na mesa, por cima) fica DENTRO do anel EXTERNO (preso na
+// base, por baixo), e as BBs rolam no canal em V que fica entre os dois, PRESAS ali.
+// O anel externo e feito em 2 metades (de baixo e de cima) para as BBs entrarem; depois se colam.
+R_pista   = 57;    // raio da pista (centro das esferas)
+d_esfera  = 6;     // BB de airsoft de 6 mm (as de 5,95 rodam com ~0,1 mm de jogo)
+folga_esf = 0.15;  // folga no diametro da esfera dentro do canal
+folga_pista = 1.6; // vao radial entre os dois aneis (a BB nao passa por ele: fica presa)
+h_rol     = 10;    // altura dos aneis na regiao da pista (5 mm acima e abaixo do centro das BBs)
+parede_rol = 3.5;  // parede atras do vertice do V
+emb_mesa  = 4;     // quanto o anel interno entra na mesa
+folga_mb  = 1;     // vao entre a mesa (coroa) e o topo da base / do anel externo
+n_dentes_anel = 8;
+h_dente_inf = 1.8; // dentes da metade de baixo do anel externo (encaixam na base)
+h_dente_sup = 1.8; // dentes do anel interno (encaixam na mesa)
 // base em BANDEJA: a mesa fica so 20 mm acima da mesa de apoio (o minimo para a
 // manivela de azimute passar ~4 mm acima dela)
 z_mesa_alvo = 20;
-h_base    = z_mesa_alvo - 2*(d_esfera/2*sqrt(2) - prof_v);   // topo do anel da pista
+h_base    = z_mesa_alvo - folga_mb;   // topo da base sob a mesa (= topo do anel externo)
 h_piso    = 3;    // piso da bandeja
 // azimute em SETOR: dentes so em +-setor_az; curso limitado a +-az_curso por batentes
 setor_az  = 60;
 az_curso  = 50;
-// sem rolamento comprado: a pista em V com as BBs centraliza a mesa (contato angular);
-// as pistas sao 2 aneis impressos com dentes que encaixam na base e na mesa
-t_anel    = 6;               // espessura dos aneis de pista
-r_anel_p  = [R_pista - 5.5, R_pista + 5.5];  // aneis de pista (raio interno/externo)
-n_dentes_anel = 8;
-h_dente_inf = 2.5;           // dentes do anel de baixo (encaixam na base)
-h_dente_sup = 1.8;           // dentes do anel de cima (encaixam na mesa)
 
 /* [Carro] */
 larg_berco   = 24;
@@ -167,9 +170,21 @@ ra_az    = rp_az + m_az;
 rf_az    = rp_az - 1.25*m_az;
 ra_raz   = d_rosca_az/2 + m_az;            // raio externo da rosca az
 x_raz    = rp_az + d_rosca_az/2;           // distancia entre eixos (az)
-folga_v  = 2*(d_esfera/2*sqrt(2) - prof_v);// vao entre base e mesa
-z_esf    = h_base + folga_v/2;             // centro das esferas
-z_mesa   = h_base + folga_v;               // fundo da mesa
+z_esf    = h_base - h_rol/2;               // centro das esferas
+z_mesa   = h_base + folga_mb;              // fundo da mesa
+// rolamento (raios): a esfera encosta nos 2 flancos a 45 graus de cada V
+r_esf_v  = (d_esfera + folga_esf)/2;
+a_v      = r_esf_v*sqrt(2);                // do centro da esfera ate o vertice do V
+R_i_land = R_pista - folga_pista/2;        // face externa do anel interno
+R_o_land = R_pista + folga_pista/2;        // face interna do anel externo
+R_i_v    = R_pista - a_v;                  // vertice do V do anel interno
+R_o_v    = R_pista + a_v;                  // vertice do V do anel externo
+dv_i     = R_i_land - R_i_v;               // meia-boca do V (flancos a 45 graus)
+dv_o     = R_o_v - R_o_land;
+R_i_in   = R_i_v - parede_rol;             // furo do anel interno
+R_o_out  = R_o_v + parede_rol;             // fora do anel externo
+h_int    = h_rol + folga_mb + emb_mesa;    // altura do anel interno (atravessa o vao e entra na mesa)
+r_sede   = [R_o_land - 0.8, R_o_out + 0.15 + 2];   // sede do anel externo na base (piso + parede)
 z_deck   = z_mesa + h_mesa;                // topo da mesa
 z_raz    = z_mesa + h_mesa/2;              // eixo da rosca az
 y_mancal_az = L_rosca_az/2 + folga_ax;     // face interna dos mancais az (a rosca encosta: sem jogo axial)
@@ -188,7 +203,7 @@ x_mancal_el = L_rosca_el/2 + folga_ax;
 gama_az  = atan(m_az/d_rosca_az);          // angulo de avanco das roscas
 gama_el  = atan(m_el/d_rosca_el);
 
-n_esferas = floor(2*PI*R_pista/(d_esfera + 0.4));
+n_esferas = floor(2*PI*R_pista/(d_esfera + 0.85));   // ~0,9 mm entre as BBs: rolam sem raspar
 
 // manivela: face do tambor encosta a 1 mm do mancal externo
 h_cubo     = 10;
@@ -215,7 +230,6 @@ r_esc_el  = rf_el - 1.7;   // borda externa das marcas de elevacao
 r_parede  = [ra_az + 1.75, ra_az + 4.75];   // parede em volta da mesa
 z_topo_parede = z_deck - 1.5;
 r_aba     = r_parede[1] + 12;               // aba com a escala de azimute (so atras)
-r_mesa_corpo = r_anel_p[1] + 3.5;           // fora do setor dentado a mesa so cobre a pista
 // ponteiros
 x_pont_el = -(ra_el + 4);                  // furo do ponteiro na bochecha
 h_pont_el = y_roda + h_roda_el/2 + 0.5 + 1.5 - y_boch_out; // agulha 0,5 mm da face da coroa
@@ -275,7 +289,7 @@ echo(str("=== ELEVACAO: reducao ", z_el, ":1  ->  ", 360/z_el, " graus por volta
 echo(str("=== coroa az D", 2*ra_az, " mm, coroa el D", 2*ra_el, " mm, munhao a ", H_t, " mm da mesa"));
 echo(str("=== angulo de avanco az = ", gama_az, " graus, el = ", gama_el,
          " graus  (autotravante se tan(gama) < mu~0,3 -> ", tan(max(gama_az,gama_el)) < 0.3 ? "SIM" : "NAO", ")"));
-echo(str("=== esferas de ", d_esfera, " mm na pista: ate ", n_esferas, " (use ~", n_esferas-3, ")"));
+echo(str("=== rolamento de 4 pontos: ", n_esferas, " BBs de ", d_esfera, " mm no raio ", R_pista, "; aneis de ", R_i_in, " a ", R_o_out, " mm"));
 echo(str("=== LANCADOR: curso do pistao ", p_trava, " mm, mola ", mola_d, "x", mola_L,
          " mm comprimida de ", mola_L - (x_s - 3 - x_tampa), " a ", mola_L - (x_s - 3 - p_trava - x_tampa),
          " mm; ", z_ra, " voltas de manivela por disparo"));
@@ -507,12 +521,6 @@ module furo_ponteiro(prof) {
     translate([-1.625, -1.625, -prof]) cube([3.25, 3.25, prof + 1]);
 }
 
-// Canal em V (90 graus) para as esferas, centrado no plano z=0
-module canal_v() {
-    rotate_extrude($fn = 180)
-        translate([R_pista, 0]) rotate(45) square(prof_v*sqrt(2), center = true);
-}
-
 // =====================================================================
 //  ESCALAS GRAVADAS
 //  numero a cada 10 graus, traco a cada 5 graus, ponto no meio de cada 5 graus (2,5 graus)
@@ -556,38 +564,34 @@ module escala_el_2d() {
 //  PECAS PRINCIPAIS
 // =====================================================================
 
-// ---- BASE fixa: pista das esferas, sede do 608, 3 mancais da rosca az
-// ---- ANEIS DE PISTA (substituem o rolamento): canal em V + dentes de encaixe.
-//      Desenhados com a face da pista em z=0 e o corpo para -Z (dentes na ponta).
-module anel_pista(h_dente) {
-    difference() {
-        union() {
-            translate([0, 0, -t_anel]) difference() {
-                cylinder(r = r_anel_p[1], h = t_anel, $fn = 180);
-                translate([0, 0, -1]) cylinder(r = r_anel_p[0], h = t_anel + 2, $fn = 180);
-            }
-            for (i = [0:n_dentes_anel-1]) rotate(i*360/n_dentes_anel + 360/n_dentes_anel/2)
-                translate([0, 0, -t_anel - h_dente]) rotate(-3.5)
-                    rotate_extrude(angle = 7, $fn = 180) translate([r_anel_p[0] + 1, 0])
-                        square([r_anel_p[1] - r_anel_p[0] - 2, h_dente + 0.01]);
-        }
-        canal_v();
-    }
+// ---- ROLAMENTO de 4 pontos (perfis em r,z; z = 0 no centro das esferas)
+//      anel_interno: preso na mesa (dentes para cima); anel_externo em 2 metades,
+//      a de baixo presa na base (dentes para baixo) e a de cima colada sobre ela.
+module dentes_anel(r1, r2, z0, h) {
+    for (i = [0:n_dentes_anel-1]) rotate(i*360/n_dentes_anel + 360/n_dentes_anel/2)
+        translate([0, 0, z0]) rotate(-3.5) rotate_extrude(angle = 7, $fn = 180)
+            translate([r1 + 1, 0]) square([r2 - r1 - 2, h]);
 }
-// assento do anel na peca: rebaixo de t_anel a partir de z0 (sentido s = -1 desce, +1 sobe) + rasgos dos dentes
-module rebaixo_anel(z0, s, h_dente) {
-    translate([0, 0, z0]) mirror([0, 0, s > 0 ? 1 : 0]) {
-        translate([0, 0, -t_anel]) difference() {
-            cylinder(r = r_anel_p[1] + 0.15, h = t_anel + 0.01, $fn = 180);
-            translate([0, 0, -1]) cylinder(r = r_anel_p[0] - 0.15, h = t_anel + 2, $fn = 180);
-        }
-        for (i = [0:n_dentes_anel-1]) rotate(i*360/n_dentes_anel + 360/n_dentes_anel/2)
-            translate([0, 0, -t_anel - h_dente - 0.2]) rotate(-4)
-                rotate_extrude(angle = 8, $fn = 180) translate([r_anel_p[0] + 0.7, 0])
-                    square([r_anel_p[1] - r_anel_p[0] - 1.4, h_dente + 0.21]);
-    }
+module rasgos_anel(r1, r2, z0, h, ang = 8) {   // rasgos dos dentes na peca (dente de 7 graus; 0,2 mm de folga na altura)
+    for (i = [0:n_dentes_anel-1]) rotate(i*360/n_dentes_anel + 360/n_dentes_anel/2)
+        translate([0, 0, z0]) rotate(-ang/2) rotate_extrude(angle = ang, $fn = 180)
+            translate([r1 + 0.7, 0]) square([r2 - r1 - 1.4, h]);
 }
+module anel_interno() {
+    rotate_extrude($fn = 180) polygon([[R_i_in, -h_rol/2], [R_i_land, -h_rol/2], [R_i_land, -dv_i], [R_i_v, 0],
+                                       [R_i_land, dv_i], [R_i_land, h_int - h_rol/2], [R_i_in, h_int - h_rol/2]]);
+    dentes_anel(R_i_in, R_i_land, h_int - h_rol/2 - 0.01, h_dente_sup + 0.01);
+}
+module anel_externo_baixo() {
+    rotate_extrude($fn = 180) polygon([[R_o_land, -h_rol/2], [R_o_out, -h_rol/2], [R_o_out, 0], [R_o_v, 0], [R_o_land, -dv_o]]);
+    dentes_anel(R_o_land, R_o_out, -h_rol/2 - h_dente_inf, h_dente_inf + 0.01);
+}
+module anel_externo_cima() {
+    rotate_extrude($fn = 180) polygon([[R_o_v, 0], [R_o_out, 0], [R_o_out, h_rol/2], [R_o_land, h_rol/2], [R_o_land, dv_o]]);
+}
+module esferas() for (i = [0:n_esferas-1]) rotate(i*360/n_esferas) translate([R_pista, 0, 0]) sphere(d = d_esfera, $fn = 24);
 
+// ---- BASE fixa: sede do anel externo do rolamento, bandeja, 3 mancais da rosca az
 // posicao de cada projetil guardado: origem no centro da base dele, Z local = eixo
 module pos_sup(a) {
     rotate(a) translate([r_saia[1] - emb_sup*cos(ang_sup), 0, z_saida - emb_sup*sin(ang_sup)])
@@ -609,7 +613,7 @@ module base() {
         union() {
             difference() {                                                           // piso (so entre o anel e a parede)
                 cylinder(r = r_parede[1], h = h_piso, $fn = 180);
-                translate([0, 0, -1]) cylinder(r = r_anel[0] + 1, h = h_piso + 2, $fn = 180);
+                translate([0, 0, -1]) cylinder(r = r_sede[0], h = h_piso + 2, $fn = 180);
             }
             difference() {                                                           // parede da bandeja
                 cylinder(r = r_parede[1], h = z_topo_parede, $fn = 180);
@@ -623,11 +627,17 @@ module base() {
             rotate(180 - a_pilar) rotate_extrude(angle = 2*a_pilar, $fn = 180)
                 translate([r_pilar, 0]) square([r_parede[0] + 0.5 - r_pilar, z_topo_pilar]);
             cylinder(r = 15, h = h_base);                                            // cubo do pino pivo
-            difference() { cylinder(r = r_anel[1], h = h_base, $fn = 180);           // anel macico da pista
-                           translate([0, 0, -1]) cylinder(r = r_anel[0], h = h_base + 2, $fn = 180); }
-            for (ang = [45:90:315]) rotate(ang) translate([0, -4, 0]) cube([r_anel[0] + 1, 8, h_base - 4]);  // raios
-            for (ang = [30:60:330]) rotate(ang) translate([r_anel[1] - 1, -1.5, 0])                          // nervuras
-                cube([r_parede[0] - r_anel[1] + 1.5, 3, 10]);
+            // SEDE do anel externo: piso sob ele e parede em volta, ate o topo do anel.
+            // Por dentro (r < r_sede[0]) fica livre: e por ali que o anel interno desce.
+            difference() {
+                cylinder(r = r_sede[1], h = h_base, $fn = 180);
+                translate([0, 0, -1]) cylinder(r = r_sede[0], h = h_base + 2, $fn = 180);
+                translate([0, 0, z_esf - h_rol/2]) cylinder(r = R_o_out + 0.15, h = h_rol + 1, $fn = 180);
+            }
+            // raios do cubo ate a sede: baixos, passam 1 mm abaixo do anel interno
+            for (ang = [45:90:315]) rotate(ang) translate([0, -4, 0]) cube([r_sede[0] + 1, 8, z_esf - h_rol/2 - 1]);
+            for (ang = [30:60:330]) rotate(ang) translate([r_sede[1] - 1, -1.5, 0])                          // nervuras
+                cube([r_parede[0] - r_sede[1] + 1.5, 3, 10]);
             cartucheira();
             // plataforma da rosca e da manivela de azimute, VAZADA: os 3 mancais descem ate o
             // chao, os 2 de dentro entram na parede da bandeja e 2 trilhos amarram os tres
@@ -639,16 +649,16 @@ module base() {
             for (x0 = [x_raz - 8, x_raz + 5])
                 translate([x0, -(y_ext_az + esp_mancal_ext), 0]) cube([3, y_ext_az + esp_mancal_ext + y_mancal_az + esp_mancal_az, h_trilho_az]);
         }
-        rebaixo_anel(h_base, -1, h_dente_inf);   // assento do anel de pista de baixo (com encaixes)
+        rasgos_anel(R_o_land, R_o_out, z_esf - h_rol/2 - h_dente_inf - 0.2, h_dente_inf + 0.21);   // rasgos dos dentes do anel externo
         translate([-r_furo_pont, 0, z_topo_pilar]) furo_ponteiro(7);              // furo do ponteiro_az
         furos_cartucheira();
         // janelas no piso da bandeja, entre as nervuras (a parede fica presa pelas nervuras)
         translate([0, 0, -1]) linear_extrude(h_piso + 1.01, convexity = 8) offset(r = 2) offset(delta = -2)
-            for (ang = [30:60:330]) arco(r_anel[1] + 2, r_parede[0] - 2, ang + 4, ang + 56);
+            for (ang = [30:60:330]) arco(r_sede[1] + 2, r_parede[0] - 2, ang + 4, ang + 56);
         translate([0, 0, h_base - 10]) cylinder(d = 8.8, h = 11);                  // pino pivo (folgado)
-        // anel oco por baixo (teto em V), abaixo do assento do anel de pista
-        rotate_extrude($fn = 120) polygon([[r_anel[0] + 2, -0.01], [r_anel[1] - 2, -0.01],
-            [r_anel[1] - 2, 3], [(r_anel[0] + r_anel[1])/2, 7], [r_anel[0] + 2, 3]]);
+        // piso da sede oco por baixo (teto a 45 graus), abaixo dos rasgos dos dentes
+        rotate_extrude($fn = 120) let(r1 = r_sede[0] + 2, r2 = R_o_out, rm = (r1 + r2)/2, zt = z_esf - h_rol/2 - h_dente_inf - 1.7)
+            polygon([[r1, -0.01], [r2, -0.01], [r2, zt - (r2 - r1)/2], [rm, zt], [r1, zt - (r2 - r1)/2]]);
         // calha e janela da rosca na parede
         translate([x_raz, 0, z_raz]) rotate([90, 0, 0]) cylinder(r = ra_raz + 1, h = 2*y_mancal_az, center = true);
         translate([r_parede[0] - 3, -(y_mancal_az - 0.05), z_raz - ra_raz - 1]) cube([12, 2*y_mancal_az - 0.1, 40]);
@@ -664,8 +674,8 @@ module base() {
 //          gravados, faz de contrapeso e tem nas pontas os ressaltos que batem no pilar
 //          do ponteiro da base (batente de azimute).
 //      O resto e fino: o copo que segura o anel de pista e os 6 raios.
-h_copo   = 9.2;                 // anel de pista (6) + 3,2 mm de teto (1,2 mm sobre os rasgos dos dentes)
-r_copo   = [r_anel_p[0] - 0.15 - 1.6, r_anel_p[1] + 0.15 + 1.6];
+h_copo   = 9.2;                 // anel interno entra 4 mm + rasgos dos dentes (2 mm) + 3,2 mm de teto
+r_copo   = [R_i_in - 0.15 - 1.6, R_i_land + 0.15 + 1.6];   // copo que segura o topo do anel interno
 r_aro_az = rf_az - 6;           // aro dentado: 6 mm abaixo do pe do dente
 raios_az = [45, 90, 135, 225, 270, 315];
 h_raio_az = 7;  larg_raio_az = 9;   // raios: agora levam o peso do carro do centro ate o anel das esferas
@@ -717,7 +727,14 @@ module mesa() {
                     arco(r_faixa_az[0] + 0.5, r_pilar + 2.5, min(a0 - sg, a0 + sg*a_ress), max(a0 - sg, a0 + sg*a_ress));   // entra 1 grau na faixa (sem aresta coincidente)
             }
         }
-        rebaixo_anel(0, 1, h_dente_sup);       // assento do anel de pista de cima (com encaixes)
+        // assento do anel interno do rolamento (com os rasgos dos dentes)
+        translate([0, 0, -1]) difference() {
+            cylinder(r = R_i_land + 0.15, h = emb_mesa + 1, $fn = 180);
+            translate([0, 0, -1]) cylinder(r = R_i_in - 0.15, h = emb_mesa + 3, $fn = 180);
+        }
+        // rasgos LARGOS (20 graus): a mesa desce sobre o anel interno, que gira solto nas BBs, e os
+        // dentes acham os rasgos sem precisar alinhar exato. Eles so fazem o anel acompanhar a mesa.
+        rasgos_anel(R_i_in, R_i_land, emb_mesa - 0.01, h_dente_sup + 0.2, 20);
         translate([0, 0, -1]) cylinder(d = 8.3, h = h_mesa + espiga[2] + 2);
         translate([0, 0, h_mesa + espiga[2] - 3.3]) cylinder(d = 14.5, h = 4);       // cabeca do pino pivo (na espiga)
         // alivios por baixo do assento: 6 bolsoes entre os raios, teto de 3 mm (ponte de 8 mm)
@@ -1220,7 +1237,7 @@ function fases_batente() = [el_batente[1] + 5 - 264, el_batente[0] - 5 - 276];
 
 // ---- Pino pivo (ou use parafuso M8)
 module pino_pivo() {
-    cylinder(d = 8, h = (h_mesa + espiga[2] - 3.3 - 0.5) + folga_v + 13);   // a ponta fica 0,5 mm acima do fundo do furo da base
+    cylinder(d = 8, h = (h_mesa + espiga[2] - 3.3 - 0.5) + folga_mb + 13);   // a ponta fica 0,5 mm acima do fundo do furo da base
     cylinder(d = 14, h = 3);
 }
 
@@ -1298,10 +1315,9 @@ module montagem() {
     color("DarkOliveGreen") base();
     // 10 projeteis guardados nas cartucheiras da base
     for (a = angs_sup) pos_sup(a) projetil_colorido();
-    color("Peru") translate([0, 0, h_base]) anel_pista(h_dente_inf);
+    color("Peru") translate([0, 0, z_esf]) { anel_externo_baixo(); anel_externo_cima(); }
     if (MOSTRAR_ESFERAS) color("Gold")
-        for (i = [0:n_esferas-4]) rotate(i*360/(n_esferas-3))
-            translate([R_pista, 0, z_esf]) sphere(d = d_esfera, $fn = 16);
+        translate([0, 0, z_esf]) esferas();
 
     acion_az(rot_raz);
     color("Red") translate([-r_furo_pont, 0, z_topo_pilar]) ponteiro(1.5, c_pont_az);   // ponteiro de azimute (encaixa no pilar)
@@ -1310,7 +1326,7 @@ module montagem() {
     rotate([0, 0, az]) {
         color("OliveDrab") translate([0, 0, z_mesa]) mesa();
         color("DarkKhaki") translate([0, 0, z_deck]) carro();
-        color("Peru") translate([0, 0, z_mesa]) mirror([0, 0, 1]) anel_pista(h_dente_sup);
+        color("SandyBrown") translate([0, 0, z_esf]) anel_interno();
         color("Silver") translate([0, 0, z_deck + espiga[2]]) rotate([180, 0, 0]) pino_pivo();
         translate([0, 0, z_deck]) {
             acion_el(rot_rel);
@@ -1365,7 +1381,8 @@ else if (PARTE == "eixo_munhao") translate([0, 0, f_munhao/2]) rotate([90, 0, 0]
 else if (PARTE == "ponteiro_el") translate([0, 0, 2]) rotate([90, 0, 0]) ponteiro(h_pont_el, c_pont_el);
 else if (PARTE == "ponteiro_az") translate([0, 0, 2]) rotate([90, 0, 0]) ponteiro(1.5, c_pont_az);
 else if (PARTE == "pino_pivo")   pino_pivo();
-else if (PARTE == "anel_pista_base") translate([0, 0, t_anel + h_dente_inf]) rotate([180, 0, 0]) anel_pista(h_dente_inf);  // canal para baixo, dentes para cima
-else if (PARTE == "anel_pista_mesa") translate([0, 0, t_anel + h_dente_sup]) rotate([180, 0, 0]) anel_pista(h_dente_sup);
+else if (PARTE == "anel_interno")  translate([0, 0, h_rol/2]) anel_interno();                     // dentes para cima
+else if (PARTE == "anel_externo_baixo") rotate([180, 0, 0]) anel_externo_baixo();                // de cabeca para baixo: dentes para cima
+else if (PARTE == "anel_externo_cima")  translate([0, 0, h_rol/2]) rotate([180, 0, 0]) anel_externo_cima();   // topo na mesa: o flanco fica para cima
 else if (PARTE == "pino_gatilho") translate([0, 0, z_b + 14.9]) rotate([180, 0, 0]) translate([-x_piv_gat, -y_piv_gat, 0]) pino_gatilho();
 else if (PARTE == "trava_4")     trava(dc_4);
