@@ -212,22 +212,22 @@ A estimativa usa volume e área de cada STL (±15%).
 | Peça | Maciço | Típico |
 |---|---|---|
 | base (bandeja com janelas, 10 casulos de projétil, plataforma vazada) | 250 g | **~177 g** |
-| mesa **com o carro** (aro dentado, copo, raios finos, contrapeso, bochechas em treliça) | 179 g | **~136 g** |
+| mesa (aro dentado, copo, raios finos, contrapeso, 4 orelhas) | 78 g | **~70 g** |
+| carro (quadro, bochechas em treliça, mancais) + 4 cunhas | 97 g | **~72 g** |
 | 2 anéis de pista | 52 g | ~44 g |
 | setor de elevação raiado (−20° a +85°) | 43 g | ~33 g |
 | culatra + cano | 84 g | ~61 g |
-| 10 projéteis | 28 g | ~17 g |
+| 10 projéteis (40 partes) | 27 g | ~21 g |
 | todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 122 g | ~101 g |
-| **Total impresso** | **~757 g** | **~568 g** |
+| **Total impresso** | **~753 g** | **~578 g** |
 | + BBs e mola | | ~11 g |
 
-Comparando com a v6: **−259 g maciço e −77 g no típico** (−12%). Desde a v5, com as coroas inteiras, foram −413 g e −122 g.
-De onde saiu o peso (no típico):
+Comparando com a v6: **−263 g maciço e −67 g no típico** (−10%).
 - **Base, −41 g:** saia → casulos; piso com janelas; plataforma da manivela vazada.
-- **Mesa + carro, −27 g:** sem a placa do carro, sem rebites, sem o disco cheio da mesa; raios finos e bochechas em treliça (v7.1).
-- **Coroa de elevação, −10 g:** raios no lugar do disco, e raios finos na espessura (v7.1).
-
-No maciço a queda é bem maior (−25%), porque o miolo que saiu era volume puro.
+- **Mesa e carro, −20 g:** sem placa, sem disco cheio, raios finos e bochechas em treliça. A mesa e o carro separados (v8)
+  pesam **3 g a menos no maciço**, mas **~6 g a mais no típico**, porque duas peças têm mais superfície (mais parede) que uma.
+- **Coroa de elevação, −10 g:** raios no lugar do disco, finos na espessura.
+- **Projéteis, +4 g:** as 4 partes pequenas saem praticamente maciças.
 
 **Por que o "típico" cai menos que o "maciço":** na impressão FDM, o miolo já é preenchimento ralo, e quem
 pesa são as paredes. Tirar volume ajuda muito no maciço. No típico, o que mais pesa é a área de superfície.
