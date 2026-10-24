@@ -123,6 +123,7 @@ levemente achatada e base plana chanfrada. A base é onde o pistão empurra, e o
   - **Cola:** cianoacrilato (Super Bonder) funciona bem em PETG; lixe de leve as faces antes.
     Passe pouca cola, só no pino, para não escorrer na cinta de guia.
   - **Impressão:** cada parte imprime com a face plana para baixo e sem suporte. Os furos ficam embaixo, como pontes de 3 a 5 mm.
+  - ![projétil em 2 cores](projetil_cores.png)
   - **Nada muda por fora:** o projétil inteiro tem as mesmas medidas, então desliza no cano e entra nos casulos como antes.
 
 | Impressão do projétil | Peso | Saída (ideal) | Energia |
@@ -263,6 +264,10 @@ Elas são presas por **4 orelhas com cunha**, o mesmo princípio da chaveta das 
    **Soltar:** toque a ponta fina, que fica para o lado de dentro.
    Cada 1 mm a mais de cunha aperta mais 0,08 mm, então ela compensa a variação da impressão e o desgaste por muito tempo.
 
+![corte da cunha](corte_cunha.png)
+
+Corte por uma orelha: a cunha (com o topo inclinado) atravessa a janela e apoia no garfo dos dois lados; as linhas finas são a folga de 0,15 mm.
+
 **Apoios:** o carro só assenta nos 4 cantos, sobre o aro dentado e o contrapeso, logo ao lado das orelhas.
 O cubo central fica 0,3 mm mais baixo de propósito, para o carro não "cavalgar" no meio. Quatro apoios mais quatro cunhas
 dão um conjunto que não balança.
@@ -377,6 +382,20 @@ Todas as peças geram sólido válido. Também conferi:
     Em ±52° o ressalto encosta no batente, e a rosca ainda tem ~8° de dentes de sobra.
   - A rosca de elevação engrena em −20°, 0° e 85°, e os batentes encostam em −22° e +87°.
   - O cano fica livre do carro de −20° a 85°. A manivela de elevação e o volante de armar não se tocam em −20° nem em 85°.
+- **v8 (carro separado com cunhas, projétil em 4 partes, folgas revistas):** refiz todas as checagens com as peças da v8,
+  e nenhum log acusou malha aberta.
+  - **Mesa, carro e cunhas montados** só se tocam nas faces de apoio, com volume 0: garfos sobre o aro e o contrapeso, cunha sobre o garfo e contra o teto da janela.
+  - **Cunha 0,3 mm mais funda** que o nominal interfere **só no teto da janela** (8,1 mm³ = 4,6 × 6 × 0,3).
+    Ou seja: ao apertar, a força vai toda para onde deve.
+  - **Partes do projétil** encaixam com folga para a cola.
+  - **Engrenagens com a folga de dente nova (0,20 mm):** todos os pares engrenam sem interferência.
+    São as roscas de azimute e de elevação nas coroas (−20°, 0° e 85°), a rosca de armar na coroa de armar,
+    o pinhão na cremalheira em 3 fases, e o pistão passando livre no disparo.
+  - **Tampa, cano e pistão** na culatra, com as folgas novas: só se tocam nas faces de encosto.
+  - **Batentes:** azimute livre em ±49°, e em ±52° só o ponteiro encosta no batente. Elevação livre de −20° a 85°, encostando em −23° e 88°.
+  - **Cano:** livre do carro de −20° a 85°.
+  - **Manivelas e volante:** livres.
+  - **Varredura completa:** azimute em −50°, −25°, 0°, 25° e 50°, com elevação em −20° e em 85°, contra a base: livre.
 - **v7.1 (bochechas em treliça, raios finos, capa do volante):**
   - **Correção:** a STL da `mesa` da v7 estava com defeito. As vigas terminavam exatamente no raio interno do contrapeso,
     e as duas curvas só se tocavam pela aresta. A malha não fechava e a STL saía **sem a camada grossa**:
