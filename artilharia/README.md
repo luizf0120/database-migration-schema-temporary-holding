@@ -211,21 +211,21 @@ A estimativa usa volume e área de cada STL (±15%).
 
 | Peça | Maciço | Típico |
 |---|---|---|
-| base (bandeja com janelas, 10 casulos de projétil, plataforma vazada) | 250 g | **~177 g** |
-| mesa (aro dentado, copo, raios finos, contrapeso, 4 orelhas) | 78 g | **~70 g** |
-| carro (quadro, bochechas em treliça, mancais) + 4 cunhas | 97 g | **~72 g** |
+| base (bandeja com janelas, 10 casulos, plataforma vazada, pilar do ponteiro) | 226 g | **~167 g** |
+| mesa (assento do carro, aro dentado, copo, raios, faixa da escala) | 103 g | **~82 g** |
+| carro (disco central, bochechas em treliça, mancais) | 93 g | **~66 g** |
 | 2 anéis de pista | 52 g | ~44 g |
 | setor de elevação raiado (−20° a +85°) | 43 g | ~33 g |
 | culatra + cano | 84 g | ~61 g |
 | 10 projéteis (40 partes) | 27 g | ~21 g |
 | todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 122 g | ~101 g |
-| **Total impresso** | **~753 g** | **~578 g** |
+| **Total impresso** | **~749 g** | **~575 g** |
 | + BBs e mola | | ~11 g |
 
-Comparando com a v6: **−263 g maciço e −67 g no típico** (−10%).
-- **Base, −41 g:** saia → casulos; piso com janelas; plataforma da manivela vazada.
-- **Mesa e carro, −20 g:** sem placa, sem disco cheio, raios finos e bochechas em treliça. A mesa e o carro separados (v8)
-  pesam **3 g a menos no maciço**, mas **~6 g a mais no típico**, porque duas peças têm mais superfície (mais parede) que uma.
+Comparando com a v6: **−267 g maciço e −70 g no típico** (−11%).
+- **Base, −51 g:** saia → casulos; piso com janelas; plataforma da manivela vazada; sem a aba da escala (v9).
+- **Mesa e carro, −14 g:** sem placa, sem disco cheio, bochechas em treliça. Na v9, o assento central e a faixa da escala
+  (que também é o contrapeso) somaram uns 16 g na mesa, mas o carro ficou sem garfos nem cunhas.
 - **Coroa de elevação, −10 g:** raios no lugar do disco, finos na espessura.
 - **Projéteis, +4 g:** as 4 partes pequenas saem praticamente maciças.
 
