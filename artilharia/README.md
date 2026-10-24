@@ -1,4 +1,4 @@
-# Canhão de brinquedo v9: carro colado no centro da mesa, escala na mesa, projéteis em 2 cores, coroas e bochechas vazadas, base enxuta, pontaria 120:1 (3° por volta) e só 2 itens para comprar
+# Canhão de brinquedo v10: rolamento de esferas de verdade, carro colado no centro da mesa, escala na mesa, projéteis em 2 cores, coroas e bochechas vazadas, base enxuta, pontaria 120:1 (3° por volta) e só 2 itens para comprar
 
 ![montagem](montagem.png)
 
@@ -211,18 +211,18 @@ A estimativa usa volume e área de cada STL (±15%).
 
 | Peça | Maciço | Típico |
 |---|---|---|
-| base (bandeja com janelas, 10 casulos, plataforma vazada, pilar do ponteiro) | 226 g | **~167 g** |
-| mesa (assento do carro, aro dentado, copo, raios, faixa da escala) | 103 g | **~82 g** |
+| base (bandeja com janelas, sede do rolamento, 10 casulos, plataforma vazada, pilar) | 204 g | **~157 g** |
+| mesa (assento do carro, aro dentado, copo, raios, faixa da escala) | 115 g | **~84 g** |
 | carro (disco central, bochechas em treliça, mancais) | 93 g | **~66 g** |
-| rolamento (3 anéis) | — | — |
+| rolamento: 3 anéis (sempre com 100%) | 69 g | **69 g** |
 | setor de elevação raiado (−20° a +85°) | 43 g | ~33 g |
 | culatra + cano | 84 g | ~61 g |
 | 10 projéteis (40 partes) | 27 g | ~21 g |
 | todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 122 g | ~101 g |
-| **Total impresso** | **~749 g** | **~575 g** |
+| **Total impresso** | **~756 g** | **~591 g** |
 | + BBs e mola | | ~11 g |
 
-Comparando com a v6: **−267 g maciço e −70 g no típico** (−11%).
+Comparando com a v6: **−260 g maciço e −54 g no típico** (−8%). O rolamento de verdade (v10) pesa mais que as pistas antigas e vai sempre com 100%.
 - **Base, −51 g:** saia → casulos; piso com janelas; plataforma da manivela vazada; sem a aba da escala (v9).
 - **Mesa e carro, −14 g:** sem placa, sem disco cheio, bochechas em treliça. Na v9, o assento central e a faixa da escala
   (que também é o contrapeso) somaram uns 16 g na mesa, mas o carro ficou sem garfos nem cunhas.
@@ -502,6 +502,18 @@ Todas as peças geram sólido válido. Também conferi:
     Em ±52° o ressalto encosta no batente, e a rosca ainda tem ~8° de dentes de sobra.
   - A rosca de elevação engrena em −20°, 0° e 85°, e os batentes encostam em −22° e +87°.
   - O cano fica livre do carro de −20° a 85°. A manivela de elevação e o volante de armar não se tocam em −20° nem em 85°.
+- **v10 (rolamento de esferas de 4 pontos):** nenhum log acusou malha aberta.
+  - **Anéis nas sedes:** o anel externo (as 2 metades) só encosta na sede da base, e o anel interno só encosta no assento da mesa.
+  - **Anel interno solto:** não toca no anel externo nem na base.
+  - **BBs:** as de 5,95 e as de 6,00 mm ficam livres no canal, sem tocar na base nem na mesa.
+    Com o anel interno e a metade de baixo apoiados numa mesa lisa, as BBs entram no lugar, então dá para montar na bancada.
+  - **Giro:** o conjunto que gira (mesa, carro e anel interno) não toca em nada fixo de −49° a +49°. Em ±52° encosta só no batente do pilar.
+  - **Descida:** a mesa com o carro desce sobre o rolamento montado sem bater em nada.
+  - **Engrenamento:** a rosca de azimute continua engrenando na coroa sem interferência.
+- **v9 (carro colado no centro, escala na mesa, ponteiro na base):**
+  - **Encaixe colado:** o carro e a mesa só se tocam nas faces de colagem.
+  - **Ponteiro:** a agulha separada não toca na mesa em todo o giro, e a mesa desce no lugar sem bater no pilar.
+  - **Cano e manivelas:** o cano, as manivelas e o volante ficam livres. A varredura completa de azimute, com a elevação em −20° e em 85°, deu livre.
 - **v8 (carro separado com cunhas, projétil em 4 partes, folgas revistas):** refiz todas as checagens com as peças da v8,
   e nenhum log acusou malha aberta.
   - **Mesa, carro e cunhas montados** só se tocam nas faces de apoio, com volume 0: garfos sobre o aro e o contrapeso, cunha sobre o garfo e contra o teto da janela.
