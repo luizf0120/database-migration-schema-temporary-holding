@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, cunha, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, punho_armar, pino_pivo, anel_pista_base, anel_pista_mesa, pino_gatilho, trava_4]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, punho_armar, pino_pivo, anel_pista_base, anel_pista_mesa, pino_gatilho, trava_4]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -526,17 +526,18 @@ module arco(r1, r2, a1, a2) {
                    [for (i = [n:-1:0]) polar(r1, a1 + (a2 - a1)*i/n)]));
 }
 
-// Azimute: escala FIXA na aba da parede da base; o ponteiro e o ressalto da mesa (local 180),
-// que aponta para o angulo 180 + az. Valor v gravado no angulo 180 + v.
+// Azimute: escala gravada na MESA (no topo da faixa de tras); o ponteiro e fixo na base, no
+// angulo 180 do mundo. Com a mesa em az, o ponto local 180 - az fica sob o ponteiro:
+// o valor v vai gravado no angulo local 180 - v.
 module escala_az_2d() {
-    r0 = r_parede[1] + 1;
-    arco(r0, r0 + 0.6, 180 - az_curso, 180 + az_curso);
-    for (v = [-az_curso:5:az_curso]) rotate(180 + v)
-        translate([r0, -0.4]) square([v % 10 == 0 ? 6 : 4, 0.8]);
-    for (v = [-az_curso + 2.5:5:az_curso]) rotate(180 + v) translate([r0 + 2.2, 0]) circle(d = 1.2, $fn = 16);
-    for (v = [-az_curso:10:az_curso]) let(a = 180 + v)
-        translate(polar(r0 + 9, a)) rotate(a + 90)
-            text(str(v), size = 3.2, font = fonte, halign = "center", valign = "center", $fn = 40);
+    re = r_faixa_az[1] - 0.4;                      // borda externa das marcas (sob a ponta do ponteiro)
+    arco(re - 0.6, re, 180 - az_curso, 180 + az_curso);
+    for (v = [-az_curso:5:az_curso]) rotate(180 - v)
+        translate([re - (v % 10 == 0 ? 5 : 3.5), -0.4]) square([v % 10 == 0 ? 5 : 3.5, 0.8]);
+    for (v = [-az_curso + 2.5:5:az_curso]) rotate(180 - v) translate([re - 1.8, 0]) circle(d = 1.1, $fn = 16);
+    for (v = [-az_curso:10:az_curso]) let(a = 180 - v)
+        translate(polar(re - 7.6, a)) rotate(a + 90)
+            text(str(v), size = 2.8, font = fonte, halign = "center", valign = "center", $fn = 40);
 }
 
 // Elevacao: valor v no angulo local v - 180 (vira 180 - v depois de montada)
@@ -617,14 +618,15 @@ module base() {
                 cylinder(r = r_parede[1], h = z_topo_parede, $fn = 180);
                 translate([0, 0, -1]) cylinder(r = r_parede[0], h = 100, $fn = 180);
             }
-            // aba da escala de azimute (atras), com mao-francesa a 45 graus por baixo
-            rotate(180 - az_curso - 12) rotate_extrude(angle = 2*az_curso + 24, $fn = 180)
-                polygon([[r_parede[0], z_topo_parede], [r_aba, z_topo_parede], [r_aba, z_topo_parede - 2.5],
-                         [r_parede[1], z_topo_parede - 2.5 - (r_aba - r_parede[1])], [r_parede[0], z_topo_parede - 2.5 - (r_aba - r_parede[1])]]);
-            // batentes de azimute: o ressalto da mesa encosta neles em +-az_curso
-            for (sg = [-1, 1]) rotate(180 + sg*(az_curso + 2.6 + 3)) rotate(-3)
-                rotate_extrude(angle = 6, $fn = 180) translate([r_parede[0] - 0.5, z_topo_parede - 2.5])
-                    square([r_aba - r_parede[0] + 0.5, z_deck + 3.5 - (z_topo_parede - 2.5)]);
+            // PILAR DO PONTEIRO (atras, angulo 180): coluna colada na parede, do chao ate um pouco
+            // acima da mesa, com a agulha que aponta para a escala gravada na mesa. E tambem o
+            // BATENTE de azimute: os ressaltos das pontas da faixa da mesa encostam nele em +-52 graus.
+            rotate(180 - a_pilar) rotate_extrude(angle = 2*a_pilar, $fn = 180)
+                translate([r_pilar, 0]) square([r_parede[0] + 0.5 - r_pilar, z_mesa + h_mesa + 1.5]);
+            hull() {   // agulha: sai do pilar e para 0,5 mm acima da faixa da mesa
+                rotate(180) translate([r_pilar - 0.01, -2, z_mesa + h_mesa + 0.5]) cube([0.01, 4, 1]);
+                rotate(180) translate([r_ponta_az, -0.3, z_mesa + h_mesa + 0.5]) cube([0.6, 0.6, 1]);
+            }
             cylinder(r = 15, h = h_base);                                            // cubo do pino pivo
             difference() { cylinder(r = r_anel[1], h = h_base, $fn = 180);           // anel macico da pista
                            translate([0, 0, -1]) cylinder(r = r_anel[0], h = h_base + 2, $fn = 180); }
@@ -654,45 +656,36 @@ module base() {
         // calha e janela da rosca na parede
         translate([x_raz, 0, z_raz]) rotate([90, 0, 0]) cylinder(r = ra_raz + 1, h = 2*y_mancal_az, center = true);
         translate([r_parede[0] - 3, -(y_mancal_az - 0.05), z_raz - ra_raz - 1]) cube([12, 2*y_mancal_az - 0.1, 40]);
-        // escala gravada no topo da aba
-        translate([0, 0, z_topo_parede - prof_grav]) linear_extrude(1, convexity = 10) escala_az_2d();
     }
 }
 
 // ---- MESA giratoria = setor da coroa de azimute (origem no fundo).
-//      Com espessura cheia (h_mesa) so o que trabalha: cubo, aro dentado e o CONTRAPESO
-//      de tras (arco rente a parede da base, com o ponteiro e o ressalto dos batentes).
-//      O resto e fino: o copo que segura o anel de pista (h_copo) e os raios (h_raio_az).
-//      O CARRO e outra peca: assenta no aro e no contrapeso e e preso por 4 ORELHAS da mesa
-//      que passam por garfos do quadro do carro; uma CUNHA atravessa cada orelha e aperta
-//      o carro contra a mesa (chaveta de 1:12, autotravante: sem folga e sem parafuso).
+//      Com espessura cheia (h_mesa) so o que trabalha:
+//        - o ASSENTO DO CARRO no centro (disco de r_assento com espiga e chaveta de posicao):
+//          o carro encaixa em cima e e COLADO ali;
+//        - o aro dentado (frente);
+//        - a FAIXA DA ESCALA atras (110 graus, do lado oposto aos dentes): leva os graus
+//          gravados, faz de contrapeso e tem nas pontas os ressaltos que batem no pilar
+//          do ponteiro da base (batente de azimute).
+//      O resto e fino: o copo que segura o anel de pista e os 6 raios.
 h_copo   = 9.2;                 // anel de pista (6) + 3,2 mm de teto (1,2 mm sobre os rasgos dos dentes)
 r_copo   = [r_anel_p[0] - 0.15 - 1.6, r_anel_p[1] + 0.15 + 1.6];
 r_aro_az = rf_az - 6;           // aro dentado: 6 mm abaixo do pe do dente
-cp_meio  = 18;                  // contrapeso: de 180-cp_meio a 180+cp_meio graus locais
-r_cp     = [r_copo[1] - 0.5, r_parede[0] - 1.5];
 raios_az = [45, 90, 135, 225, 270, 315];
-h_raio_az = 4;                  // espessura dos raios (cubo, aro e contrapeso ficam com h_mesa)
-// fixacao do carro: orelhas da mesa (4) + garfos do quadro + cunhas
-h_quadro = 6;                   // altura do quadro do carro (trilhos, garfos, travessas)
-x_or = 66.5;  y_or = y_boch_in + esp_bochecha/2;   // centro das orelhas (sob os trilhos)
-or_x = 9;  or_y = 6;            // orelha: 9 (radial) x 6
-jan_x = 5;                      // largura da janela da cunha (paredes de 2 mm)
-L_cunha = 22;  b_cunha = 4.6;  t_cunha = [3.0, 4.8];   // fina -> grossa (1:12)
-k_cunha = (t_cunha[1] - t_cunha[0])/L_cunha;
-t_cunha_meio = (t_cunha[0] + t_cunha[1])/2;
-folga_or = 0.15;                // orelha no garfo, por lado (encaixe de posicao)
-h_orelha = h_mesa + h_quadro + t_cunha_meio + k_cunha*or_y/2 + 3;   // topo da orelha (medido do fundo da mesa)
-function cantos_or() = [for (sx = [-1, 1], sy = [-1, 1]) [sx, sy]];
-module orelha(sx, sy) {
-    xc = sx*x_or;  yc = sy*y_or;  zj = h_mesa + h_quadro;    // zj = topo do garfo (onde a cunha apoia)
-    difference() {
-        translate([xc - or_x/2, yc - or_y/2, 0]) cube([or_x, or_y, h_orelha]);
-        // janela da cunha: atravessa em Y; o teto sobe para fora na mesma inclinacao da cunha
-        hull() for (e = [-1, 1]) let(y = yc + e*(or_y/2 + 0.5), dz = k_cunha*(abs(y) - y_or))
-            translate([xc - jan_x/2, y - 0.01, zj - 1]) cube([jan_x, 0.02, 1 + t_cunha_meio + dz]);
-    }
-}
+h_raio_az = 7;  larg_raio_az = 9;   // raios: agora levam o peso do carro do centro ate o anel das esferas
+// assento do carro (centro) e encaixe para colar
+r_assento = 24;
+espiga  = [30, 20, 4];          // espiga retangular em cima do assento (X, Y, altura)
+d_chave = 5;  x_chave = 19.5;   // pino de posicao fora do centro: o carro so entra virado para a frente
+folga_cola_c = 0.2;             // por lado, no encaixe do carro (espaco para a cola)
+h_disco_c = 8;                  // disco do carro que senta no assento
+// faixa da escala (atras) e batente
+a_faixa  = az_curso + 5;        // a faixa vai de 180 - a_faixa a 180 + a_faixa (graus locais)
+r_faixa_az = [r_copo[1] - 0.5, r_aro_az + 5.6];   // fica por dentro do pilar do ponteiro
+r_pilar  = r_faixa_az[1] + 1;   // face interna do pilar do ponteiro (base)
+a_pilar  = 4/(r_pilar + 2)*180/PI;   // pilar de ~8 mm de largura
+r_ponta_az = r_faixa_az[1] - 3.5;    // ponta da agulha
+a_ress   = 6;                   // largura angular de cada ressalto de batente
 module mesa() {
     passo = 360/z_az;
     dentes = [for (k = [-round(setor_az/passo):round(setor_az/passo)]) (k + z_az) % z_az];
@@ -706,53 +699,44 @@ module mesa() {
                 difference() { circle(r = r_copo[1], $fn = 180); circle(r = r_copo[0], $fn = 180); }   // copo do anel
                 arco(r_copo[1] - 0.5, r_aro_az + 0.5, -setor_az - 1.5, setor_az + 1.5);          // liga o aro ao copo
             }
-            // raios FINOS (h_raio_az) do cubo ao copo, com cantos arredondados
+            // raios do assento ao copo, com cantos arredondados
             linear_extrude(h_raio_az, convexity = 6) intersection() {
                 circle(r = r_copo[1] - 0.5, $fn = 180);
                 offset(r = -2) offset(delta = 2) union() {
-                    for (a = raios_az) rotate(a) translate([0, -4]) square([r_copo[0] + 1, 8]);
-                    circle(r = 15);
+                    for (a = raios_az) rotate(a) translate([0, -larg_raio_az/2]) square([r_copo[0] + 1, larg_raio_az]);
+                    circle(r = r_assento);
                     difference() { circle(r = r_copo[1], $fn = 180); circle(r = r_copo[0], $fn = 180); }
                 }
             }
-            cylinder(r = 12, h = h_mesa - 0.3);   // cubo do pino pivo (0,3 abaixo do carro: o carro so assenta nos cantos)
-            linear_extrude(h_mesa, convexity = 4) arco(r_cp[0], r_cp[1], 180 - cp_meio, 180 + cp_meio);   // contrapeso
-            for (c = cantos_or()) orelha(c[0], c[1]);
-            // ressalto atras (local 180): e o PONTEIRO da escala e bate nos batentes da base.
-            // Corpo de altura cheia por dentro da parede + ponta que passa por cima dela.
-            rotate(180) {
-                translate([r_mesa_corpo - 6, -3.5, 0]) cube([r_parede[0] - 0.3 - (r_mesa_corpo - 6), 7, h_mesa + 3]);
-                hull() {   // chanfro a 45 graus por dentro da parede
-                    translate([r_parede[0] - 4.3, -3.5, h_mesa + 3 - 0.01]) cube([4, 7, 0.01]);
-                    translate([r_parede[0] - 4.3, -3.5, h_mesa - 4]) cube([0.01, 7, 7]);
-                    translate([r_parede[0] - 0.4, -3.5, h_mesa - 1]) cube([0.1, 7, 4]);
-                }
-                hull() {   // por cima da parede: fundo plano 0,5 mm acima dela
-                    translate([r_parede[0] - 0.4, -3.5, h_mesa - 1]) cube([0.1, 7, 4]);
-                    translate([r_parede[1] + 0.6, -0.3, h_mesa - 1]) cube([0.6, 0.6, 4]);   // ponta da agulha
-                }
+            cylinder(r = r_assento, h = h_mesa, $fn = 96);                                   // assento do carro
+            translate([-espiga[0]/2, -espiga[1]/2, h_mesa - 0.01]) cube([espiga[0], espiga[1], espiga[2] + 0.01]);
+            translate([x_chave, 0, h_mesa - 0.01]) cylinder(d = d_chave, h = espiga[2] + 0.01, $fn = 24);
+            // faixa da escala (contrapeso) e ressaltos de batente nas pontas
+            linear_extrude(h_mesa, convexity = 6) {
+                arco(r_faixa_az[0], r_faixa_az[1], 180 - a_faixa, 180 + a_faixa);
+                for (sg = [-1, 1]) let(a0 = 180 + sg*a_faixa)
+                    arco(r_faixa_az[0], r_pilar + 2.5, min(a0, a0 + sg*a_ress), max(a0, a0 + sg*a_ress));
             }
         }
         rebaixo_anel(0, 1, h_dente_sup);       // assento do anel de pista de cima (com encaixes)
-        translate([0, 0, -1]) cylinder(d = 8.3, h = h_mesa + 2);
-        translate([0, 0, h_mesa - 3.3]) cylinder(d = 14.5, h = 4);
+        translate([0, 0, -1]) cylinder(d = 8.3, h = h_mesa + espiga[2] + 2);
+        translate([0, 0, h_mesa + espiga[2] - 3.3]) cylinder(d = 14.5, h = 4);       // cabeca do pino pivo (na espiga)
+        // alivios por baixo do assento: 6 bolsoes entre os raios, teto de 3 mm (ponte de 8 mm)
+        for (a = raios_az) rotate(a + 30) translate([0, 0, -1])
+            linear_extrude(h_mesa - 3 + 1, convexity = 4) offset(r = 1.5) offset(delta = -1.5)
+                arco(13, r_assento - 2.5, -30 + 180/PI*(larg_raio_az/2 + 1.5)/17, 30 - 180/PI*(larg_raio_az/2 + 1.5)/17);
+        // alivios por baixo da faixa: bolsoes de 10 graus, teto de 2,4 mm, nervuras de 2 mm
+        for (k = [0:9]) let(a1 = 180 - a_faixa + 2 + k*(2*a_faixa - 4)/10)
+            translate([0, 0, -1]) linear_extrude(h_mesa - 2.4 + 1, convexity = 4)
+                arco(r_faixa_az[0] + 2.2, r_faixa_az[1] - 1.6, a1 + 1.1, a1 + (2*a_faixa - 4)/10 - 1.1);
+        // escala gravada no topo da faixa
+        translate([0, 0, h_mesa - prof_grav]) linear_extrude(1, convexity = 10) escala_az_2d();
     }
-}
-
-// ---- CUNHA (chaveta) que prende o carro: base plana, topo inclinado 1:12.
-//      Origem: ponta fina em y=0, cresce para +Y; base em z=0.
-module cunha() {
-    rotate([90, 0, 90]) linear_extrude(b_cunha) polygon([[0, 0], [L_cunha, 0], [L_cunha, t_cunha[1]], [0, t_cunha[0]]]);
-}
-// cunha montada na orelha (sx, sy): ponta fina para o centro, grossa para fora, no meio do curso
-module cunha_montada(sx, sy) {
-    yc = sy*y_or;
-    translate([sx*x_or - b_cunha/2, yc - sy*L_cunha/2, h_mesa + h_quadro]) mirror([0, sy < 0 ? 1 : 0, 0]) cunha();
 }
 
 // ---- CARRO: bochechas + 3 mancais da rosca de elevacao (origem no topo da mesa).
 //      Peca separada da mesa: as bochechas e os mancais nascem do quadro do carro,
-//      que e preso na mesa pelas 4 orelhas e cunhas.
+//      que senta no assento do centro da mesa e e colado nele.
 module contorno_bochecha() hull() {
     translate([-20, 0]) square([50, h_placa]);
     translate([0, H_t]) circle(r = 16);
@@ -801,19 +785,16 @@ module perfil_bochecha(com_braco) {
     }
 }
 
-// Quadro do carro (origem no topo da mesa): 2 trilhos sob as bochechas, 2 travessas,
-// pes e trilho dos mancais de elevacao, e 4 GARFOS abertos para fora, que abracam as
-// orelhas da mesa. Os garfos apoiam no aro dentado (frente) e no contrapeso (tras);
-// abertos para fora, os quatro juntos prendem o carro em X e em Y sem folga.
+// Quadro do carro (origem no topo da mesa): um DISCO no centro, que senta no assento da
+// mesa e e colado nele (a espiga e a chaveta da mesa entram num rebaixo por baixo do disco),
+// 2 trilhos curtos sob as bochechas e os pes e o trilho dos mancais de elevacao.
+h_quadro = 6;
 module quadro_carro() {
     difference() {
         union() {
-            for (y0 = [y_boch_in, -y_boch_out]) translate([-x_or - or_x/2, y0, 0])
-                cube([2*x_or + or_x, esp_bochecha, h_quadro]);                         // trilhos
-            for (c = cantos_or()) translate([c[0]*x_or, c[1]*y_or, 0])                      // garfos
-                translate([c[0] > 0 ? -or_x/2 - 5 : -or_x/2, -or_y/2 - 5, 0]) cube([or_x + 5, or_y + 10, h_quadro]);
-            for (x0 = [x_or - or_x/2 - 10, -(x_or - or_x/2 - 10) - 6])                    // travessas
-                translate([x0, -y_boch_in - 0.01, 0]) cube([6, 2*y_boch_in + 0.02, h_quadro]);
+            cylinder(r = r_assento, h = h_disco_c, $fn = 96);                                 // disco central
+            for (y0 = [y_boch_in, -y_boch_out]) translate([-x_mancal_el - esp_mancal_el - 1, y0, 0])
+                cube([x_mancal_el + esp_mancal_el + 1 + 32, esp_bochecha, h_quadro]);      // trilhos sob as bochechas
             // pes dos mancais da rosca de elevacao + trilho que os amarra (mantem a rosca alinhada)
             for (xs = [[-x_mancal_el - esp_mancal_el, esp_mancal_el], [x_mancal_el, esp_mancal_el],
                        [-x_ext_el - esp_mancal_ext, esp_mancal_ext]])
@@ -821,10 +802,15 @@ module quadro_carro() {
             translate([-x_ext_el - esp_mancal_ext, y_roda + 4, 0])
                 cube([x_ext_el + esp_mancal_ext + x_mancal_el + esp_mancal_el, 3, h_quadro]);
         }
-        // vao da orelha em cada garfo (aberto para fora), com folga_or por lado
-        for (c = cantos_or()) translate([c[0]*x_or, c[1]*y_or, -1])
-            translate([c[0] > 0 ? -or_x/2 - folga_or : -or_x/2 - 20, -or_y/2 - folga_or, 0])
-                cube([or_x + 20 + folga_or, or_y + 2*folga_or, h_quadro + 2]);
+        // rebaixo do encaixe (espiga + chaveta da mesa), com folga para a cola
+        translate([-espiga[0]/2 - folga_cola_c, -espiga[1]/2 - folga_cola_c, -1])
+            cube([espiga[0] + 2*folga_cola_c, espiga[1] + 2*folga_cola_c, espiga[2] + 0.3 + 1]);
+        translate([x_chave, 0, -1]) cylinder(d = d_chave + 2*folga_cola_c, h = espiga[2] + 0.3 + 1, $fn = 24);
+        // ranhuras de cola no fundo do disco (o excesso de cola escorre para elas)
+        for (r = [r_assento - 3, 18.5]) difference() {
+            translate([0, 0, -1]) cylinder(r = r + 0.6, h = 1.5, $fn = 96);
+            translate([0, 0, -2]) cylinder(r = r - 0.6, h = 3, $fn = 96);
+        }
     }
 }
 
@@ -1235,7 +1221,7 @@ function fases_batente() = [el_batente[1] + 5 - 264, el_batente[0] - 5 - 276];
 
 // ---- Pino pivo (ou use parafuso M8)
 module pino_pivo() {
-    cylinder(d = 8, h = (h_mesa - 3.8) + folga_v + 13);   // a ponta fica 0,5 mm acima do fundo do furo da base
+    cylinder(d = 8, h = (h_mesa + espiga[2] - 3.3 - 0.5) + folga_v + 13);   // a ponta fica 0,5 mm acima do fundo do furo da base
     cylinder(d = 14, h = 3);
 }
 
@@ -1324,9 +1310,8 @@ module montagem() {
     rotate([0, 0, az]) {
         color("OliveDrab") translate([0, 0, z_mesa]) mesa();
         color("DarkKhaki") translate([0, 0, z_deck]) carro();
-        for (c = cantos_or()) color("Orange") translate([0, 0, z_mesa]) cunha_montada(c[0], c[1]);
         color("Peru") translate([0, 0, z_mesa]) mirror([0, 0, 1]) anel_pista(h_dente_sup);
-        color("Silver") translate([0, 0, z_deck - 0.3]) rotate([180, 0, 0]) pino_pivo();
+        color("Silver") translate([0, 0, z_deck + espiga[2]]) rotate([180, 0, 0]) pino_pivo();
         translate([0, 0, z_deck]) {
             acion_el(rot_rel);
             color("Red") translate([x_pont_el, y_boch_out, H_t]) rotate([-90, 0, 0])
@@ -1358,7 +1343,6 @@ else if (PARTE == "projetil_anel")  translate([0, 0, -z_anel_p]) projetil_anel()
 else if (PARTE == "projetil_meio")  translate([0, 0, -z_meio_p]) projetil_meio();
 else if (PARTE == "projetil_ponta") translate([0, 0, -z_ponta_p]) projetil_ponta();
 else if (PARTE == "carro")       carro();
-else if (PARTE == "cunha")       linear_extrude(b_cunha) polygon([[0, 0], [L_cunha, 0], [L_cunha, t_cunha[1]], [0, t_cunha[0]]]);   // de lado: a rampa sai lisa
 else if (PARTE == "porta_projeteis") porta_projeteis();
 else if (PARTE == "eixo_pinhao") translate([0, 0, f_eixo/2]) rotate([90, 0, 0]) eixo_hex(f_eixo, pi_z0, pi_z1, [pi_g2, pi_g1], dc_6);
 else if (PARTE == "eixo_armar")  translate([0, 0, f_eixo/2]) rotate([90, 0, 0]) eixo_hex(f_eixo, ra_z0, ra_z1, [ra_g1, ra_g2, ra_g3], dc_6);
