@@ -103,7 +103,7 @@ parede_rol = 3.5;  // parede atras do vertice do V
 emb_mesa  = 4;     // quanto o anel interno entra na mesa
 folga_mb  = 1;     // vao entre a mesa (coroa) e o topo da base / do anel externo
 n_dentes_anel = 8;
-h_dente_inf = 1.8; // dentes da metade de baixo do anel externo (encaixam na base)
+h_chaveta = 1.8;   // chavetas na lateral da metade de baixo do anel externo (entram na parede da sede da base)
 h_dente_sup = 1.8; // dentes do anel interno (encaixam na mesa)
 // base em BANDEJA: a mesa fica so 20 mm acima da mesa de apoio (o minimo para a
 // manivela de azimute passar ~4 mm acima dela)
@@ -184,7 +184,7 @@ dv_o     = R_o_v - R_o_land;
 R_i_in   = R_i_v - parede_rol;             // furo do anel interno
 R_o_out  = R_o_v + parede_rol;             // fora do anel externo
 h_int    = h_rol + folga_mb + emb_mesa;    // altura do anel interno (atravessa o vao e entra na mesa)
-r_sede   = [R_o_land - 0.8, R_o_out + 0.15 + 2];   // sede do anel externo na base (piso + parede)
+r_sede   = [R_o_land - 0.8, R_o_out + 0.15 + 4];   // sede do anel externo na base (piso + parede de 4 mm, com os rasgos das chavetas)
 z_deck   = z_mesa + h_mesa;                // topo da mesa
 z_raz    = z_mesa + h_mesa/2;              // eixo da rosca az
 y_mancal_az = L_rosca_az/2 + folga_ax;     // face interna dos mancais az (a rosca encosta: sem jogo axial)
@@ -566,7 +566,9 @@ module escala_el_2d() {
 
 // ---- ROLAMENTO de 4 pontos (perfis em r,z; z = 0 no centro das esferas)
 //      anel_interno: preso na mesa (dentes para cima); anel_externo em 2 metades,
-//      a de baixo presa na base (dentes para baixo) e a de cima colada sobre ela.
+//      a de baixo presa na base (chavetas na lateral) e a de cima colada sobre ela.
+//      Os fundos do anel interno e da metade de baixo ficam no MESMO plano: em cima de uma
+//      mesa lisa, os dois ja ficam na altura certa para as BBs entrarem (monta-se na bancada).
 module dentes_anel(r1, r2, z0, h) {
     for (i = [0:n_dentes_anel-1]) rotate(i*360/n_dentes_anel + 360/n_dentes_anel/2)
         translate([0, 0, z0]) rotate(-3.5) rotate_extrude(angle = 7, $fn = 180)
@@ -584,7 +586,9 @@ module anel_interno() {
 }
 module anel_externo_baixo() {
     rotate_extrude($fn = 180) polygon([[R_o_land, -h_rol/2], [R_o_out, -h_rol/2], [R_o_out, 0], [R_o_v, 0], [R_o_land, -dv_o]]);
-    dentes_anel(R_o_land, R_o_out, -h_rol/2 - h_dente_inf, h_dente_inf + 0.01);
+    for (i = [0:n_dentes_anel-1]) rotate(i*360/n_dentes_anel + 360/n_dentes_anel/2)   // chavetas laterais
+        rotate(-3.5) rotate_extrude(angle = 7, $fn = 180)
+            translate([R_o_out - 0.01, -h_rol/2]) square([h_chaveta + 0.01, h_rol/2 - 0.5]);
 }
 module anel_externo_cima() {
     rotate_extrude($fn = 180) polygon([[R_o_v, 0], [R_o_out, 0], [R_o_out, h_rol/2], [R_o_land, h_rol/2], [R_o_land, dv_o]]);
@@ -649,15 +653,18 @@ module base() {
             for (x0 = [x_raz - 8, x_raz + 5])
                 translate([x0, -(y_ext_az + esp_mancal_ext), 0]) cube([3, y_ext_az + esp_mancal_ext + y_mancal_az + esp_mancal_az, h_trilho_az]);
         }
-        rasgos_anel(R_o_land, R_o_out, z_esf - h_rol/2 - h_dente_inf - 0.2, h_dente_inf + 0.21);   // rasgos dos dentes do anel externo
+        // rasgos das chavetas do anel externo na parede da sede (abertos em cima: o rolamento desce pronto)
+        for (i = [0:n_dentes_anel-1]) rotate(i*360/n_dentes_anel + 360/n_dentes_anel/2)
+            translate([0, 0, z_esf - h_rol/2 - 0.01]) rotate(-4) rotate_extrude(angle = 8, $fn = 180)
+                translate([R_o_out, 0]) square([h_chaveta + 0.2, h_rol + 1]);
         translate([-r_furo_pont, 0, z_topo_pilar]) furo_ponteiro(7);              // furo do ponteiro_az
         furos_cartucheira();
         // janelas no piso da bandeja, entre as nervuras (a parede fica presa pelas nervuras)
         translate([0, 0, -1]) linear_extrude(h_piso + 1.01, convexity = 8) offset(r = 2) offset(delta = -2)
             for (ang = [30:60:330]) arco(r_sede[1] + 2, r_parede[0] - 2, ang + 4, ang + 56);
         translate([0, 0, h_base - 10]) cylinder(d = 8.8, h = 11);                  // pino pivo (folgado)
-        // piso da sede oco por baixo (teto a 45 graus), abaixo dos rasgos dos dentes
-        rotate_extrude($fn = 120) let(r1 = r_sede[0] + 2, r2 = R_o_out, rm = (r1 + r2)/2, zt = z_esf - h_rol/2 - h_dente_inf - 1.7)
+        // piso da sede oco por baixo (teto a 45 graus, 2 mm de piso em cima)
+        rotate_extrude($fn = 120) let(r1 = r_sede[0] + 2, r2 = R_o_out, rm = (r1 + r2)/2, zt = z_esf - h_rol/2 - 2)
             polygon([[r1, -0.01], [r2, -0.01], [r2, zt - (r2 - r1)/2], [rm, zt], [r1, zt - (r2 - r1)/2]]);
         // calha e janela da rosca na parede
         translate([x_raz, 0, z_raz]) rotate([90, 0, 0]) cylinder(r = ra_raz + 1, h = 2*y_mancal_az, center = true);
@@ -1382,7 +1389,7 @@ else if (PARTE == "ponteiro_el") translate([0, 0, 2]) rotate([90, 0, 0]) ponteir
 else if (PARTE == "ponteiro_az") translate([0, 0, 2]) rotate([90, 0, 0]) ponteiro(1.5, c_pont_az);
 else if (PARTE == "pino_pivo")   pino_pivo();
 else if (PARTE == "anel_interno")  translate([0, 0, h_rol/2]) anel_interno();                     // dentes para cima
-else if (PARTE == "anel_externo_baixo") rotate([180, 0, 0]) anel_externo_baixo();                // de cabeca para baixo: dentes para cima
+else if (PARTE == "anel_externo_baixo") translate([0, 0, h_rol/2]) anel_externo_baixo();      // fundo plano na mesa da impressora
 else if (PARTE == "anel_externo_cima")  translate([0, 0, h_rol/2]) rotate([180, 0, 0]) anel_externo_cima();   // topo na mesa: o flanco fica para cima
 else if (PARTE == "pino_gatilho") translate([0, 0, z_b + 14.9]) rotate([180, 0, 0]) translate([-x_piv_gat, -y_piv_gat, 0]) pino_gatilho();
 else if (PARTE == "trava_4")     trava(dc_4);

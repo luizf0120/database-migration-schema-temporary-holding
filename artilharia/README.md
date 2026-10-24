@@ -169,7 +169,7 @@ Ficaram como estavam, porque já têm folga boa:
 - o pistão no cilindro (0,25 por lado);
 - a quilha no rasgo (0,2);
 - o eixo sextavado girando nos mancais (0,2 por lado);
-- os anéis de pista nos assentos (0,15);
+- os anéis do rolamento nas sedes (0,15) e as BBs no canal (~0,1 de jogo);
 - as capas dos punhos no pino (0,25);
 - os projéteis no cano (0,15) e nos casulos (0,25);
 - o pino pivô: Ø8 justo na mesa (Ø8,3), para servir de guia, e solto na base (Ø8,8).
@@ -214,7 +214,7 @@ A estimativa usa volume e área de cada STL (±15%).
 | base (bandeja com janelas, 10 casulos, plataforma vazada, pilar do ponteiro) | 226 g | **~167 g** |
 | mesa (assento do carro, aro dentado, copo, raios, faixa da escala) | 103 g | **~82 g** |
 | carro (disco central, bochechas em treliça, mancais) | 93 g | **~66 g** |
-| 2 anéis de pista | 52 g | ~44 g |
+| rolamento (3 anéis) | — | — |
 | setor de elevação raiado (−20° a +85°) | 43 g | ~33 g |
 | culatra + cano | 84 g | ~61 g |
 | 10 projéteis (40 partes) | 27 g | ~21 g |
@@ -272,7 +272,7 @@ Cianoacrilato (Super Bonder) também cola, mas fica quebradiço com as pancadas 
   - o **aro dentado**, 6 mm abaixo do pé do dente;
   - a **faixa da escala** atrás.
 - **Fino:**
-  - o **copo** que abraça o anel de pista (9,2 mm);
+  - o **copo** que abraça o topo do anel interno do rolamento (9,2 mm);
   - **6 raios** de 9 × 7 mm. Engrossaram em relação à v8, porque agora levam o peso do carro do centro até o anel das esferas.
 - **Faixa da escala (contrapeso):** um arco de **110°** atrás, do lado oposto aos dentes.
   - Tem os **graus gravados no topo** e 10 bolsões por baixo, com teto de 2,4 mm.
@@ -315,35 +315,39 @@ Peça: `punho_armar` (imprima em pé, com a tampa para cima).
 
 ## Sem nada comprado além das BBs e da mola
 
-### Rolamento impresso (substitui o 608)
-A pista da mesa são **dois anéis impressos** (`anel_pista_base` e `anel_pista_mesa`), com um canal em V de 90°.
-As **BBs de 6 mm** rolam entre eles.
-- **Encaixe:** o anel de baixo tem **8 dentes para baixo**, que entram em rasgos da base. O de cima tem **8 dentes para cima**,
-  que entram em rasgos da mesa. Assim os anéis não giram nem saem do centro, e a folga no assento é de 0,15 mm.
-- **Por que dispensa o 608:** uma esfera presa entre dois canais em V funciona como um **rolamento de contato angular**.
-  Ela segura o peso e também **centraliza** a mesa. O `pino_pivo` passa folgado (Ø8 num furo de Ø8,8) e serve só de guia
-  na montagem.
-- **Se gastar:** depois de muito uso, imprima só os dois anéis de novo.
-
-**Conferido com a BB real de 5,95 mm** (corte abaixo: anel de baixo, BB e anel de cima):
+### Rolamento de esferas impresso (contato em 4 pontos)
+É um **rolamento de verdade**: um **anel menor dentro de um anel maior**, com as BBs **presas** no canal entre os dois.
+É o mesmo tipo de rolamento das mesas giratórias de guindastes e de torres: segura o peso, o esforço de lado e a alavanca do cano.
 
 ![corte do rolamento](rolamento_corte.png)
 
-- Cada anel tem um canal em V de 90°, com **3,4 mm de profundidade** e **6,8 mm de boca**.
-  A BB tem 5,95 mm, então **não cabe inteira num anel só**: ela fica **3,8 mm para fora** do anel de baixo, e o anel de cima pousa por cima dela.
-- **Os anéis não se tocam:** ficam separados por **1,6 mm**. A BB encosta nas **4 faces inclinadas**, 2 em cima e 2 embaixo,
-  1,3 mm para dentro da face de cada anel. É isso que centraliza a mesa.
-- **Na boca do canal**, a BB tem 5,73 mm de largura, contra 6,8 mm de boca. Mesmo com o "pé de elefante" estreitando a boca, ela entra solta.
-- **Quantas BBs:** cabem 60 encostadas umas nas outras. **Com 52 sobra ~0,9 mm entre elas**, e assim elas rolam sem raspar uma na outra.
-- **BB de 6,00 contra 5,95:** com a de 5,95 a mesa fica só 0,07 mm mais baixa. Isso não muda nenhuma folga do canhão.
-- **Montagem:**
-  1. Passe uma camada fina de **vaselina** no canal do anel de baixo. Ela segura as BBs no lugar enquanto você monta, e o giro fica mais macio.
-  2. Distribua as 52 BBs.
-  3. Pouse o **anel de cima sobre as BBs**, com o canal para baixo.
-  4. Só então desça a mesa, encaixando os 8 dentes do anel nos rasgos dela.
-  - Se você puser o anel na mesa e virar a mesa, ele pode cair do rebaixo.
-- **Teste antes de tudo:** imprima só os dois anéis, ponha as BBs, pouse um sobre o outro e gire com a mão.
-  Tem que girar liso, sem raspar face com face.
+**Corte (da esquerda para a direita):**
+- **Anel interno:** sobe e entra na mesa.
+- **BB:** no canal entre os anéis.
+- **Anel externo:** assentado na sede da base.
+
+**As peças:**
+| Peça | Onde fica | Encaixe |
+|---|---|---|
+| `anel_interno` (Ø98 a Ø112) | preso **na mesa, por cima** | 8 dentes para cima, que entram em rasgos largos da mesa |
+| `anel_externo_baixo` (Ø116 a Ø130) | preso **na base, por baixo** | 8 chavetas na lateral, que descem nos rasgos da parede da sede |
+| `anel_externo_cima` | colado em cima do `anel_externo_baixo` | a parede da sede da base centraliza as duas metades |
+
+**Como as BBs ficam presas:**
+- Cada anel tem um **canal em V de 90°** virado para o outro: o interno por fora, o externo por dentro.
+  A BB encosta nos **4 flancos**, 2 de cada anel, a 45°. É isso que segura o peso, o esforço de lado e a alavanca.
+- **Entre os dois anéis sobra um vão de só 1,6 mm.** A BB de 5,95 mm não passa por ele.
+  Por isso ela não sai nem para cima nem para baixo, e os anéis não se separam.
+- **Folga:** o canal foi desenhado para uma esfera de 6,15 mm. Com BB de 5,95 sobra ~0,1 mm de jogo, e a BB roda solta, sem prender.
+- **Por que o anel externo tem 2 metades:** é o único jeito de pôr as BBs dentro de um rolamento com o anel interno já no lugar.
+  A divisão fica bem no meio do canal. Você põe as BBs com a metade de cima fora e depois fecha.
+- **Vão entre a coroa e a base: 1 mm.** O topo do anel externo fica rente ao topo da base, 1 mm abaixo da mesa.
+  O peso da mesa e do canhão passa **todo pelo rolamento**: mesa → anel interno → BBs → anel externo → base.
+- **52 BBs:** sobra ~0,9 mm entre elas, e elas rolam sem raspar uma na outra.
+- **Impressão:**
+  - todos os flancos do V ficam a 45°, então nenhum anel precisa de suporte;
+  - cada anel já sai na posição certa no arquivo;
+  - imprima com **4 paredes e 100%**.
 
 ### Sem parafusos
 | Onde era parafuso | Agora | Por que não espana |
@@ -359,7 +363,7 @@ Cada peça já sai na orientação de impressão.
 
 | Grupo | Peças |
 |---|---|
-| Base e mesa | `base`, `mesa`, `anel_pista_base`, `anel_pista_mesa`, `pino_pivo` |
+| Base e mesa | `base`, `mesa`, `anel_interno`, `anel_externo_baixo`, `anel_externo_cima`, `pino_pivo` |
 | Carro | `carro`, `roda_el`, `ponteiro_el`, `ponteiro_az` (encaixa no pilar da base) |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
 | Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `porta_projeteis` |
@@ -368,7 +372,7 @@ Cada peça já sai na orientação de impressão.
 
 **Comprar:** ~52 BBs de 6 mm e 1 mola 1,0×12×100. Mais nada.
 
-**Imprima os anéis de pista com 4 paredes e 100%.**
+**Imprima os 3 anéis do rolamento com 4 paredes e 100%.**
 
 ## Montagem passo a passo
 
@@ -390,15 +394,21 @@ Cada peça já sai na orientação de impressão.
 Imprima primeiro a placa das peças pequenas. Passe o `eixo_el` na `rosca_el` e estale uma `trava_6` num canal do eixo.
 Se a rosca entrar sem forçar e a trava estalar e ficar firme, as folgas estão certas para a sua impressora.
 
-### 1. Base: rosca de azimute e anel de baixo
-1. **Rosca:** deite a `rosca_az` na calha, entre os dois mancais de dentro.
-2. **Eixo:** passe o `eixo_az` pelo lado da manivela, atravessando o mancal externo, o mancal de dentro, a rosca e o outro mancal.
-3. **Travas:** encaixe uma `trava_6` no canal da ponta, depois do último mancal, e outra no canal logo depois do mancal externo.
-   Para encaixar, encoste a boca da trava no canal e empurre de lado até estalar.
-4. **Manivela:** ponha a `manivela_az` no sextavado, com o tambor virado para o mancal, e a 3ª trava no canal de fora.
-   Estale o `punho` no pino. Ele tem que girar solto.
-5. **Anel de baixo:** encaixe o `anel_pista_base` no rebaixo da base, com o **canal para cima** e os 8 dentes nos rasgos.
-6. **Confira:** gire a manivela. A rosca tem que girar inteira, sem raspar.
+### 1. Rolamento (monte na bancada, numa mesa lisa)
+O fundo do `anel_interno` e o fundo do `anel_externo_baixo` ficam no **mesmo plano**. Em cima de uma mesa lisa,
+os dois já ficam na altura certa para as BBs entrarem.
+1. **Anéis na mesa:** ponha o `anel_externo_baixo` deitado na mesa e o `anel_interno` dentro dele, com os dentes para cima.
+2. **Vaselina:** passe uma camada fina nos dois canais. Ela segura as BBs enquanto você monta e deixa o giro macio.
+3. **BBs:** distribua as **52 BBs** no canal entre os dois anéis. Elas assentam sozinhas nos flancos de baixo.
+   Espalhe por igual, deixando o mesmo espacinho entre todas.
+4. **Metade de cima:**
+   - passe **3 ou 4 gotinhas de cola instantânea** na face de cima do `anel_externo_baixo`, só na borda de fora, longe do canal;
+   - encaixe o `anel_externo_cima` por cima, com o flanco para baixo, alinhando as bordas de fora;
+   - aperte com os dedos por alguns segundos.
+5. **Confira:** gire o anel interno com a mão. Tem que girar liso, sem prender, e **não pode sair** quando você puxa.
+   O rolamento agora é uma peça só, com as BBs presas dentro.
+6. **Na base:** desça o rolamento na sede da base, com as 8 chavetas de fora entrando nos rasgos da parede.
+   O anel interno fica pendurado nas BBs, 1 mm acima dos raios da base.
 
 ### 2. Mesa e carro (colados)
 1. **Pino pivô:** ponha o `pino_pivo` no furo central da mesa, de cima para baixo. A cabeça entra no rebaixo da espiga.
@@ -407,24 +417,26 @@ Se a rosca entrar sem forçar e a trava estalar e ficar firme, as folgas estão 
    - lixe as faces (assento, espiga e o fundo do disco do carro) e limpe com álcool;
    - passe **epóxi** no assento e na espiga, encaixe o carro e aperte;
    - limpe o excesso e deixe curar o tempo da embalagem, com a mesa deitada.
-4. **Anel de cima:**
-   - vire a mesa de cabeça para baixo e encaixe o `anel_pista_mesa` no rebaixo de baixo dela, com o **canal para fora** e os dentes nos rasgos;
-   - prenda com **3 ou 4 gotinhas de cola instantânea** nos dentes.
-   - **Por que colar o anel:** na hora de descer a mesa, a coroa já engrena na rosca antes do anel entrar nos rasgos. Aí não dá mais para girar a mesa e achar os rasgos.
 
-### 3. Rolamento e descida da mesa
-1. Passe uma camada fina de **vaselina** no canal do anel de baixo e distribua as **52 BBs** por igual.
-2. **Ponteiro fora:** o `ponteiro_az` **ainda não vai**. Ele encaixa depois, senão a faixa da escala bate nele.
-3. **Posição:** segure a mesa com o carro em cima da base, com:
-   - a **faixa da escala virada para trás**, de modo que o **pilar da base fique entre os dois ressaltos** das pontas da faixa;
-   - os **dentes na frente**, sobre a rosca;
-   - o **pino pivô** sobre o furo do centro.
-4. **Desça devagar.** Quando os dentes tocarem a rosca, gire **de leve** a manivela de azimute para um lado e para o outro até eles entrarem.
-   Deixe a mesa pousar nas BBs.
-5. **Ponteiro:** encaixe o `ponteiro_az` no furo quadrado do topo do pilar, com a agulha virada para a escala.
+### 3. Descida da mesa (antes da rosca de azimute)
+A rosca de azimute entra **depois** da mesa. Assim a mesa ainda gira solta na hora de descer.
+1. **Alinhe os dentes:** gire o anel interno até o **pilar da base ficar bem no meio entre dois dentes** dele.
+2. **Posição:**
+   - o **ponteiro ainda fora**, senão a faixa da escala bate nele;
+   - a mesa com a **faixa da escala para trás** e o **pilar entre os dois ressaltos** das pontas da faixa;
+   - os dentes da coroa na frente.
+3. **Desça devagar.** O pino pivô entra no furo do centro da base, e os dentes do anel interno entram nos rasgos da mesa.
+   Os rasgos são largos, então não precisa acertar exato. Se a mesa não assentar, gire-a uns poucos graus para um lado e para o outro.
+   Ela pousa no anel interno e fica **1 mm acima da base**, sem encostar.
+4. **Ponteiro:** encaixe o `ponteiro_az` no furo quadrado do topo do pilar, com a agulha virada para a escala.
+5. **Rosca de azimute:**
+   - deite a `rosca_az` na calha, entre os dois mancais de dentro, girando a mesa de leve até os dentes da coroa entrarem no filete;
+   - passe o `eixo_az` pelo lado da manivela, atravessando o mancal externo, o mancal de dentro, a rosca e o outro mancal;
+   - encaixe uma `trava_6` no canal da ponta e outra logo depois do mancal externo (encoste a boca da trava no canal e empurre de lado até estalar);
+   - ponha a `manivela_az`, a 3ª trava e estale o `punho`.
 6. **Confira:**
-   - gire a manivela de azimute de ponta a ponta: tem que ir de −50° a +50° liso e parar firme em ±52°, no pilar;
-   - **a mesa não pode raspar na parede da base em nenhum ponto.**
+   - gire a manivela de ponta a ponta: tem que ir de −50° a +50° liso e parar firme em ±52°, no pilar;
+   - **a mesa não pode raspar na base em nenhum ponto.**
 
 ### 4. Elevação
 1. **Rosca:** coloque a `rosca_el` entre os dois mancais de dentro do carro.
