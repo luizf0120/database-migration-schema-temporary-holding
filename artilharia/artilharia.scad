@@ -130,10 +130,10 @@ esp_mancal_el = 6;
 esp_mancal_ext = 6;
 
 /* [Lancador de mola] */
-// Mola de compressao (AliExpress: "mola de compressao 1.0 x 12 x 100 mm")
+// Mola de compressao (AliExpress: "mola de compressao 0.8 x 9 x 75 mm")
 mola_d    = mm_real(9);    // mola de 0,8 x 9 x 75 mm (diametro externo, em mm reais)
 mola_L    = mm_real(75);   // comprimento livre
-d_proj    = 12;    // projetil: bolinha de 12 mm (impressa, EVA ou isopor)
+d_proj    = 12;    // calibre de desenho (alma = d_proj + 0,8); o projetil impresso sai com d_alma - folga_proj
 L_cano    = 110;   // cano a frente do cilindro
 z_b       = 18;    // eixo do cano acima do eixo do munhao
 // pinhao "mutilado" + cremalheira no pistao
@@ -1153,7 +1153,7 @@ module porta_montado() {
     for (i = [0:n_proj-1]) translate([(i % nx)*passo, floor(i/nx)*passo, 3]) projetil_colorido();
 }
 
-// ---- PINO do gatilho (Ø4, com trava "E" por baixo da lingueta)
+// ---- PINO do gatilho (D4, com trava "E" por baixo da lingueta)
 dc_4 = 3.0;
 module pino_gatilho() {
     translate([x_piv_gat, y_piv_gat, 0]) difference() {

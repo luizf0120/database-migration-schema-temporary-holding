@@ -76,14 +76,15 @@ que entra num canal interno da capa. Depois disso ela **não sai mais**, mas **g
 
 ![corte armado](corte_armado.png)
 
-*Corte armado: o pistão (laranja) está recuado e a mola (azul) comprimida. A bolinha está carregada e a parte lisa do pinhão encara a cremalheira.*
+*Corte armado: o pistão (laranja) está recuado e a mola (azul) comprimida. O projétil está carregado e a parte lisa do pinhão encara a cremalheira.*
 
 **Mola (AliExpress):** mola de compressão de aço, **fio 0,8 mm × Ø externo 9 mm × 75 mm**.
-Procure por "compression spring 1.0 x 12 x 100". Se só achar mais longa, corte. A mola trabalha dentro do pistão,
-apoiada numa guia na tampa, com pré-carga de ~20 mm e ~55 mm comprimida quando armada (~25–30 N).
+Procure por "compression spring 0.8 x 9 x 75". Se só achar mais longa, corte. A mola trabalha dentro do pistão,
+apoiada numa guia na tampa, com pré-carga de ~13 mm e ~40 mm comprimida quando armada (~6 N em repouso, ~20 N armada, estimando ~0,5 N/mm).
+A v10 chegava a ~27 N num pinhão maior: agora o torque de armar caiu para pouco mais da metade (~0,19 N·m no pinhão, contra 0,33).
 
-**Projétil:** bolinha de **12 mm** (impressa, EVA ou isopor). Ela é carregada **pela boca do cano**, como num
-canhão antigo, e rola até o pistão. Com o cano na horizontal, empurre com o `soquete`.
+**Projétil:** a granada impressa de **Ø9,6 mm** (veja abaixo). Ela é carregada **pela boca do cano**, como num
+canhão antigo, e desliza até o pistão. Com o cano na horizontal, empurre com o `soquete`.
 
 ### Como funciona
 
@@ -91,11 +92,11 @@ canhão antigo, e rola até o pistão. Com o cano na horizontal, empurre com o `
    Ele gira uma **rosca sem fim
    (16:1, autotravante)**, que gira uma coroa e um **pinhão "mutilado"**. Esse pinhão tem 8 dentes de um lado e é liso do outro,
    como o setor de um gearbox de airsoft. O pinhão puxa a **cremalheira** que fica no topo do pistão, comprimindo a mola.
-2. **Clique:** quando o pistão chega a 35 mm de recuo, a **lingueta do gatilho** estala na frente dele.
+2. **Clique:** quando o pistão chega a 27 mm de recuo, a **lingueta do gatilho** estala na frente dele.
 3. **PRONTO:** continue girando cerca de **2 a 5 voltas**, até a faixa gravada na coroa de armar passar sob a seta.
    Nessa faixa a parte lisa do pinhão encara a cremalheira e o caminho fica livre. São 16 voltas por disparo no total.
 4. **Disparar:** aperte o **botão do gatilho** (na esquerda, atrás) para dentro. O dente sai, a mola empurra o pistão
-   e o pistão empurra a bolinha.
+   e o pistão empurra o projétil.
 
 > Não gire além da faixa PRONTO. Se girar demais, o pinhão volta a pegar a cremalheira e trava contra a tampa.
 > Basta voltar uma volta.
@@ -153,11 +154,14 @@ levemente achatada e base plana chanfrada. A base é onde o pistão empurra, e o
 
 | Impressão do projétil | Peso | Saída (ideal) | Energia |
 |---|---|---|---|
-| 2 paredes, 15% | 1,2 g | ~12,6 m/s | 0,10 J |
-| **3 paredes, 20% (recomendado)** | **1,7 g** | **~12,3 m/s** | **0,12 J** |
-| maciço | 2,7 g | ~11,5 m/s | 0,18 J |
+| 2 paredes, 15% | 0,65 g | ~13,6 m/s | 0,06 J |
+| **3 paredes, 20% (recomendado)** | **0,9 g** | **~13,2 m/s** | **0,08 J** |
+| maciço | 1,25 g | ~12,7 m/s | 0,10 J |
 
-**Por que a velocidade quase não muda:** o pistão (~7 g) leva quase toda a massa em movimento. Um projétil
+Na v11 a mola guarda ~0,36 J armada (a da v10 guardava ~0,65 J). O pistão caiu de 7 para 3,2 g e o projétil
+também ficou mais leve, então a **velocidade de saída até subiu um pouco**. A energia de cada tiro é menor (0,08 J contra 0,12 J), e o alcance fica parecido.
+
+**Por que a velocidade quase não muda:** o pistão (~3,2 g) leva quase toda a massa em movimento. Um projétil
 mais pesado sai só um pouco mais devagar, mas com **mais energia**, e sofre menos com o ar. Com atrito, os valores reais
 ficam uns 20–30% abaixo. Os projéteis imprimem em pé, com a ponta para cima e sem suporte.
 Para lixar as cintas, se ficarem justas, gire o projétil entre os dedos com uma lixa 400.
@@ -206,21 +210,22 @@ Ative a **compensação de "pé de elefante"** no fatiador (Creality Print: ~0,1
 | Ponto | Problema | Solução |
 |---|---|---|
 | **Roscas sem fim** | ficavam com 1 mm de jogo de cada lado e podiam escorregar no eixo. Cada 1 mm de deslize gira a coroa sem mexer na manivela: **~0,85° no azimute** | a rosca agora encosta nos mancais (0,15 mm), que funcionam como **mancal de empuxo** |
-| **Batente do pistão** | o pistão (~7 g a ~13 m/s) para em menos de 1 mm, gerando **centenas de N** de pico a cada tiro. O tampão do cano preso por 1 M3 numa parede de 2,5 mm ia rachar | o batente agora é um **degrau interno da culatra**, com o **anel `amortecedor`** (TPU de preferência; em PETG serve de espaçador). O cano não leva mais a pancada |
-| **Tampa traseira** | era fixa, e o pistão entrava pela frente | **tampa removível com baioneta em J** (2 ressaltos de 3 mm; ~3,6 MPa com a mola). O pistão entra por trás |
-| **Pino do punho** | Ø6 impresso em pé: a mão força o pino entre as camadas (~19 MPa) e ele quebra na raiz | **Ø8** (~8 MPa); a fenda do clique fica só na ponta, onde o esforço é pequeno |
+| **Batente do pistão** | o pistão (~7 g a ~13 m/s na v10; 3,2 g na v11) para em menos de 1 mm, gerando **centenas de N** de pico a cada tiro. O tampão do cano preso por 1 M3 numa parede de 2,5 mm ia rachar | o batente agora é um **degrau interno da culatra**, com o **anel `amortecedor`** (TPU de preferência; em PETG serve de espaçador). O cano não leva mais a pancada |
+| **Tampa traseira** | era fixa, e o pistão entrava pela frente | **tampa removível com baioneta em J** (2 ressaltos de 3 mm; ~3,6 MPa com a mola; ~4,5 MPa na v11). O pistão entra por trás |
+| **Pino do punho** | Ø6 impresso em pé: a mão força o pino entre as camadas (~19 MPa) e ele quebra na raiz | **Ø8** (~8 MPa; na v11 sai com Ø6,2 e ~13 MPa, porque a mão não encolheu); a fenda do clique fica só na ponta, onde o esforço é pequeno |
 | **Elevação sem fim de curso** | insistir na manivela gera até ~4 N·m na coroa e pode esmagar a culatra ou cisalhar dentes | **batentes em −22° e 87°**: 2 ressaltos na face interna da coroa batem num bloco da bochecha |
-| **Gatilho** | 4 mm de espessura sob carga constante (~22 MPa com a mola armada): o PETG flui e a lingueta entortaria com o tempo | **6 mm** e dente de 5 mm (~10 MPa). Gira num **pino impresso de Ø4** com `trava_4`, e a mola de lâmina ficou mais longa (deforma <1%, não perde a força) |
-| **Cubos e eixos** | os canais das travas reduzem o sextavado para Ø4,6 | torção ~15 MPa com a mão forçando: aceitável |
+| **Gatilho** | 4 mm de espessura sob carga constante (~22 MPa com a mola armada): o PETG flui e a lingueta entortaria com o tempo | **6 mm** e dente de 5 mm (~10 MPa; ~12 MPa na v11: a mola tem 74% da força numa peça 23% menor). Gira num **pino impresso de Ø4** com `trava_4`, e a mola de lâmina ficou mais longa (deforma <1%, não perde a força) |
+| **Cubos e eixos** | os canais das travas reduzem o sextavado para Ø4,6 | torção ~15 MPa com a mão forçando: aceitável. **Na v11, ~25 MPa:** o eixo sai com 4,6 mm (3,6 mm no canal) e a mão força igual. Imprima os eixos com 100% e não force a manivela no batente |
 
 ### Pontos que continuam merecendo atenção
 
 - **Rosca de armar** (impressa em pé): o filete trabalha **entre camadas**. Use 4+ paredes, 100% de preenchimento,
   240–250 °C e ventoinha em 30–50% para a camada colar bem.
-- **Dentes da coroa de elevação (módulo 1):** aguentam ~160 N. Os batentes limitam o esforço, mas **não force a manivela quando ela parar**.
+- **Dentes da coroa de elevação (módulo 0,77 na v11):** aguentam ~95 N (eram ~160 N com módulo 1). Os batentes limitam o esforço, mas **não force a manivela quando ela parar**.
 - **Lingueta do gatilho com o canhão armado por muito tempo:** o PETG flui sob carga constante. Não deixe armado por dias. Arme, atire e desarme.
 - **Culatra:** imprima com a frente para baixo, com suportes nas placas e nos mancais externos, e 4 paredes.
 - **PETG em PEI liso** pode arrancar o revestimento da placa. Use cola bastão ou PEI texturizado.
+- **Na v11, os pontos mais fracos são os eixos e o pino do punho.** Peças menores com a mesma mão forçando: quando a manivela parar no batente, pare.
 - Os outros pontos (rolamento, mesa e eixos sob carga de pontaria) trabalham com tensões baixas, abaixo de 5 MPa.
 
 ### Dica de artilheiro (para eliminar a folga dos dentes)
@@ -236,23 +241,23 @@ A estimativa usa volume e área de cada STL (±15%).
 
 | Peça | Maciço | Típico |
 |---|---|---|
-| base (bandeja com janelas, sede do rolamento, 10 casulos, plataforma vazada, pilar) | 204 g | **~157 g** |
-| mesa (assento do carro, aro dentado, copo, raios, faixa da escala) | 115 g | **~84 g** |
-| carro (disco central, bochechas em treliça, mancais) | 93 g | **~66 g** |
-| rolamento: 3 anéis (sempre com 100%) | 69 g | **69 g** |
-| setor de elevação raiado (−20° a +85°) | 43 g | ~33 g |
-| culatra + cano | 84 g | ~61 g |
-| 10 projéteis (40 partes) | 27 g | ~21 g |
-| todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 122 g | ~101 g |
-| **Total impresso** | **~756 g** | **~591 g** |
-| + BBs e mola | | ~11 g |
+| base (bandeja com janelas, sede do rolamento, 10 casulos, plataforma vazada, pilar) | 93 g | **~86 g** |
+| mesa (assento do carro, aro dentado, copo, raios, faixa da escala) | 53 g | **~48 g** |
+| carro (disco central, bochechas em treliça, mancais) | 43 g | **~37 g** |
+| rolamento: 3 anéis (sempre com 100%) | 47 g | **47 g** |
+| setor de elevação raiado (−20° a +85°) | 20 g | ~19 g |
+| culatra + cano | 39 g | ~34 g |
+| 10 projéteis (40 partes) | 12 g | ~11 g |
+| todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 56 g | ~52 g |
+| **Total impresso** | **~363 g** | **~333 g** |
+| + 40 BBs e mola | | ~8 g |
 
-Comparando com a v6: **−260 g maciço e −54 g no típico** (−8%). O rolamento de verdade (v10) pesa mais que as pistas antigas e vai sempre com 100%.
-- **Base, −51 g:** saia → casulos; piso com janelas; plataforma da manivela vazada; sem a aba da escala (v9).
-- **Mesa e carro, −14 g:** sem placa, sem disco cheio, bochechas em treliça. Na v9, o assento central e a faixa da escala
-  (que também é o contrapeso) somaram uns 16 g na mesa, mas o carro ficou sem garfos nem cunhas.
-- **Coroa de elevação, −10 g:** raios no lugar do disco, finos na espessura.
-- **Projéteis, +4 g:** as 4 partes pequenas saem praticamente maciças.
+**v11 contra a v10: de ~591 g para ~333 g no típico (−44%).**
+- **O maciço caiu para 48%.** Reduzir tudo a 77% divide o volume por 0,773³ = 2,2.
+  Só o rolamento cai menos, porque o perfil dele (BB de 6 mm, paredes e folgas) ficou em tamanho real.
+- **O típico cai menos:** as paredes continuam com 1,2 mm, e nas peças menores elas já são quase a peça inteira.
+  Por isso, nesta escala, o típico fica perto do maciço.
+- **Tempo e filamento:** espere cerca de metade do tempo de impressão da v10.
 
 **Por que o "típico" cai menos que o "maciço":** na impressão FDM, o miolo já é preenchimento ralo, e quem
 pesa são as paredes. Tirar volume ajuda muito no maciço. No típico, o que mais pesa é a área de superfície.
