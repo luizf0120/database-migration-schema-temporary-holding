@@ -60,7 +60,7 @@ f_eixo   = 6;    // eixos das roscas/manivelas (medida entre faces)
 f_munhao = 8;    // eixo do munhao (chave Allen 8 mm serve)
 // travas em "E" impressas: encaixam num canal do eixo deformando de leve
 g_canal  = 1.6;  // largura do canal no eixo
-e_trava  = 1.4;  // espessura da trava
+e_trava  = mm_real(1.0);  // espessura da trava: 1 mm real (5 camadas de 0,2), 0,24 mm de folga no canal
 dc_6     = 4.6;  // diametro no fundo do canal (eixo 6 e pino do punho)
 dc_8     = 6.2;  // diametro no fundo do canal (eixo 8)
 

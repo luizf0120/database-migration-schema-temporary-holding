@@ -67,6 +67,7 @@ A leitura é 32,5° + 1,3° = **33,8°**. Uma volta inteira da manivela soma 3°
 **Travas dos eixos:** são travas em "E" impressas (`trava_6` e `trava_8`). Você encosta a boca da trava no
 canal do eixo e empurra de lado. Ela abre um pouco, estala no canal e não sai mais sozinha. Para tirar,
 empurre pela aba. Cada eixo tem 2 ou 3 canais, e o punho da manivela também tem a sua trava.
+Na v11 a trava tem **1,0 mm** de espessura (5 camadas de 0,2), num canal de 1,24 mm. Imprima com camada de 0,2 mm para ela sair exata.
 
 **Manivelas:** cada uma tem 3 mancais (o externo afasta a manivela de tudo), um tambor graduado e um **punho em capa**.
 A capa é fechada em cima e encaixa no pino com um **clique**: a ponta do pino é bipartida e tem um dente cônico,
