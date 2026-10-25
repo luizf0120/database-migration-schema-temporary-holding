@@ -543,6 +543,16 @@ Todas as peças geram sólido válido. Também conferi:
     Em ±52° o ressalto encosta no batente, e a rosca ainda tem ~8° de dentes de sobra.
   - A rosca de elevação engrena em −20°, 0° e 85°, e os batentes encostam em −22° e +87°.
   - O cano fica livre do carro de −20° a 85°. A manivela de elevação e o volante de armar não se tocam em −20° nem em 85°.
+- **v11 (tudo a 77%, base de 15 cm):** refiz as 36 checagens com o modelo reduzido, e nenhum log acusou malha aberta.
+  Como as folgas, as BBs e o perfil do rolamento ficaram em tamanho real, a redução não é só uma escala: tudo precisou ser conferido de novo.
+  - **Rolamento:** anéis nas sedes, anel interno solto, BBs de 5,95 e 6,00 mm livres no canal, montagem na bancada e descida da mesa: tudo livre.
+  - **Giro:** livre de −49° a +49°; em ±52° encosta só no batente do pilar.
+  - **Engrenamento:** a rosca de azimute na coroa, a de elevação na coroa raiada (−20°, 0° e 85°), a rosca de armar, o pinhão e a cremalheira: sem interferência.
+  - **Lançador:** o pistão, o pinhão, o gatilho e o projétil passam livres, e o gatilho só toca onde deve.
+    A mola nova cabe (conta, não CGAL): Ø9 num furo de 9,8 mm no pistão, e a guia da tampa tem 7,1 mm para o furo de 7,4 mm da mola.
+  - **Elevação:** livre de −20° a 85°, encostando no batente em −23°.
+  - **Cano, manivelas e volante:** livres. A varredura de azimute em −50°, 0° e +50° contra a base também deu livre.
+  - **STLs:** as 42 peças exportadas sem erro de malha; a `base` mede 150,3 mm.
 - **v10 (rolamento de esferas de 4 pontos):** nenhum log acusou malha aberta.
   - **Anéis nas sedes:** o anel externo (as 2 metades) só encosta na sede da base, e o anel interno só encosta no assento da mesa.
   - **Anel interno solto:** não toca no anel externo nem na base.
