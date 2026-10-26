@@ -139,10 +139,10 @@ levemente achatada e base plana chanfrada. A base é onde o pistão empurra, e o
 
   | Parte | Cor | Altura |
   |---|---|---|
-  | `projetil_corpo` | cor principal | corpo inteiro |
-  | `projetil_anel` | cor 2 | 2 mm, uma faixa na base da ogiva |
-  | `projetil_meio` | cor principal | 3,5 mm, o meio da ogiva |
-  | `projetil_ponta` | cor 2 | ~3 mm, a ponta |
+  | `projetil_corpo` | cor principal | corpo inteiro (10 mm) |
+  | `projetil_anel` | cor 2 | 1,5 mm, uma faixa na base da ogiva |
+  | `projetil_meio` | cor principal | 2,7 mm, o meio da ogiva |
+  | `projetil_ponta` | cor 2 | ~2,4 mm, a ponta |
 
   - **Encaixes de centragem para colar:** o **pino de Ø3,9** do corpo atravessa o anel e entra no meio.
     O meio tem um **pino de Ø2,3** que entra na ponta.
