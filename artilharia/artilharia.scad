@@ -1393,8 +1393,8 @@ else if (PARTE == "eixo_el")     translate([0, 0, f_eixo/2]) rotate([90, 0, 0])
                                      eixo_hex(f_eixo, el_z0, el_z1, [el_g1, el_g2, el_g3], dc_6);
 else if (PARTE == "eixo_munhao") translate([0, 0, f_munhao/2]) rotate([90, 0, 0])
                                      eixo_hex(f_munhao, mu_z0, mu_z1, [mu_g1, mu_g2], dc_8);
-else if (PARTE == "ponteiro_el") translate([0, 0, 2]) rotate([90, 0, 0]) ponteiro(h_pont_el, c_pont_el);
-else if (PARTE == "ponteiro_az") translate([0, 0, 2]) rotate([90, 0, 0]) ponteiro(1.5, c_pont_az);
+else if (PARTE == "ponteiro_el") translate([0, 0, h_pont_el]) rotate([180, 0, 0]) ponteiro(h_pont_el, c_pont_el);   // agulha deitada na mesa, pino para cima
+else if (PARTE == "ponteiro_az") translate([0, 0, 1.5]) rotate([180, 0, 0]) ponteiro(1.5, c_pont_az);   // agulha deitada na mesa, pino para cima
 else if (PARTE == "pino_pivo")   pino_pivo();
 else if (PARTE == "anel_interno")  translate([0, 0, h_rol/2]) anel_interno();                     // dentes para cima
 else if (PARTE == "anel_externo_baixo") translate([0, 0, h_rol/2]) anel_externo_baixo();      // fundo plano na mesa da impressora
