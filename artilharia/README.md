@@ -38,6 +38,7 @@ e as peças altas viravam espaguete. Isto mudou:
   - os 5 eixos (`eixo_az`, `eixo_el`, `eixo_munhao`, `eixo_pinhao` e `eixo_armar`);
   - `ponteiro_az`, `ponteiro_el` e `pino_pivo`.
 - **O `pistao` não mudou.** Só reimprima **sem suporte**: com suporte, os dentes da cremalheira fecham.
+- **Atalho:** o `reimprimir_v12.zip` traz só essas 17 STLs (as 16 novas ou alteradas e o `pistao`).
 - **Todo o resto vale como está**: base, mesa, carro, anéis, roscas, coroas, pinhão, manivelas, volante, punhos, travas, coroa de elevação, projéteis e porta-projéteis.
 
 ## Tamanho (v11)
@@ -281,10 +282,10 @@ A estimativa usa volume e área de cada STL (±15%).
 | carro (disco central, bochechas em treliça, mancais) | 43 g | **~37 g** |
 | rolamento: 3 anéis (sempre com 100%) | 47 g | **47 g** |
 | setor de elevação raiado (−20° a +85°) | 20 g | ~19 g |
-| culatra + cano | 39 g | ~34 g |
+| culatra (2 metades) + cano | 35 g | ~32 g |
 | 10 projéteis (40 partes) | 12 g | ~11 g |
-| todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 56 g | ~52 g |
-| **Total impresso** | **~363 g** | **~333 g** |
+| todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 56 g | ~51 g |
+| **Total impresso** | **~359 g** | **~331 g** |
 | + 40 BBs e mola | | ~8 g |
 
 **v11 contra a v10: de ~591 g para ~333 g no típico (−44%).**
@@ -586,6 +587,18 @@ Todas as peças geram sólido válido. Também conferi:
     Em ±52° o ressalto encosta no batente, e a rosca ainda tem ~8° de dentes de sobra.
   - A rosca de elevação engrena em −20°, 0° e 85°, e os batentes encostam em −22° e +87°.
   - O cano fica livre do carro de −20° a 85°. A manivela de elevação e o volante de armar não se tocam em −20° nem em 85°.
+- **v12 (impressão sem suporte e folgas novas):** 30 checagens novas, e nenhum log acusou malha aberta.
+  - **Achados e corrigidos:** o gatilho invadia a culatra (53 mm³) e nenhuma checagem antiga testava esse par.
+    O olhal raspava no cilindro, o dente batia na parede porque a janela era rasa, e o pé do mancal da rosca de armar entrava na lingueta.
+    Agora o gatilho só encosta com a ponta da mola de lâmina, que é a pré-carga de propósito.
+  - **Metades da culatra:** só se tocam no plano do corte.
+  - **Pistão:** livre em todo o curso (repouso, armado e recuo máximo), encostando só no amortecedor e na tampa.
+  - **Projétil:** desce livre pelo cano, pelo funil e pelo degrau até o pistão armado.
+  - **Baionetas:** o cano entra (recuado 8, 4 e 0 mm) e gira 0°, 10°, 20° e 30° sem prender.
+    A tampa entra, é empurrada até o colar, gira 30° e assenta no entalhe sem prender.
+  - **Engrenagens e eixos:** o pinhão, a coroa, a rosca de armar, os eixos novos e o volante giram livres.
+  - **Elevação:** de −22° a 87° (batentes inclusos), contra o carro e as manivelas, livre. O azimute em −50°, 0° e +50° contra a base também.
+  - **Impressão:** medi os balanços das STLs novas. Sobram só pontes curtas, de 2 a 3 mm (teto dos furos em gota e dentro dos rasgos da baioneta). Nada passa de 45° no ar.
 - **v11 (tudo a 77%, base de 15 cm):** refiz as 36 checagens com o modelo reduzido, e nenhum log acusou malha aberta.
   Como as folgas, as BBs e o perfil do rolamento ficaram em tamanho real, a redução não é só uma escala: tudo precisou ser conferido de novo.
   - **Rolamento:** anéis nas sedes, anel interno solto, BBs de 5,95 e 6,00 mm livres no canal, montagem na bancada e descida da mesa: tudo livre.
