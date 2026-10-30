@@ -41,7 +41,7 @@ e as peças altas viravam espaguete. Isto mudou:
   - os 5 eixos (`eixo_az`, `eixo_el`, `eixo_munhao`, `eixo_pinhao` e `eixo_armar`);
   - `ponteiro_az`, `ponteiro_el` e `pino_pivo`.
 - **O `pistao` não mudou.** Só reimprima **sem suporte**: com suporte, os dentes da cremalheira fecham.
-- **Atalho:** o `reimprimir_v12.zip` traz só essas 17 STLs (as 16 novas ou alteradas e o `pistao`).
+- **Atalho:** o `reimprimir_v12.zip` traz só as 16 STLs novas ou alteradas (o `pistao` antigo serve).
 - **Todo o resto vale como está**: base, mesa, carro, anéis, roscas, coroas, pinhão, manivelas, volante, punhos, travas, coroa de elevação, projéteis e porta-projéteis.
 
 ## Tamanho (v11)
@@ -601,6 +601,7 @@ Todas as peças geram sólido válido. Também conferi:
     A tampa entra, é empurrada até o colar, gira 30° e assenta no entalhe sem prender.
   - **Engrenagens e eixos:** o pinhão, a coroa, a rosca de armar, os eixos novos e o volante giram livres.
   - **Elevação:** de −22° a 87° (batentes inclusos), contra o carro e as manivelas, livre. O azimute em −50°, 0° e +50° contra a base também.
+  - **Cano sextavado (v12.1):** entra, gira os 30° da baioneta e trava sem prender. O projétil passa livre, e a elevação de −22° a 87° e o azimute também.
   - **Impressão:** medi os balanços das STLs novas. Sobram só pontes curtas, de 2 a 3 mm (teto dos furos em gota e dentro dos rasgos da baioneta). Nada passa de 45° no ar.
 - **v11 (tudo a 77%, base de 15 cm):** refiz as 36 checagens com o modelo reduzido, e nenhum log acusou malha aberta.
   Como as folgas, as BBs e o perfil do rolamento ficaram em tamanho real, a redução não é só uma escala: tudo precisou ser conferido de novo.
