@@ -1,4 +1,4 @@
-# Canhão de brinquedo v11: base de 15 cm, rolamento de esferas de verdade, carro colado no centro da mesa, escala na mesa, projéteis em 2 cores e só 2 itens para comprar
+# Canhão de brinquedo v12: nenhuma peça precisa de suporte, folgas revistas, base de 15 cm, rolamento de esferas de verdade e só 2 itens para comprar
 
 ![montagem](montagem.png)
 
@@ -8,6 +8,37 @@ Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `ca
 **Para comprar, só 2 itens:**
 - **~40 BBs de airsoft de 6 mm** (compre um pacote; sobram muitas): são as esferas do rolamento da mesa.
 - **1 mola de compressão 0,8 × 9 × 75 mm** (fio de 0,8 mm, Ø externo 9 mm, 75 mm de comprimento).
+
+## Novidades da v12 (depois do primeiro teste de impressão)
+
+No primeiro teste, os eixos não entravam nas roscas e engrenagens, o pistão e o projétil travavam,
+e as peças altas viravam espaguete. Isto mudou:
+
+- **Nenhuma peça precisa de suporte.**
+  - A `culatra` agora são **2 metades deitadas**, `culatra_cima` e `culatra_baixo`, coladas depois.
+  - O `cano` e o `soquete` saem deitados, com o fundo plano e chanfros de 45°.
+  - Todo furo que fica deitado tem formato de **gota**, com teto a 45°, e sai redondo sem suporte.
+- **Eixos 0,25 mm mais finos.**
+  - No sextavado sobram 0,25 mm por lado. As pontas são chanfradas para entrar fácil, e as 2 arestas de baixo também, contra o "pé de elefante".
+  - Servem nas roscas, coroas e manivelas **que você já imprimiu**: os furos dessas peças não mudaram.
+- **Pistão:** 0,35 mm por lado no cilindro (era 0,25), e a quilha corre com 0,3 por lado no rasgo (era 0,2).
+- **Projétil:** 0,3 mm por lado no cano (era 0,15). Quem cresceu foi a alma do cano, então os **projéteis já impressos continuam servindo**.
+- **Encaixes da culatra:** a espiga do cano entra com 0,3 por lado (era 0,2), e a tampa com 0,25 (era 0,2).
+- **Gatilho: dois defeitos antigos.** Nenhuma checagem antiga testava o gatilho contra a culatra.
+  - O olhal do pino raspava 1 mm no cilindro. O pivô foi 2 mm para fora.
+  - A janela do dente era rasa, e o dente batia na parede. A janela agora vai até dentro do furo.
+  - O pé do mancal da rosca de armar também invadia a lingueta e foi refeito.
+- **Pinos menores:** o dos ponteiros ficou 0,15 mais fino (0,2 por lado no furo), e o pino pivô também (0,22 por lado na mesa).
+
+**O que reimprimir:**
+- **Peças novas:** `culatra_cima` e `culatra_baixo` (substituem a `culatra`).
+- **Peças alteradas:**
+  - `cano`, `soquete`, `tampa` e `amortecedor`;
+  - `gatilho` e `pino_gatilho`;
+  - os 5 eixos (`eixo_az`, `eixo_el`, `eixo_munhao`, `eixo_pinhao` e `eixo_armar`);
+  - `ponteiro_az`, `ponteiro_el` e `pino_pivo`.
+- **O `pistao` não mudou.** Só reimprima **sem suporte**: com suporte, os dentes da cremalheira fecham.
+- **Todo o resto vale como está**: base, mesa, carro, anéis, roscas, coroas, pinhão, manivelas, volante, punhos, travas, coroa de elevação, projéteis e porta-projéteis.
 
 ## Tamanho (v11)
 Tudo foi reduzido para **77%** (fator 150/194), para a **base ficar com 15 cm**.
@@ -123,7 +154,7 @@ canhão antigo, e desliza até o pistão. Com o cano na horizontal, empurre com 
 Formato de granada de morteiro: **corpo cilíndrico curto + ogiva tangente curta** (Ø9,6 × 17 mm), com a ponta
 levemente achatada e base plana chanfrada. A base é onde o pistão empurra, e o chanfro ajuda a entrar no funil do cano.
 
-- **Desliza sem vibrar:** tem **duas cintas de guia**, na frente e atrás, com 0,15 mm de folga por lado na alma de 9,9 mm.
+- **Desliza sem vibrar:** tem **duas cintas de guia**, na frente e atrás, com 0,3 mm de folga por lado na alma de 10,2 mm.
   O meio é rebaixado 0,4 mm, então só as cintas tocam o cano. Com pouco atrito e dois apoios afastados, ele não
   "dança" no tubo e sai alinhado.
 - **Caminho conferido no CGAL:** o projétil passa livre apoiado no pistão armado, sem tocar no dente do gatilho,
@@ -173,15 +204,18 @@ Para lixar as cintas, se ficarem justas, gire o projétil entre os dedos com uma
 
 | Parâmetro | Valor | Onde | Se travar |
 |---|---|---|---|
-| `folga` | 0,25 mm | eixo sextavado em furo sextavado (rosca, coroa, cubos) | 0,30 |
-| `folga_gira` | 0,40 mm (Ø) | eixo sextavado girando em furo redondo (mancais, bochechas) | 0,50 |
-| `folga_desl` | 0,25 mm (Ø) | pistão no cilindro; quilha no rasgo (0,2 mm por lado) | 0,35 |
+| `folga` | 0,25 mm | furo sextavado das peças (rosca, coroa, cubos) | 0,30 |
+| `folga_eixo` | **0,25 mm** (v12) | o **eixo** sai mais fino: com `folga`, dá 0,25 por lado no sextavado | 0,30 |
+| `folga_gira` | 0,40 mm (Ø) | eixo sextavado girando em furo redondo (mancais, bochechas). Com o eixo mais fino, sobra ~0,35 por lado | 0,50 |
+| `folga_desl` | **0,35 mm por lado** (v12) | pistão no cilindro. A quilha tem 0,3 por lado no rasgo | 0,45 |
+| `folga_proj` | **0,6 mm (Ø)** (v12) | projétil na alma do cano: 0,3 por lado | 0,8 |
 | `folga_ax` | 0,15 mm | **rosca encostada nos mancais** (sem jogo axial) | 0,25 |
 | `folga_dente` | **0,20 mm** (v8; era 0,12) | entre os dentes (backlash). Cobre o "pé de elefante" e a dilatação do PETG | 0,25 |
 | `folga_cola_c` | 0,2 mm por lado | encaixe colado do carro na mesa (espaço para a cola) | — |
 | `folga_cola` | 0,35 mm (Ø) | pinos de centragem do projétil | — |
 
 Teste antes de imprimir tudo: imprima `trava_6`, `eixo_el`, `rosca_el` e `manivela_el`.
+Na v12 o eixo tem que **entrar com a mão**, sem martelo nem lixa. Se ainda ficar duro, suba `folga_eixo` para 0,30.
 Se o eixo entrar sem forçar e a trava estalar, as folgas estão boas para a sua impressora.
 
 **Revisão geral das folgas (v8).** Furo impresso em FDM costuma sair 0,1 a 0,2 mm menor e pino um pouco maior.
@@ -224,7 +258,7 @@ Ative a **compensação de "pé de elefante"** no fatiador (Creality Print: ~0,1
   240–250 °C e ventoinha em 30–50% para a camada colar bem.
 - **Dentes da coroa de elevação (módulo 0,77 na v11):** aguentam ~95 N (eram ~160 N com módulo 1). Os batentes limitam o esforço, mas **não force a manivela quando ela parar**.
 - **Lingueta do gatilho com o canhão armado por muito tempo:** o PETG flui sob carga constante. Não deixe armado por dias. Arme, atire e desarme.
-- **Culatra:** imprima com a frente para baixo, com suportes nas placas e nos mancais externos, e 4 paredes.
+- **Culatra (v12):** as 2 metades saem com a face do corte na mesa e **sem suporte**. A `culatra_baixo` imprime de cabeça para baixo e a `culatra_cima` em pé. Use 4 paredes.
 - **PETG em PEI liso** pode arrancar o revestimento da placa. Use cola bastão ou PEI texturizado.
 - **Na v11, os pontos mais fracos são os eixos e o pino do punho.** Peças menores com a mesma mão forçando: quando a manivela parar no batente, pare.
 - Os outros pontos (rolamento, mesa e eixos sob carga de pontaria) trabalham com tensões baixas, abaixo de 5 MPa.
@@ -407,11 +441,11 @@ Cada peça já sai na orientação de impressão.
 | Base e mesa | `base`, `mesa`, `anel_interno`, `anel_externo_baixo`, `anel_externo_cima`, `pino_pivo` |
 | Carro | `carro`, `roda_el`, `ponteiro_el`, `ponteiro_az` (encaixa no pilar da base) |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
-| Lançador | `culatra` (frente para baixo, com suportes), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `porta_projeteis` |
+| Lançador | `culatra_cima` e `culatra_baixo` (deitadas, sem suporte; coladas com 2 pinos de filamento), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `porta_projeteis` |
 | Projéteis (×10) | `projetil_corpo` e `projetil_meio` na cor principal; `projetil_anel` e `projetil_ponta` na cor 2 (o `projetil` inteiro continua disponível, numa cor só) |
 | Pequenas | `punho` ×2 e `punho_armar` ×1 (capas de encaixe), `trava_4` ×1, `trava_6` ×11, `trava_8` ×2 (imprima algumas a mais de cada) |
 
-**Comprar:** ~40 BBs de 6 mm e 1 mola 0,8 × 9 × 75 mm. Mais nada.
+**Comprar:** ~40 BBs de 6 mm e 1 mola 0,8 × 9 × 75 mm. Mais nada (os pinos da culatra são 2 pedaços do seu próprio filamento de 1,75 mm).
 
 **Imprima os 3 anéis do rolamento com 4 paredes e 100%.**
 
@@ -486,6 +520,15 @@ A rosca de azimute entra **depois** da mesa. Assim a mesa ainda gira solta na ho
 4. **Manivela:** coloque a `manivela_el` no eixo, a 3ª trava e estale o `punho`.
 
 ### 5. Lançador (monte fora do canhão)
+0. **Culatra, colando as 2 metades (v12):**
+   - **Pinos:** corte 2 pedaços de **6 mm** do seu filamento de 1,75 mm. São os pinos de alinhamento.
+   - **Teste a seco:** ponha os pinos nos 2 furos dos ressaltos do lado direito da `culatra_baixo` e encaixe a `culatra_cima` por cima.
+     As faces do corte encostam inteiras e as bordas ficam alinhadas.
+   - **Preparo:** lixe de leve as 2 faces planas e limpe com álcool.
+   - **Cola:** passe uma camada fina de **epóxi** (ou Super Bonder em gel) nas faces, deixando 2 mm de distância das bordas do furo do cilindro e do rasgo de cima.
+     Assim a cola não escorre para dentro.
+   - **Cura:** feche, aperte com prendedores ou elásticos e deixe curar.
+     Depois, raspe qualquer gota que tenha entrado no furo e confira se o pistão corre livre, sem a mola.
 1. **Amortecedor:** empurre o `amortecedor` pela boca de trás da culatra até o fundo do cilindro, encostado no degrau da frente.
 2. **Cano:** encaixe o `cano` no soquete da frente, alinhando os ressaltos com as entradas laterais.
    Empurre até o colar e gire 30°.
