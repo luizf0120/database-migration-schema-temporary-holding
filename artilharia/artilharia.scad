@@ -1044,16 +1044,18 @@ module amortecedor() {
     }
 }
 
-// ---- CANO (espiga de 20 mm no soquete da culatra, preso por baioneta; nao leva a pancada do pistao)
-// v12: impresso DEITADO e sem suporte. Desenhado no referencial local do cano (eixo em Z, z = 0 na
-// ponta da espiga) ja na posicao de impressao: o "chao" da impressao fica em +X local.
-//   - fundo plano a d_cano_plano do eixo, com chanfros de 45 graus dos lados (o tubo, a espiga,
-//     o colar e o anel da boca encostam na mesa no mesmo plano);
+// ---- CANO SEXTAVADO (encaixa no soquete da culatra e trava na baioneta; nao leva a pancada do pistao)
+// v12.1: o tubo inteiro e um SEXTAVADO com os cantos a 10,1 do eixo. Deitado numa face, imprime
+// sem suporte e sem cortar nada. A ponta de tras entra no soquete redondo (Ø20,8) e gira os 30 graus
+// da baioneta com 0,2 mm de folga nos cantos; o encosto e a propria ponta, no fundo do soquete.
+// Referencial local de impressao: eixo em Z (z = 0 na ponta de tras), "chao" da impressao em +X.
 //   - alma em gota (ponta para cima na impressao);
-//   - ressaltos da baioneta deitados (em +-Y local), com a face de baixo a 45 graus.
-// Montado, ele gira giro_baioneta (30 graus) e os ressaltos ficam travados nos rasgos em J.
-d_cano_plano = 10 - mm_real(1.0);   // do eixo ate a face plana
-module perfil_deitado(r, d) intersection() {   // circulo com fundo plano em x = d e chanfros de 45 graus
+//   - ressaltos da baioneta nos 2 cantos laterais (+-Y), com a face de baixo a 45 graus.
+// Montado, ele gira giro_baioneta (30 graus): os ressaltos travam nos rasgos em J e fica um canto
+// para cima e outro para baixo.
+r_cano_hex   = 10.1;                      // cantos do sextavado
+d_cano_plano = r_cano_hex*cos(30);        // do eixo ate a face de baixo (na mesa da impressora)
+module perfil_deitado(r, d) intersection() {   // circulo com fundo plano em x = d e chanfros de 45 graus (soquete)
     circle(r = r);
     translate([-r - 1, -r - 1]) square([r + 1 + d, 2*r + 2]);
     let(c = d + sqrt(max(r*r - d*d, 0)))
@@ -1061,15 +1063,9 @@ module perfil_deitado(r, d) intersection() {   // circulo com fundo plano em x =
 }
 module ressalto_cano2d() polygon([[1.85, 9.6], [-1.05, 9.6], [-1.05, 12.5]]);   // face de baixo a 45 graus; >= 0,35 mm de folga no rasgo
 module cano_l() {   // referencial local de impressao
-    d = d_cano_plano;
     difference() {
         union() {
-            linear_extrude(10 + L_cano, convexity = 4) perfil_deitado(10, d);                    // espiga + tubo
-            hull() {                                                                              // colar chanfrado
-                translate([0, 0, 10]) linear_extrude(0.01) perfil_deitado(14, d);
-                translate([0, 0, 14]) linear_extrude(0.01) perfil_deitado(10, d);
-            }
-            translate([0, 0, 10 + L_cano - 6]) linear_extrude(6) perfil_deitado(12, d);           // anel da boca
+            linear_extrude(10 + L_cano, convexity = 4) rotate(30) circle(r = r_cano_hex, $fn = 6);   // face para baixo, cantos em +-Y
             for (m = [0, 1]) mirror([0, m, 0]) translate([0, 0, 2.95]) linear_extrude(6.2 - 2.95) ressalto_cano2d();
         }
         translate([0, 0, -1]) linear_extrude(L_cano + 12, convexity = 4) rotate(90) gota2d(d_alma/2, 1.5);

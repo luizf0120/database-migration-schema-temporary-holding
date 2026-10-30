@@ -16,7 +16,10 @@ e as peças altas viravam espaguete. Isto mudou:
 
 - **Nenhuma peça precisa de suporte.**
   - A `culatra` agora são **2 metades deitadas**, `culatra_cima` e `culatra_baixo`, coladas depois.
-  - O `cano` e o `soquete` saem deitados, com o fundo plano e chanfros de 45°.
+  - O `cano` agora é **sextavado** (15,6 mm entre cantos, 13,5 entre faces). Ele imprime deitado numa face, sem cortar nada.
+    A ponta de trás entra no soquete redondo da culatra e gira os 30° da baioneta, com 0,2 mm de folga nos cantos.
+    O encosto é a própria ponta, no fundo do soquete. Montado, fica um canto para cima e outro para baixo.
+  - O `soquete` sai deitado, com o fundo plano e chanfros de 45°.
   - Todo furo que fica deitado tem formato de **gota**, com teto a 45°, e sai redondo sem suporte.
 - **Eixos 0,25 mm mais finos.**
   - No sextavado sobram 0,25 mm por lado. As pontas são chanfradas para entrar fácil, e as 2 arestas de baixo também, contra o "pé de elefante".
@@ -430,7 +433,7 @@ As duas metades se empilham e formam o anel externo; cada uma tem metade do cana
 |---|---|---|
 | Carro → mesa (4) | **colado no centro** (v9): espiga e pino de posição, com epóxi | a cola trabalha numa área grande (~2000 mm²), sem rosca nenhuma |
 | Tampa traseira (2) | **baioneta em J**: encaixe, empurre, gire 30° e solte. A mola puxa os ressaltos para o entalhe | é a própria mola que trava a tampa |
-| Cano (1) | **baioneta**: encaixe até o colar e gire 30°. Fica justo no fim do curso | o cano quase não leva esforço: a pancada fica no degrau da culatra |
+| Cano (1) | **baioneta**: encaixe até a ponta bater no fundo do soquete e gire 30°. Fica justo no fim do curso | o cano quase não leva esforço: a pancada fica no degrau da culatra |
 | Pivô do gatilho (1) | **`pino_gatilho`** de Ø3,1 com **`trava_4`** | o pino só leva cisalhamento (~27 N) |
 
 ## Peças (troque `PARTE` no Customizer)
@@ -532,7 +535,7 @@ A rosca de azimute entra **depois** da mesa. Assim a mesa ainda gira solta na ho
      Depois, raspe qualquer gota que tenha entrado no furo e confira se o pistão corre livre, sem a mola.
 1. **Amortecedor:** empurre o `amortecedor` pela boca de trás da culatra até o fundo do cilindro, encostado no degrau da frente.
 2. **Cano:** encaixe o `cano` no soquete da frente, alinhando os ressaltos com as entradas laterais.
-   Empurre até o colar e gire 30°.
+   Empurre até a ponta bater no fundo do soquete e gire 30°.
 3. **Pistão e mola:** coloque o `pistao` **por trás**, com a quilha (a cremalheira) no rasgo de cima, e a mola dentro dele.
 4. **Tampa:** encaixe os ressaltos da `tampa` nas entradas, empurre (comprimindo a mola), gire 30° e solte.
    A mola puxa a tampa para o entalhe e ela trava.
