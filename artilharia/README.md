@@ -43,6 +43,8 @@ e as peças altas viravam espaguete. A v12 dividiu a culatra em 2 metades; a v13
 - **Pinos:** `ponteiro_az`, `ponteiro_el` e `pino_pivo`.
 - **Atalho:** tudo isso está no `reimprimir_v13.zip`.
 
+![culatra v13](culatra_v13.png)
+
 **O que vale como está:** o **pistão** e os **projéteis** que você já imprimiu, e também a base, a mesa, o carro, os anéis, as roscas, as coroas, o pinhão, as manivelas, o volante, os punhos, as travas e a coroa de elevação.
 
 ## Tamanho (v11)
@@ -286,10 +288,10 @@ A estimativa usa volume e área de cada STL (±15%).
 | carro (disco central, bochechas em treliça, mancais) | 43 g | **~37 g** |
 | rolamento: 3 anéis (sempre com 100%) | 47 g | **47 g** |
 | setor de elevação raiado (−20° a +85°) | 20 g | ~19 g |
-| culatra (2 metades) + cano | 35 g | ~32 g |
+| culatra + cano (octogonais) | 39 g | ~34 g |
 | 10 projéteis (40 partes) | 12 g | ~11 g |
 | todo o resto (roscas, manivelas, volante, capas, eixos, travas…) | 56 g | ~51 g |
-| **Total impresso** | **~359 g** | **~331 g** |
+| **Total impresso** | **~363 g** | **~333 g** |
 | + 40 BBs e mola | | ~8 g |
 
 **v11 contra a v10: de ~591 g para ~333 g no típico (−44%).**
@@ -584,6 +586,17 @@ Todas as peças geram sólido válido. Também conferi:
     Em ±52° o ressalto encosta no batente, e a rosca ainda tem ~8° de dentes de sobra.
   - A rosca de elevação engrena em −20°, 0° e 85°, e os batentes encostam em −22° e +87°.
   - O cano fica livre do carro de −20° a 85°. A manivela de elevação e o volante de armar não se tocam em −20° nem em 85°.
+- **v13 (culatra inteira e cano octogonais):** 39 checagens com o pistão e os projéteis já impressos (a cremalheira foi mantida na altura da v11). Nenhum log acusou malha aberta.
+  - **Pistão:** livre em todo o curso. Encosta só no amortecedor (em repouso) e na tampa (no recuo máximo).
+  - **Projétil:** desce livre pelo cano até o pistão armado.
+  - **Cano:** entra e gira 0°, 15°, 30° e 45° na baioneta sem prender. A tampa entra, gira 30° e assenta.
+  - **Pinhão:** entra pela passagem da frente sem bater. O pinhão, a coroa, a rosca de armar, os eixos com as travas e o volante giram livres.
+  - **Gatilho:** só encosta com a ponta da mola de lâmina, que é a pré-carga de propósito.
+  - **Achados e corrigidos:**
+    - o pino do ponteiro de elevação passava 1 mm da bochecha para dentro e raspava na culatra entre 70° e 85°; ficou com 5,5 mm;
+    - a aba da trava do eixo do pinhão batia no bolso; o bolso foi alargado.
+  - **Elevação e azimute:** de −22° a 87° (batentes inclusos), contra o carro e as manivelas, livre. O azimute em −50°, 0° e +50° também.
+  - **Já existia e fica como está:** no fim do curso de armar (pinhão a 195°), a ponta do último dente raspa ~0,05 mm na cremalheira. A folga de 0,2 mm dos dentes absorve.
 - **v12 (impressão sem suporte e folgas novas):** 30 checagens novas, e nenhum log acusou malha aberta.
   - **Achados e corrigidos:** o gatilho invadia a culatra (53 mm³) e nenhuma checagem antiga testava esse par.
     O olhal raspava no cilindro, o dente batia na parede porque a janela era rasa, e o pé do mancal da rosca de armar entrava na lingueta.
