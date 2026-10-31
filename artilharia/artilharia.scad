@@ -544,7 +544,7 @@ module punho(d = d_pino_p, D = d_punho, L = L_punho) {   // capa: origem na base
 // Ponteiro em "L": pino quadrado (-Z) + haste (+Z) + agulha (+X) no topo
 module ponteiro(h, c) {
     pq = 3 - mm_real(0.15);   // pino quadrado: 0,2 por lado no furo
-    translate([-pq/2, -pq/2, -7]) cube([pq, pq, 7]);
+    translate([-pq/2, -pq/2, -5.5]) cube([pq, pq, 5.5]);   // 5,5: nao passa da bochecha (6) para dentro
     translate([-1.5, -1.5, -0.01]) cube([3, 3, h + 0.01]);
     hull() {
         translate([-1.5, -2, h - 1.5]) cube([3, 4, 1.5]);
@@ -1025,8 +1025,8 @@ module culatra() {
         translate([x_g - x_mancal_ra + 0.01, y_ra, z_ra_eixo]) rotate([0, 90, 0])                          // berco da rosca de armar
             cylinder(r = d_rosca_ra/2 + m_ra + 0.8, h = 2*x_mancal_ra - 0.02, $fn = 64);
         translate([x_g, A + 1, z_g]) rotate([90, 0, 0]) cylinder(d = f_eixo/cos(30) + mm_real(0.6), h = A - y_placa_e + 2);
-        translate([x_g - 6, y_trava_pi, z_g]) cube([12, A, z_topo_caixa + 1 - z_g]);
-        translate([x_g, y_trava_pi, z_g]) rotate([-90, 0, 0]) cylinder(r = 6, h = A);
+        translate([x_g - 8.5, y_trava_pi, z_g]) cube([17, A, z_topo_caixa + 1 - z_g]);   // cabe a aba da trava
+        translate([x_g, y_trava_pi, z_g]) rotate([-90, 0, 0]) cylinder(r = 8.5, h = A);
         // janela do dente do gatilho (lado esquerdo): atravessa a parede ate dentro do furo
         translate([x_s - p_trava - 0.5, -A - 1, z_b + 0.5]) cube([6, A + 1 - 2, 7]);
         // furo do pino do gatilho (ao longo de Z: deitado na impressao, em gota)
