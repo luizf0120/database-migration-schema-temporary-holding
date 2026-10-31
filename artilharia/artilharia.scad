@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, culatra_cima, culatra_baixo, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -49,7 +49,7 @@ function mm_real(x) = x/ESCALA;
 folga       = mm_real(0.25);  // furos sextavados das pecas (roscas, coroas, cubos) - nao mudou
 folga_eixo  = mm_real(0.25);  // o EIXO sextavado sai 0,25 mais fino: 0,5 no total (0,25 por lado); serve nas pecas ja impressas
 folga_gira  = mm_real(0.4);   // furos redondos onde eixo sextavado GIRA (diametral; o eixo mais fino soma mais 0,3)
-folga_desl  = mm_real(0.35);  // pecas que DESLIZAM (pistao no cilindro): 0,35 POR LADO
+folga_desl  = mm_real(0.45);  // pecas que DESLIZAM (pistao no cilindro): 0,45 POR LADO (v13)
 folga_ax    = mm_real(0.15);  // folga axial de cada rosca contra seus mancais (empuxo)
 folga_dente = mm_real(0.2);   // folga (backlash) nos dentes: cobre o "pe de elefante" e a dilatacao do PETG
 pa          = 20;    // angulo de pressao dos dentes (graus)
@@ -154,7 +154,7 @@ ARMADO = 1;
 /* [Projeteis] */
 L_corpo_proj = 13;   // corpo cilindrico
 L_ogiva_proj = 9;    // ogiva tangente curta
-folga_proj   = mm_real(0.6);  // folga diametral no cano (0,3 por lado nas cintas)
+folga_proj   = mm_real(0.7);  // folga diametral no cano (0,35 por lado nas cintas; v13)
 n_proj       = 6;    // capacidade do porta-municao avulso (peca opcional)
 // cartucheiras integradas na base: saia baixa em volta do anel, projeteis deitados
 // a 25 graus apontando para fora; a ogiva fica inteira para fora (pega-se de lado)
@@ -255,7 +255,8 @@ L_munhao  = mu_z1 - mu_z0;
 d_pist    = mola_d + 5;             // pistao (a mola trabalha dentro dele)
 d_cil_i   = d_pist + 2*folga_desl;  // furo do cilindro
 d_cil_e   = d_cil_i + 5;            // externo do cilindro
-d_alma    = d_proj + 0.8 + mm_real(0.3);   // alma do cano (v12: +0,3; o projetil nao mudou)
+d_proj_e  = d_proj + 0.8 - mm_real(0.3);   // projetil da v11 (ja impresso): NAO mudar
+d_alma    = d_proj_e + folga_proj;   // alma do cano (v13: 0,35 por lado; o projetil nao mudou)
 L_pist    = 46;
 rp_pin    = m_arm*z_pinhao/2;
 p_arm     = PI*m_arm;
@@ -264,7 +265,8 @@ x_s       = x_g - 4 + L_pist;       // frente do pistao em repouso (= batente do
 p_trava   = 35;                     // recuo do pistao quando o gatilho estala
 p_max     = 37.5;                   // recuo maximo (tampa traseira)
 x_tampa   = x_g - 4 - p_max;        // face interna da tampa
-z_rk      = z_b + d_cil_e/2 + 2.2;  // linha primitiva da cremalheira (no topo)
+d_cil_e_v11 = d_pist + 2*mm_real(0.25) + 5;   // so para a cremalheira ficar igual a do pistao ja impresso
+z_rk      = z_b + d_cil_e_v11/2 + 2.2;  // linha primitiva da cremalheira (no topo)
 z_g       = z_rk + rp_pin;          // eixo do pinhao
 rp_ra     = m_ra*z_ra/2;
 y_ra      = -10.5;                  // plano da coroa/rosca de armar (lado esquerdo)
@@ -276,9 +278,9 @@ th_pronto = [212, 305];
 th_arm    = ARMADO == 1 ? 255 : 0;
 p_arm_vis = ARMADO == 1 ? p_trava : 0;
 // eixo do pinhao (Z local = +Y): canais fora da placa direita e fora da coroa
-pi_g1 = 6.5 + 0.2;
+pi_g1 = 9 + 0.2;                   // trava no bolso do lado direito da caixa (y_trava_pi = 9)
 pi_g2 = y_ra - 3 - 0.2 - g_canal;
-pi_z0 = pi_g2 - 2;  pi_z1 = pi_g1 + g_canal + 2;
+pi_z0 = pi_g2 - 2;  pi_z1 = pi_g1 + g_canal + 1;
 // eixo da rosca de armar (Z local = +X do cano, manivela atras)
 ra_g1    = x_mancal_ra + esp_mancal_ra + 0.2;
 x_man_ra = x_mancal_ra + esp_mancal_ra + 0.2 + g_canal + 0.4;
@@ -286,7 +288,7 @@ ra_g2    = -(x_mancal_ra + esp_mancal_ra + 0.2 + g_canal);
 ra_g3    = -(x_man_ra + h_cubo + 0.2 + g_canal);
 ra_z0    = ra_g3 - 2;  ra_z1 = ra_g1 + g_canal + 2;
 // gatilho (lingueta lateral esquerda)
-x_piv_gat = -14;  y_piv_gat = -16;   // v12: 2 mm mais para fora (o olhal raspava no cilindro)
+x_piv_gat = -14;  y_piv_gat = -16.5; // v13: fora da face lateral da culatra octogonal (y = -12)
 
 echo(str("=== AZIMUTE : reducao ", z_az, ":1  ->  ", 360/z_az, " graus por volta da manivela, ",
          360/z_az/n_tambor, " graus por marca do tambor"));
@@ -936,92 +938,105 @@ module pistao() {
     }
 }
 
-// ---- CULATRA: berco do munhao + cilindro da mola + caixa do pinhao + mancais da rosca de armar
-module placa_pinhao() {   // placa no plano XZ, de y=0 a y=3
-    rotate([90, 0, 0]) translate([0, 0, -3]) linear_extrude(3) difference() {
-        hull() {
-            translate([x_g - 14, z_b]) square([28, d_cil_e/2]);
-            translate([x_g, z_g]) circle(r = 7);
-        }
-        translate([x_g, z_g]) gota2d((f_eixo/cos(30) + mm_real(0.6))/2);   // furo em gota: imprime deitado sem suporte
-    }
+// ---- CULATRA (v13): UMA PECA, impressa DEITADA sobre a face direita (y = +12), sem suporte.
+//  Corpo OCTOGONAL (apotema r_corpo = 12: a face direita fica no plano da face do berco), com
+//  pontas chanfradas e frisos rebaixados. Regras para imprimir deitada (a "altura" e -Y):
+//   - furos ao longo do cano em gota com a ponta para -Y; furos de eixo ao longo de Y ficam em pe;
+//   - o rasgo da quilha tem a parede esquerda chanfrada a 45 graus (a direita, reta, guia a quilha);
+//   - a caixa do pinhao e um bloco cheio da face direita ate a placa esquerda: o pinhao fica num
+//     vao redondo (o teto, que e a placa esquerda, imprime como ponte) e ENTRA PELA FRENTE, por uma
+//     passagem que atravessa a torre da frente (a rosca de armar fica num berco em cima da caixa);
+//   - os mancais da rosca de armar ficam em cima de 2 torres que nascem na face direita.
+r_corpo   = larg_berco/2;      // apotema do octogono (12)
+x_tr      = x_tampa - 6;       // boca traseira do cilindro (entra o espigao da tampa)
+d_degrau  = d_proj + 2;        // furo do degrau (o projetil passa folgado)
+x_degrau  = x_s + 2;           // face do degrau (o amortecedor fica entre x_s e x_degrau)
+x_soq     = x_degrau + 4;      // inicio do soquete do cano
+x_frente  = x_soq + 10;        // frente da culatra
+y_placa_e = -7;                // face de fora da placa esquerda (a coroa de armar fica 0,5 mm alem)
+y_vao     = [-4.3, 4];         // vao do pinhao (pinhao de 6 mm: ~1 mm de cada lado)
+r_vao     = rp_pin + m_arm + 1;
+z_topo_caixa = z_g + 17;       // a caixa cobre o pinhao; em cima tem o berco da rosca de armar
+w_quilha  = 2.5 + mm_real(0.35);           // meia largura do rasgo da quilha (0,35 por lado)
+z_tunel   = z_rk + m_arm + 0.8;             // teto do caminho da cremalheira
+y_trava_pi = 9;                             // fundo do bolso da trava do eixo do pinhao (lado direito)
+module oct2d(ap) rotate(22.5) circle(r = ap/cos(22.5), $fn = 8);       // faces em 0, 45, 90... graus
+module oct_x(ap, x0, L, ch = 1.5) translate([x0, 0, z_b]) rotate([0, 90, 0]) hull() {   // prisma ao longo de X, pontas chanfradas
+    linear_extrude(0.01) oct2d(ap - ch);
+    translate([0, 0, ch]) linear_extrude(L - 2*ch) oct2d(ap);
+    translate([0, 0, L - 0.01]) linear_extrude(0.01) oct2d(ap - ch);
 }
-module mancal_ra(seta = false) {   // parede no plano YZ, espessura esp_mancal_ra em +X
-    // v12: o pe nasce em cima do cilindro (no corte da culatra) e sobe abrindo menos de 45 graus:
-    // imprime sem suporte e fica longe do gatilho (o pe antigo, de 18 mm, invadia a lingueta).
-    difference() {
-        rotate([90, 0, 90]) linear_extrude(esp_mancal_ra, convexity = 4) difference() {
-            hull() {
-                translate([-0.72*d_cil_e/2, z_corte + 0.01]) square([0.72*d_cil_e/2 - 3.5, 1]);
-                translate([-6.5, z_corte + 0.01]) square([3, z_g - z_corte]);
-                translate([y_ra, z_ra_eixo]) circle(r = 7);
-            }
-            translate([y_ra, z_ra_eixo]) gota2d((f_eixo/cos(30) + folga_gira)/2);   // furo em gota (ponta para cima)
-        }
-        // seta indice da janela PRONTO (aponta para a coroa de armar)
-        if (seta) translate([esp_mancal_ra + 0.01, -18 + 0.7, z_g]) rotate([90, 0, 0])
-            linear_extrude(1, convexity = 4) polygon([[0, 0], [-3.5, -2], [-3.5, 2]]);
-    }
+module friso_x(ap, xc, w = 1.4, p = mm_real(0.6)) difference() {   // friso rebaixado em volta do octogono
+    translate([xc - w/2, 0, z_b]) rotate([0, 90, 0]) linear_extrude(w) oct2d(ap + 1);
+    translate([xc - w/2 - 1, 0, z_b]) rotate([0, 90, 0]) linear_extrude(w + 2) oct2d(ap - p);
 }
-// Culatra: o pistao entra POR TRAS (tampa removivel); na frente ha um degrau interno
-// que e o batente do pistao (a pancada do disparo fica na propria culatra, nao no cano),
-// com um anel amortecedor de 2 mm (TPU de preferencia; em PETG serve de espacador).
-// v12: impressa DEITADA, em 2 METADES coladas, sem nenhum suporte:
-//   - corte horizontal em z_corte (7,5 acima do eixo do cilindro), onde a parede do cilindro
-//     ainda desce a menos de 45 graus;
-//   - culatra_baixo imprime de cabeca para baixo e culatra_cima em pe, as duas com a face do corte na mesa;
-//   - todos os furos ao longo do cano sao em "gota" (teto a 45 graus) e os furos de eixo tambem;
-//   - 2 pinos de filamento de 1,75 mm (8 mm de comprimento) alinham as metades na colagem.
-x_tr      = x_tampa - 6;     // boca traseira do cilindro (entra o espigao da tampa)
-d_degrau  = d_proj + 2;      // furo do degrau (o projetil passa folgado)
-x_degrau  = x_s + 2;         // face do degrau (o amortecedor fica entre x_s e x_degrau)
-x_soq     = x_degrau + 4;    // inicio do soquete do cano
-z_corte   = z_b + 7.5;       // plano de colagem das 2 metades
-x_pinos   = [x_tr + 12, 25]; // pinos de alinhamento (lado direito, num ressalto)
-d_furo_pino = mm_real(1.75 + 0.25);   // filamento de 1,75 com 0,25 de folga
+// furo ao longo de X (eixo em z_b) em gota com a ponta para -Y (para cima na impressao)
+module furo_xg(d, x0, L, t = 1) translate([x0, 0, z_b]) rotate([0, 90, 0]) linear_extrude(L, convexity = 4) rotate(180) gota2d(d/2, t);
 module culatra() {
-    r_e = d_cil_e/2;
+    A = r_corpo;
+    z_e = z_b + sqrt(pow(d_cil_i/2, 2) - w_quilha*w_quilha);   // onde a parede do rasgo encontra o furo
     difference() {
         union() {
-            hull() {
+            hull() {                                                       // berco do munhao
                 rotate([90, 0, 0]) cylinder(r = 12, h = larg_berco, center = true);
                 translate([-16, 0, 0]) rotate([90, 0, 0]) cylinder(r = 8, h = larg_berco, center = true);
                 translate([-20, -larg_berco/2, z_b - 4]) cube([40, larg_berco, 4]);
             }
-            translate([x_tr, 0, z_b]) rotate([0, 90, 0]) cylinder(r = r_e, h = x_soq - x_tr);
-            // reforco da frente (degrau + soquete do cano)
-            translate([x_s - 4, 0, z_b]) rotate([0, 90, 0]) cylinder(d = 28, h = x_soq + 10 - (x_s - 4));
-            translate([0, 3.5, 0]) placa_pinhao();     // placa ocupa [y, y+3]
-            translate([0, -6.5, 0]) placa_pinhao();
-            translate([x_g - x_mancal_ra - esp_mancal_ra, 0, 0]) mancal_ra(true);
-            translate([x_g + x_mancal_ra, 0, 0]) mancal_ra();
-            // orelha do gatilho: nasce no plano do corte (fica deitada na mesa); o pino de 4 mm passa por ela
-            translate([0, 0, z_corte + 0.01]) linear_extrude(6) hull() {   // 0,01 acima do corte: fica inteira na metade de cima
+            oct_x(A, x_tr, x_frente - x_tr);                                // corpo octogonal
+            // caixa do pinhao + 2 torres (da face direita, y = 12, ate a placa esquerda)
+            translate([0, A, 0]) rotate([90, 0, 0]) linear_extrude(A - y_placa_e, convexity = 6)
+                offset(r = 2) offset(delta = -2) union() {
+                    translate([x_g - 17.5, z_b]) square([35, z_topo_caixa - z_b]);
+                    for (xm = [x_g - x_mancal_ra - esp_mancal_ra, x_g + x_mancal_ra])
+                        translate([xm, z_b]) square([esp_mancal_ra, z_ra_eixo + 7 - z_b]);
+                }
+            // mancais da rosca de armar (de y_placa_e para fora), em cima das torres
+            for (i = [0, 1]) translate([i == 0 ? x_g - x_mancal_ra - esp_mancal_ra : x_g + x_mancal_ra, 0, 0])
+                rotate([90, 0, 90]) linear_extrude(esp_mancal_ra, convexity = 4) difference() {
+                    hull() {
+                        translate([y_placa_e - 0.5, z_b + 12]) square([1, z_ra_eixo + 7 - z_b - 12]);
+                        translate([y_ra, z_ra_eixo]) circle(r = 7);
+                        if (i == 0) translate([-17.5, z_g - 3]) square([1, 6]);     // apoio da seta PRONTO
+                    }
+                    translate([y_ra, z_ra_eixo]) rotate(90) gota2d((f_eixo/cos(30) + folga_gira)/2);
+                }
+            // seta indice da janela PRONTO (aponta para a coroa de armar)
+            translate([x_g - x_mancal_ra - 0.01, -17.3, z_g]) rotate([90, 0, 90]) linear_extrude(1, convexity = 4)
+                polygon([[0, 0], [-2, -3.5], [2, -3.5]]);
+            // orelha do gatilho (o pino de 4 mm passa por ela; o gatilho fica embaixo)
+            translate([0, 0, z_b + 7.5]) linear_extrude(4.5) hull() {
                 translate([x_piv_gat, y_piv_gat]) circle(r = 4.5);
                 translate([x_piv_gat - 6, -5]) square([12, 1]);
             }
-            // ressaltos dos pinos de alinhamento (lado direito, dentro da largura do berco)
-            for (px = x_pinos) translate([px - 3.5, 7, z_corte - 5]) cube([7, larg_berco/2 - 7, 9]);
         }
+        // frisos (aneis rebaixados) - rusticos
+        for (xf = [x_tr + 9, x_s - 7, x_s - 4]) friso_x(A, xf);
         rotate([90, 0, 0]) hex_furo(f_munhao, larg_berco + 2);
-        // furo do cilindro (aberto atras) + degrau + soquete do cano, todos em gota
-        furo_x(d_cil_i, x_tr - 1, x_degrau - x_tr + 1);
-        furo_x(d_degrau, x_degrau - 1, 10);
-        furo_x(20 + mm_real(0.6), x_soq, 11);   // espiga de 20: 0,3 mm por lado
-        // rasgo da quilha: aberto atras (o pistao entra por tras), fechado na frente
-        translate([x_tr - 1, -2.5 - mm_real(0.3), z_b]) cube([x_fim_crem + 1.5 - x_tr + 1, 5 + mm_real(0.6), r_e + 1]);   // quilha 5 + 0,3/lado
+        // furo do cilindro (aberto atras) + degrau + soquete do cano, em gota
+        furo_xg(d_cil_i, x_tr - 1, x_degrau - x_tr + 1);
+        furo_xg(d_degrau, x_degrau - 1, 10);
+        furo_xg(20 + mm_real(0.6), x_soq, 11);
+        // rasgo da quilha + caminho da cremalheira; parede esquerda a 45 graus (imprime sem suporte)
+        translate([x_tr - 1, 0, 0]) rotate([90, 0, 90]) linear_extrude(x_fim_crem + 1.5 - x_tr + 1, convexity = 4)
+            polygon([[w_quilha, z_b], [w_quilha, z_tunel], [-w_quilha - (z_tunel - z_e), z_tunel], [-w_quilha, z_e], [-w_quilha, z_b]]);
+        // vao do pinhao, furo do eixo e bolso da trava (lado direito, aberto em cima)
+        translate([x_g, y_vao[1], z_g]) rotate([90, 0, 0]) cylinder(r = r_vao, h = y_vao[1] - y_vao[0], $fn = 96);
+        translate([x_g, y_vao[0], z_g - r_vao]) cube([x_g + 17.5 + 2 - x_g, y_vao[1] - y_vao[0], 2*r_vao]);   // passagem do pinhao (entra pela frente)
+        translate([x_g - x_mancal_ra + 0.01, y_ra, z_ra_eixo]) rotate([0, 90, 0])                          // berco da rosca de armar
+            cylinder(r = d_rosca_ra/2 + m_ra + 0.8, h = 2*x_mancal_ra - 0.02, $fn = 64);
+        translate([x_g, A + 1, z_g]) rotate([90, 0, 0]) cylinder(d = f_eixo/cos(30) + mm_real(0.6), h = A - y_placa_e + 2);
+        translate([x_g - 6, y_trava_pi, z_g]) cube([12, A, z_topo_caixa + 1 - z_g]);
+        translate([x_g, y_trava_pi, z_g]) rotate([-90, 0, 0]) cylinder(r = 6, h = A);
         // janela do dente do gatilho (lado esquerdo): atravessa a parede ate dentro do furo
-        translate([x_s - p_trava - 0.5, -r_e - 1, z_b + 0.5]) cube([6, r_e + 1 - 2, 7]);
-        translate([x_piv_gat, y_piv_gat, z_corte - 0.01]) cylinder(d = 4 + mm_real(0.4), h = 7);    // pino do gatilho
+        translate([x_s - p_trava - 0.5, -A - 1, z_b + 0.5]) cube([6, A + 1 - 2, 7]);
+        // furo do pino do gatilho (ao longo de Z: deitado na impressao, em gota)
+        translate([x_piv_gat, y_piv_gat, z_b + 7]) linear_extrude(6) rotate(180) gota2d((4 + mm_real(0.4))/2, 0.6);
         // baioneta da tampa (J: empurra, gira 30 graus, a mola puxa para o entalhe e trava)
-        em_eixo() rasgo_j(d_cil_i/2 - 0.5, r_e + 1, x_tr, -1, ang_baioneta, giro_baioneta, 1.4, 2.8, 6.3, 6.3);
-        // baioneta do cano (L com aperto no fim do curso)
-        em_eixo() rasgo_j(10 + folga/2 - 0.5, 14 + 1, x_soq + 10, 1, ang_baioneta, giro_baioneta, 0, 3.8, 7.2, 7.2, false);
+        em_eixo() rasgo_j(d_cil_i/2 - 0.5, A + 2, x_tr, -1, ang_baioneta, giro_baioneta, 1.4, 2.8, 6.3, 6.3);
+        // baioneta do cano octogonal (gira 45 graus; justo no fim do curso)
+        em_eixo() rasgo_j(10 + folga/2 - 0.5, A + 2, x_frente, 1, ang_baioneta, giro_cano, 0, 3.8, 7.2, 7.2, false);
     }
 }
-module furos_pinos() for (px = x_pinos) translate([px, 9.8, z_corte - 4.5]) cylinder(d = d_furo_pino, h = 8, $fn = 24);   // 4,5 para baixo e 3,5 para cima
-module culatra_cima()  difference() { intersection() { culatra(); translate([-100, -50, z_corte]) cube([200, 100, 100]); } furos_pinos(); }
-module culatra_baixo() difference() { intersection() { culatra(); translate([-100, -50, z_corte - 100]) cube([200, 100, 100]); } furos_pinos(); }
 
 // ---- TAMPA traseira: espigao + guia da mola, presa por BAIONETA (2 ressaltos).
 //      Montagem: encaixe os ressaltos nos rasgos, empurre (comprime a mola), gire 30 graus
@@ -1044,38 +1059,44 @@ module amortecedor() {
     }
 }
 
-// ---- CANO SEXTAVADO (encaixa no soquete da culatra e trava na baioneta; nao leva a pancada do pistao)
-// v12.1: o tubo inteiro e um SEXTAVADO com os cantos a 10,1 do eixo. Deitado numa face, imprime
-// sem suporte e sem cortar nada. A ponta de tras entra no soquete redondo (Ø20,8) e gira os 30 graus
-// da baioneta com 0,2 mm de folga nos cantos; o encosto e a propria ponta, no fundo do soquete.
+// ---- CANO OCTOGONAL (v13): encaixa no soquete da culatra e trava na baioneta (1/8 de volta).
+// Impresso DEITADO numa face, sem suporte e sem corte. Os cantos ficam a r_cano do eixo e giram
+// no soquete redondo (Ø20,8) com 0,2 mm de folga; o encosto e a propria ponta, no fundo do soquete.
+// Frisos rebaixados perto da boca e da culatra, e boca chanfrada. Alma em gota (ponta para cima
+// na impressao), com 0,35 mm por lado para o projetil.
 // Referencial local de impressao: eixo em Z (z = 0 na ponta de tras), "chao" da impressao em +X.
-//   - alma em gota (ponta para cima na impressao);
-//   - ressaltos da baioneta nos 2 cantos laterais (+-Y), com a face de baixo a 45 graus.
-// Montado, ele gira giro_baioneta (30 graus): os ressaltos travam nos rasgos em J e fica um canto
-// para cima e outro para baixo.
-r_cano_hex   = 10.1;                      // cantos do sextavado
-d_cano_plano = r_cano_hex*cos(30);        // do eixo ate a face de baixo (na mesa da impressora)
+r_cano       = 10.1;                       // cantos do octogono
+d_cano_plano = r_cano*cos(22.5);           // do eixo ate a face de baixo (na mesa da impressora)
 module perfil_deitado(r, d) intersection() {   // circulo com fundo plano em x = d e chanfros de 45 graus (soquete)
     circle(r = r);
     translate([-r - 1, -r - 1]) square([r + 1 + d, 2*r + 2]);
     let(c = d + sqrt(max(r*r - d*d, 0)))
         polygon([[c, 0], [c - 4*r, 4*r], [-4*r, 4*r], [-4*r, -4*r], [c - 4*r, -4*r]]);
 }
-module ressalto_cano2d() polygon([[1.85, 9.6], [-1.05, 9.6], [-1.05, 12.5]]);   // face de baixo a 45 graus; >= 0,35 mm de folga no rasgo
+module ressalto_cano2d() polygon([[2.45, 9.0], [-1.05, 9.0], [-1.05, 12.5]]);   // face de baixo a 45 graus; >= 0,35 mm de folga no rasgo
+module oct_cano2d(ap) rotate(22.5) circle(r = ap/cos(22.5), $fn = 8);
 module cano_l() {   // referencial local de impressao
+    L = 10 + L_cano;  ap = d_cano_plano;  ch = 1.2;  p = mm_real(0.6);
     difference() {
         union() {
-            linear_extrude(10 + L_cano, convexity = 4) rotate(30) circle(r = r_cano_hex, $fn = 6);   // face para baixo, cantos em +-Y
+            hull() {                                                       // tubo octogonal com a boca chanfrada
+                linear_extrude(L - ch) oct_cano2d(ap);
+                translate([0, 0, L - 0.01]) linear_extrude(0.01) oct_cano2d(ap - ch);
+            }
             for (m = [0, 1]) mirror([0, m, 0]) translate([0, 0, 2.95]) linear_extrude(6.2 - 2.95) ressalto_cano2d();
         }
-        translate([0, 0, -1]) linear_extrude(L_cano + 12, convexity = 4) rotate(90) gota2d(d_alma/2, 1.5);
-        hull() {                                                                                  // funil de entrada
+        for (zf = [13, L - 9, L - 6]) translate([0, 0, zf]) difference() {   // frisos
+            linear_extrude(1.4) oct_cano2d(ap + 1);
+            translate([0, 0, -1]) linear_extrude(3.4) oct_cano2d(ap - p);
+        }
+        translate([0, 0, -1]) linear_extrude(L + 2, convexity = 4) rotate(90) gota2d(d_alma/2, 1.5);
+        hull() {                                                           // funil de entrada
             translate([0, 0, -0.01]) linear_extrude(0.01) rotate(90) gota2d(d_degrau/2, 1.5);
             translate([0, 0, 2]) linear_extrude(0.01) rotate(90) gota2d(d_alma/2, 1.5);
         }
     }
 }
-module cano() translate([x_soq, 0, z_b]) rotate([0, 90, 0]) rotate(giro_baioneta) cano_l();   // montado e travado
+module cano() translate([x_soq, 0, z_b]) rotate([0, 90, 0]) rotate(giro_cano) cano_l();   // montado e travado
 
 // ---- PINHAO mutilado (Z local = -Y do cano quando montado)
 module pinhao_armar() {
@@ -1126,13 +1147,13 @@ module gatilho() {
     xt = x_s - p_trava + 0.2;
     difference() {
         translate([0, 0, z_b + 1]) linear_extrude(6, convexity = 6) {
-            hull() { translate(P) circle(r = 4); translate([xt + 2.5, -14.5]) circle(r = 2.5); }
+            hull() { translate(P) circle(r = 4); translate([xt + 2.5, -15]) circle(r = 2.5); }
             translate([xt, -15]) square([5, 15 - 6.6]);                   // dente
             hull() { translate(P) circle(r = 3.5); translate([-36, -19]) circle(r = 2.8); }
             translate([-39, -19]) circle(r = 5.5);                        // botao
             hull() {                                                      // mola de lamina longa (deforma < 1%)
                 translate([-18, -18.6]) circle(r = 0.65, $fn = 12);
-                translate([-42, -d_cil_e/2 + 0.3]) circle(r = 0.65, $fn = 12);
+                translate([-42, -r_corpo + 0.3]) circle(r = 0.65, $fn = 12);
             }
         }
         translate([P[0], P[1], 0]) cylinder(d = 4 + mm_real(0.5), h = 100);   // gira no pino: 0,25 por lado
@@ -1143,7 +1164,6 @@ module gatilho() {
 //      Duas cintas de guia (frente e tras) com 0,3 mm de folga por lado; o meio e
 //      rebaixado 0,4 mm, so as cintas tocam o cano: desliza leve e nao balanca.
 //      Base plana (o pistao empurra) com chanfro para entrar no funil do cano.
-d_proj_e = d_alma - folga_proj;
 function perfil_projetil() = let(
     R   = d_proj_e/2,  Lc = L_corpo_proj,  Ln = L_ogiva_proj,
     rho = (R*R + Ln*Ln)/(2*R),                    // raio da ogiva tangente
@@ -1217,8 +1237,8 @@ dc_4 = 3.0;
 module pino_gatilho() {
     translate([x_piv_gat, y_piv_gat, 0]) difference() {
         union() {
-            translate([0, 0, z_corte + 6.01]) cylinder(d = 8, h = 1.6);
-            translate([0, 0, z_b + 1 - 0.2 - g_canal - 2]) cylinder(d = 4, h = z_corte + 6 - (z_b + 1 - 0.2 - g_canal - 2) + 0.01);
+            translate([0, 0, z_b + 12.01]) cylinder(d = 8, h = 1.6);   // cabeca em cima da orelha (z_b + 7,5 a z_b + 12)
+            translate([0, 0, z_b + 1 - 0.2 - g_canal - 2]) cylinder(d = 4, h = z_b + 12 - (z_b + 1 - 0.2 - g_canal - 2) + 0.02);
         }
         translate([0, 0, z_b + 1 - 0.2 - g_canal]) canal(dc_4);
     }
@@ -1238,7 +1258,8 @@ module rasgo_j(r1, r2, z_boca, sb, ang0, giro, a_ent, a_trv1, a_trv2, a_ent_fim,
     }
 }
 ang_baioneta = [90, 270];   // entradas nas laterais (o rasgo da quilha fica em cima)
-giro_baioneta = 30;
+giro_baioneta = 30;   // tampa
+giro_cano = 45;       // cano octogonal: gira 1/8 de volta e as faces ficam alinhadas com as da culatra
 
 // ---- SOQUETE (vareta para empurrar a bolinha cano abaixo, como nos canhoes antigos)
 module soquete() {   // v12: ja deitado para imprimir (fundo plano com chanfros de 45 graus)
@@ -1420,8 +1441,7 @@ scale(ESCALA) {   // tudo sai reduzido para a base de 150 mm
 if      (PARTE == "montagem")    montagem();
 else if (PARTE == "base")        base();
 else if (PARTE == "mesa")        mesa();
-else if (PARTE == "culatra_cima")  translate([0, 0, -z_corte]) culatra_cima();                        // em pe, face do corte na mesa
-else if (PARTE == "culatra_baixo") rotate([180, 0, 0]) translate([0, 0, -z_corte]) culatra_baixo();   // de cabeca para baixo
+else if (PARTE == "culatra")     translate([0, 0, r_corpo]) rotate([-90, 0, 0]) culatra();   // deitada sobre a face direita
 else if (PARTE == "pistao")      translate([0, 0, -(x_g - 4)]) rotate([0, -90, 0]) pistao();
 else if (PARTE == "pinhao_armar") translate([0, 0, 3]) pinhao_armar();
 else if (PARTE == "coroa_armar") translate([0, 0, 3]) coroa_armar();
@@ -1459,6 +1479,6 @@ else if (PARTE == "pino_pivo")   pino_pivo();
 else if (PARTE == "anel_interno")  translate([0, 0, h_rol/2]) anel_interno();                     // dentes para cima
 else if (PARTE == "anel_externo_baixo") translate([0, 0, h_rol/2]) anel_externo_baixo();      // fundo plano na mesa da impressora
 else if (PARTE == "anel_externo_cima")  translate([0, 0, h_rol/2]) rotate([180, 0, 0]) anel_externo_cima();   // topo na mesa: o flanco fica para cima
-else if (PARTE == "pino_gatilho") translate([0, 0, z_corte + 7.6]) rotate([180, 0, 0]) translate([-x_piv_gat, -y_piv_gat, 0]) pino_gatilho();
+else if (PARTE == "pino_gatilho") translate([0, 0, z_b + 13.61]) rotate([180, 0, 0]) translate([-x_piv_gat, -y_piv_gat, 0]) pino_gatilho();
 else if (PARTE == "trava_4")     trava(dc_4);
 }
