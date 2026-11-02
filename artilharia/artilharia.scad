@@ -1003,10 +1003,11 @@ module culatra() {
             // seta indice da janela PRONTO (aponta para a coroa de armar)
             translate([x_g - x_mancal_ra - 0.01, -17.3, z_g]) rotate([90, 0, 90]) linear_extrude(1, convexity = 4)
                 polygon([[0, 0], [-2, -3.5], [2, -3.5]]);
-            // orelha do gatilho (o pino de 4 mm passa por ela; o gatilho fica embaixo)
-            translate([0, 0, z_b + 7.5]) linear_extrude(4.5) hull() {
-                translate([x_piv_gat, y_piv_gat]) circle(r = 4.5);
-                translate([x_piv_gat - 6, -5]) square([12, 1]);
+            // orelha do gatilho, de z_b + 7,3 a z_b + 13,3 (a mesma altura da v11: o pino_gatilho antigo serve).
+            // Junto ao corpo ela vai so ate o topo do octogono (z_b + 12) e sobe ate 13,3 na ponta (imprime sem suporte).
+            hull() {
+                translate([0, 0, z_b + 7.3]) linear_extrude(12 - 7.3) translate([x_piv_gat - 6, -5]) square([12, 1]);
+                translate([x_piv_gat, y_piv_gat, z_b + 7.3]) cylinder(r = 4.5, h = 6);
             }
         }
         // frisos (aneis rebaixados) - rusticos
@@ -1030,7 +1031,7 @@ module culatra() {
         // janela do dente do gatilho (lado esquerdo): atravessa a parede ate dentro do furo
         translate([x_s - p_trava - 0.5, -A - 1, z_b + 0.5]) cube([6, A + 1 - 2, 7]);
         // furo do pino do gatilho (ao longo de Z: deitado na impressao, em gota)
-        translate([x_piv_gat, y_piv_gat, z_b + 7]) linear_extrude(6) rotate(180) gota2d((4 + mm_real(0.4))/2, 0.6);
+        translate([x_piv_gat, y_piv_gat, z_b + 7]) linear_extrude(7) rotate(180) gota2d((4 + mm_real(0.4))/2, 0.6);
         // baioneta da tampa (J: empurra, gira 30 graus, a mola puxa para o entalhe e trava)
         em_eixo() rasgo_j(d_cil_i/2 - 0.5, A + 2, x_tr, -1, ang_baioneta, giro_baioneta, 1.4, 2.8, 6.3, 6.3);
         // baioneta do cano octogonal (gira 45 graus; justo no fim do curso)
@@ -1237,8 +1238,8 @@ dc_4 = 3.0;
 module pino_gatilho() {
     translate([x_piv_gat, y_piv_gat, 0]) difference() {
         union() {
-            translate([0, 0, z_b + 12.01]) cylinder(d = 8, h = 1.6);   // cabeca em cima da orelha (z_b + 7,5 a z_b + 12)
-            translate([0, 0, z_b + 1 - 0.2 - g_canal - 2]) cylinder(d = 4, h = z_b + 12 - (z_b + 1 - 0.2 - g_canal - 2) + 0.02);
+            translate([0, 0, z_b + 13.3]) cylinder(d = 8, h = 1.6);   // cabeca em cima da orelha (igual a v11)
+            translate([0, 0, z_b + 1 - 0.2 - g_canal - 2]) cylinder(d = 4, h = 13.3 - 1 + 0.2 + g_canal + 2 + 0.01);
         }
         translate([0, 0, z_b + 1 - 0.2 - g_canal]) canal(dc_4);
     }
@@ -1479,6 +1480,6 @@ else if (PARTE == "pino_pivo")   pino_pivo();
 else if (PARTE == "anel_interno")  translate([0, 0, h_rol/2]) anel_interno();                     // dentes para cima
 else if (PARTE == "anel_externo_baixo") translate([0, 0, h_rol/2]) anel_externo_baixo();      // fundo plano na mesa da impressora
 else if (PARTE == "anel_externo_cima")  translate([0, 0, h_rol/2]) rotate([180, 0, 0]) anel_externo_cima();   // topo na mesa: o flanco fica para cima
-else if (PARTE == "pino_gatilho") translate([0, 0, z_b + 13.61]) rotate([180, 0, 0]) translate([-x_piv_gat, -y_piv_gat, 0]) pino_gatilho();
+else if (PARTE == "pino_gatilho") translate([0, 0, z_b + 14.9]) rotate([180, 0, 0]) translate([-x_piv_gat, -y_piv_gat, 0]) pino_gatilho();
 else if (PARTE == "trava_4")     trava(dc_4);
 }
