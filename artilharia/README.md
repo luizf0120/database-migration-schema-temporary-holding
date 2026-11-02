@@ -34,18 +34,18 @@ e as peças altas viravam espaguete. A v12 dividiu a culatra em 2 metades; a v13
 - **Eixos 0,25 mm mais finos (desde a v12).**
   - O sextavado fica com 0,25 mm por lado, e as pontas e arestas de baixo são chanfradas.
   - Servem nas roscas e engrenagens **que você já imprimiu**.
-- **Gatilho:** o pivô foi para fora, para não raspar na culatra. A orelha fica de 7,5 a 12 mm acima do eixo do cilindro.
+- **Gatilho:** o pivô foi para fora, para não raspar na culatra. A orelha voltou à altura da v11, então o **`pino_gatilho` que você já imprimiu serve**: o arquivo é idêntico.
 - **Pinos menores (desde a v12):** os pinos dos ponteiros e o pino pivô ficaram 0,15 mais finos.
 
 **O que reimprimir:**
-- **Culatra e lançador:** `culatra`, `cano`, `soquete`, `tampa`, `amortecedor`, `gatilho`, `pino_gatilho`.
+- **Culatra e lançador:** `culatra`, `cano`, `soquete`, `tampa`, `amortecedor`, `gatilho`.
 - **Eixos:** os 5 (`eixo_az`, `eixo_el`, `eixo_munhao`, `eixo_pinhao` e `eixo_armar`).
 - **Pinos:** `ponteiro_az`, `ponteiro_el` e `pino_pivo`.
 - **Atalho:** tudo isso está no `reimprimir_v13.zip`.
 
 ![culatra v13](culatra_v13.png)
 
-**O que vale como está:** o **pistão** e os **projéteis** que você já imprimiu, e também a base, a mesa, o carro, os anéis, as roscas, as coroas, o pinhão, as manivelas, o volante, os punhos, as travas e a coroa de elevação.
+**O que vale como está:** o **pistão**, os **projéteis** e o **pino do gatilho** que você já imprimiu, e também a base, a mesa, o carro, os anéis, as roscas, as coroas, o pinhão, as manivelas, o volante, os punhos, as travas e a coroa de elevação.
 
 ## Tamanho (v11)
 Tudo foi reduzido para **77%** (fator 150/194), para a **base ficar com 15 cm**.
@@ -591,7 +591,7 @@ Todas as peças geram sólido válido. Também conferi:
   - **Projétil:** desce livre pelo cano até o pistão armado.
   - **Cano:** entra e gira 0°, 15°, 30° e 45° na baioneta sem prender. A tampa entra, gira 30° e assenta.
   - **Pinhão:** entra pela passagem da frente sem bater. O pinhão, a coroa, a rosca de armar, os eixos com as travas e o volante giram livres.
-  - **Gatilho:** só encosta com a ponta da mola de lâmina, que é a pré-carga de propósito.
+  - **Gatilho:** só encosta com a ponta da mola de lâmina, que é a pré-carga de propósito. O `pino_gatilho` da v11 assenta na orelha (v13.1).
   - **Achados e corrigidos:**
     - o pino do ponteiro de elevação passava 1 mm da bochecha para dentro e raspava na culatra entre 70° e 85°; ficou com 5,5 mm;
     - a aba da trava do eixo do pinhão batia no bolso; o bolso foi alargado.
