@@ -579,6 +579,13 @@ Todas as peças geram sólido válido. Também conferi:
     Em ±52° o ressalto encosta no batente, e a rosca ainda tem ~8° de dentes de sobra.
   - A rosca de elevação engrena em −20°, 0° e 85°, e os batentes encostam em −22° e +87°.
   - O cano fica livre do carro de −20° a 85°. A manivela de elevação e o volante de armar não se tocam em −20° nem em 85°.
+- **v14 (culatra e cano octogonais em pé):** checagens refeitas com o pistão, os projéteis, a tampa, o amortecedor, o pino do gatilho e os ponteiros **da v11**. Nenhum log acusou malha aberta.
+  - **Pistão e projétil:** o pistão é livre em todo o curso, e o projétil desce livre até o pistão armado.
+  - **Tampa:** a tampa antiga entra, gira 30° e assenta. Para isso o rasgo da baioneta voltou à largura da v11; com o octógono, ele tinha ficado 0,15 mm mais estreito e raspava.
+  - **Cano:** entra e gira 45° sem prender.
+  - **Engrenagens e eixos:** o pinhão, a coroa, a rosca, os eixos com as travas e o volante giram livres.
+  - **Gatilho:** só encosta com a mola de lâmina.
+  - **Elevação:** de −22° a 87°, contra o carro (com o ponteiro antigo) e as manivelas, livre.
 - **v13 (culatra inteira e cano octogonais):** 39 checagens com o pistão e os projéteis já impressos (a cremalheira foi mantida na altura da v11). Nenhum log acusou malha aberta.
   - **Pistão:** livre em todo o curso. Encosta só no amortecedor (em repouso) e na tampa (no recuo máximo).
   - **Projétil:** desce livre pelo cano até o pistão armado.
