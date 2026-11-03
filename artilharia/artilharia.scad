@@ -1023,7 +1023,7 @@ module culatra() {
         translate([x_s - p_trava - 0.5, -A - 1, z_b + 0.5]) cube([6, A + 1 - 2, 7]);
         translate([x_piv_gat, y_piv_gat, z_b + 7]) cylinder(d = 4 + mm_real(0.35), h = 8);   // furo do pino do gatilho (v11)
         // baioneta da tampa (J da v11: empurra, gira 30 graus, a mola puxa para o entalhe e trava)
-        em_eixo() rasgo_j(d_cil_i_v11/2 - 0.5, A + 2, x_tr, -1, ang_baioneta, giro_baioneta, 1.4, 2.8, 6.3, 6.3);
+        em_eixo() rasgo_j(d_cil_i_v11/2 - 0.5, d_cil_e_v11/2 + 1, x_tr, -1, ang_baioneta, giro_baioneta, 1.4, 2.8, 6.3, 6.3);   // rasgo da v11 (mesma largura)
         // baioneta do cano octogonal (gira 45 graus; justo no fim do curso)
         em_eixo() rasgo_j(10 + folga/2 - 0.5, A + 2, x_frente, 1, ang_baioneta, giro_cano, 0, 3.8, 7.2, 7.2, false);
     }
