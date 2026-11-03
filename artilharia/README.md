@@ -18,7 +18,7 @@ Nenhum eixo, engrenagem ou rosca mudou.
 - **Se você já imprimiu o carro:** não precisa reimprimir.
   Corte rente, com alicate de corte ou estilete, o **pino redondo** da mesa (a chaveta ao lado da espiga retangular). Depois encaixe o carro virado e cole normalmente.
   A espiga retangular sozinha já garante que ele fica reto e centrado.
-- **Checagens:** conferi o giro completo da mesa (de −50° a +50°), com o cano em −20°, −10°, 80° e 85°.
+- **Checagens (todas livres):** conferi o giro completo da mesa (de −50° a +50°), com o cano em −20°, −10°, 80° e 85°.
   A manivela de elevação passa por cima da de azimute sem bater, e o cano, o carro e as manivelas não tocam na base, no pilar nem no ponteiro.
   O encaixe carro-mesa e a descida da mesa sobre o rolamento também foram conferidos.
 
