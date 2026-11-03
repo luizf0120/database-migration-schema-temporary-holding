@@ -31,6 +31,8 @@ Assim o cilindro do pistão e a alma do projétil saem **redondos de verdade**.
   - imprime em pé, com a **traseira na mesa** (que dá mais apoio que a frente);
   - precisa de **suporte só por fora**: embaixo das placas do pinhão, dos mancais da rosca de armar e da orelha do gatilho;
   - tem pontas chanfradas na frente e 3 frisos rebaixados;
+  - **a aba da baioneta do cano** (em cima, segura o ressalto do cano) tem embaixo uma **rampa a 45°**, e só o trecho onde o ressalto trava fica reto (~3 mm). Ela não fica pendurada no ar;
+  - **o degrau interno** onde o amortecedor encosta avança só ~1,3 mm: imprime sem suporte. Use `support_on_build_plate_only = 1` para nenhum suporte entrar no cilindro;
   - a caixa do pinhão voltou a ser de 2 placas, como na v11: o pinhão entra por cima, entre elas.
 - **Cano:**
   - imprime em pé, com a ponta da baioneta na mesa e a boca chanfrada em cima;

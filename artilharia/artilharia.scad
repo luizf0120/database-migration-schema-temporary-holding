@@ -1028,6 +1028,14 @@ module culatra() {
         em_eixo() rasgo_j(d_cil_i_v11/2 - 0.5, d_cil_e_v11/2 + 1, x_tr, -1, ang_baioneta, giro_baioneta, 1.4, 2.8, 6.3, 6.3);   // rasgo da v11 (mesma largura)
         // baioneta do cano octogonal (gira 45 graus; justo no fim do curso)
         em_eixo() rasgo_j(10 + folga/2 - 0.5, A + 2, x_frente, 1, ang_baioneta, giro_cano, 0, 3.8, 7.2, 7.2, false);
+        // rampa a 45 graus embaixo da aba que segura o ressalto (em pe, a aba nao fica pendurada no ar):
+        // a aba so fica reta onde o ressalto trava (os ultimos ~20 graus do giro)
+        for (ab = ang_baioneta) em_eixo() intersection() {
+            translate([0, 0, x_frente - 3.8 - 0.01]) linear_extrude(3.8 + 1, twist = 19*(3.8 + 1)/3.8, convexity = 4)
+                rotate(ab + giro_cano - 10 - 60) arco(10 + folga/2 - 0.5, A + 2, 0, 60);
+            translate([0, 0, x_frente - 3.8 - 0.02]) linear_extrude(3.8 + 1.1, convexity = 4)
+                arco(10 + folga/2 - 0.5, A + 2, ab - 2, ab + giro_cano - 10);
+        }
     }
 }
 
