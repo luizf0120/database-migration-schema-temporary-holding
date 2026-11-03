@@ -722,7 +722,9 @@ h_raio_az = 7;  larg_raio_az = 9;   // raios: agora levam o peso do carro do cen
 // assento do carro (centro) e encaixe para colar
 r_assento = 24;
 espiga  = [30, 20, 4];          // espiga retangular em cima do assento (X, Y, altura)
-d_chave = 5;  x_chave = 19.5;   // pino de posicao fora do centro: o carro so entra virado para a frente
+d_chave = 5;  x_chave = 19.5;   // pino de posicao fora do centro (na mesa)
+giro_carro = 180;   // v15: o carro vai na mesa virado 180 graus: o cano aponta para o lado OPOSTO da manivela de
+                    // azimute, e as 2 manivelas ficam do mesmo lado (atras do canhao)
 folga_cola_c = mm_real(0.2);             // por lado, no encaixe do carro (espaco para a cola)
 h_disco_c = 8;                  // disco do carro que senta no assento
 // faixa da escala (atras) e batente
@@ -861,7 +863,7 @@ module quadro_carro() {
         // rebaixo do encaixe (espiga + chaveta da mesa), com folga para a cola
         translate([-espiga[0]/2 - folga_cola_c, -espiga[1]/2 - folga_cola_c, -1])
             cube([espiga[0] + 2*folga_cola_c, espiga[1] + 2*folga_cola_c, espiga[2] + 0.3 + 1]);
-        translate([x_chave, 0, -1]) cylinder(d = d_chave + 2*folga_cola_c, h = espiga[2] + 0.3 + 1, $fn = 24);
+        for (sx = [-1, 1]) translate([sx*x_chave, 0, -1]) cylinder(d = d_chave + 2*folga_cola_c, h = espiga[2] + 0.3 + 1, $fn = 24);   // v15: furo da chaveta dos 2 lados (o carro entra de qualquer jeito)
         // ranhuras de cola no fundo do disco (o excesso de cola escorre para elas)
         for (r = [r_assento - 3, 18.5]) difference() {
             translate([0, 0, -1]) cylinder(r = r + 0.6, h = 1.5, $fn = 96);
@@ -1416,14 +1418,16 @@ module montagem() {
     // tudo que gira com a mesa
     rotate([0, 0, az]) {
         color("OliveDrab") translate([0, 0, z_mesa]) mesa();
-        color("DarkKhaki") translate([0, 0, z_deck]) carro();
         color("SandyBrown") translate([0, 0, z_esf]) anel_interno();
         color("Silver") translate([0, 0, z_deck + espiga[2]]) rotate([180, 0, 0]) pino_pivo();
-        translate([0, 0, z_deck]) {
-            acion_el(rot_rel);
-            color("Red") translate([x_pont_el, y_boch_out, H_t]) rotate([-90, 0, 0])
-                ponteiro(h_pont_el, c_pont_el);
-            translate([0, 0, H_t]) conjunto_elevacao();
+        rotate(giro_carro) {   // o carro e tudo que vai nele (cano virado para o lado oposto da manivela de azimute)
+            color("DarkKhaki") translate([0, 0, z_deck]) carro();
+            translate([0, 0, z_deck]) {
+                acion_el(rot_rel);
+                color("Red") translate([x_pont_el, y_boch_out, H_t]) rotate([-90, 0, 0])
+                    ponteiro(h_pont_el, c_pont_el);
+                translate([0, 0, H_t]) conjunto_elevacao();
+            }
         }
     }
 }

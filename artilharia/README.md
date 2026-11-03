@@ -9,6 +9,19 @@ Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `ca
 - **~40 BBs de airsoft de 6 mm** (compre um pacote; sobram muitas): são as esferas do rolamento da mesa.
 - **1 mola de compressão 0,8 × 9 × 75 mm** (fio de 0,8 mm, Ø externo 9 mm, 75 mm de comprimento).
 
+## v15: cano virado para o outro lado
+
+O carro agora vai na mesa **virado 180°**. O cano aponta para o lado **oposto** da manivela de azimute, e as **duas manivelas ficam do mesmo lado**, atrás do canhão, fáceis de mexer juntas.
+Nenhum eixo, engrenagem ou rosca mudou.
+
+- **Encaixe do carro na mesa:** o `carro` novo tem o furo da chaveta **dos 2 lados**, então entra virado para qualquer lado. A espiga retangular continua centrando e alinhando.
+- **Se você já imprimiu o carro:** não precisa reimprimir.
+  Corte rente, com alicate de corte ou estilete, o **pino redondo** da mesa (a chaveta ao lado da espiga retangular). Depois encaixe o carro virado e cole normalmente.
+  A espiga retangular sozinha já garante que ele fica reto e centrado.
+- **Checagens:** conferi o giro completo da mesa (de −50° a +50°), com o cano em −20°, −10°, 80° e 85°.
+  A manivela de elevação passa por cima da de azimute sem bater, e o cano, o carro e as manivelas não tocam na base, no pilar nem no ponteiro.
+  O encaixe carro-mesa e a descida da mesa sobre o rolamento também foram conferidos.
+
 ## Novidades da v14: culatra e cano octogonais, impressos EM PÉ (furos redondos)
 
 Impressos deitados (v13), os furos saíam um pouco ovais. Na v14 a culatra e o cano continuam **octogonais e inteiros**, mas imprimem **em pé**.
