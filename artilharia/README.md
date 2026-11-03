@@ -46,7 +46,7 @@ Assim o cilindro do pistão e a alma do projétil saem **redondos de verdade**.
 - **Eixos 0,25 mm mais finos (desde a v12):** entram nas roscas e engrenagens que você já imprimiu.
 
 **O que reimprimir:** `culatra`, `cano`, `gatilho` e os 5 eixos (`eixo_az`, `eixo_el`, `eixo_munhao`, `eixo_pinhao` e `eixo_armar`).
-O gatilho da v11 raspava no cilindro, então ele precisa ser o novo. Tudo isso está no `reimprimir_v14.zip`.
+O gatilho da v11 raspava no cilindro, então ele precisa ser o novo. Tudo isso, e o `carro` (v15), está no `reimprimir_v15.zip`.
 
 **O que vale como está:** pistão, projéteis, tampa, amortecedor, pino do gatilho, ponteiros, pino pivô, soquete, engrenagens, roscas, travas, manivelas, volante e punhos.
 
