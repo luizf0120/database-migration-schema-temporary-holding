@@ -9,43 +9,38 @@ Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `ca
 - **~40 BBs de airsoft de 6 mm** (compre um pacote; sobram muitas): são as esferas do rolamento da mesa.
 - **1 mola de compressão 0,8 × 9 × 75 mm** (fio de 0,8 mm, Ø externo 9 mm, 75 mm de comprimento).
 
-## Novidades da v13: culatra e cano inteiros, deitados e octogonais
+## Novidades da v14: culatra e cano octogonais, impressos EM PÉ (furos redondos)
 
-No primeiro teste de impressão, os eixos não entravam nas roscas, o pistão e o projétil travavam
-e as peças altas viravam espaguete. A v12 dividiu a culatra em 2 metades; a v13 volta a fazer
-**cada uma numa peça só**, impressa deitada e **sem nenhum suporte**.
+Impressos deitados (v13), os furos saíam um pouco ovais. Na v14 a culatra e o cano continuam **octogonais e inteiros**, mas imprimem **em pé**.
+Assim o cilindro do pistão e a alma do projétil saem **redondos de verdade**.
 
-- **Culatra octogonal, inteira.**
-  - Imprime **deitada sobre a face direita**, que fica no mesmo plano da face do berço do munhão.
-  - **Visual:** pontas chanfradas e 3 frisos rebaixados, no estilo das outras peças.
-  - **Furos ao longo do cano em "gota":** o teto termina em ponta de 45°, e eles saem redondos sem suporte.
-  - **Rasgo da quilha:** a parede esquerda é chanfrada a 45°. A direita, reta, guia a quilha do pistão.
-  - **Caixa do pinhão:** é um bloco fechado. O pinhão **entra pela frente**, por uma passagem na torre da frente.
-    O teto do vão dele imprime como uma ponte de ~22 mm.
-  - **Rosca de armar:** fica num berço em cima da caixa, entre 2 torres que nascem na face de baixo.
-- **Cano octogonal, inteiro, com frisos e boca chanfrada.**
-  - Imprime deitado numa face. A ponta de trás entra no soquete redondo da culatra.
-  - A baioneta agora gira **1/8 de volta (45°)**. Assim as faces do cano ficam alinhadas com as da culatra.
-- **Folgas para o seu pistão e os seus projéteis, que não mudam.**
-  - O pistão já impresso corre com **0,45 mm por lado** no cilindro, e a quilha com 0,35 por lado no rasgo.
-    A cremalheira dele fica exatamente na mesma altura de antes.
-  - Os projéteis já impressos correm com **0,35 mm por lado** na alma.
-  - Mais que isso, o projétil começa a tombar no cano e o pistão a balançar. Os dois têm 2 apoios afastados (cintas e quilha), que não deixam girar.
-- **Eixos 0,25 mm mais finos (desde a v12).**
-  - O sextavado fica com 0,25 mm por lado, e as pontas e arestas de baixo são chanfradas.
-  - Servem nas roscas e engrenagens **que você já imprimiu**.
-- **Gatilho:** o pivô foi para fora, para não raspar na culatra. A orelha voltou à altura da v11, então o **`pino_gatilho` que você já imprimiu serve**: o arquivo é idêntico.
-- **Pinos menores (desde a v12):** os pinos dos ponteiros e o pino pivô ficaram 0,15 mais finos.
+- **Culatra:**
+  - imprime em pé, com a **traseira na mesa** (que dá mais apoio que a frente);
+  - precisa de **suporte só por fora**: embaixo das placas do pinhão, dos mancais da rosca de armar e da orelha do gatilho;
+  - tem pontas chanfradas na frente e 3 frisos rebaixados;
+  - a caixa do pinhão voltou a ser de 2 placas, como na v11: o pinhão entra por cima, entre elas.
+- **Cano:**
+  - imprime em pé, com a ponta da baioneta na mesa e a boca chanfrada em cima;
+  - **não precisa de suporte**: os ressaltos da baioneta têm a face de baixo a 45°;
+  - trava com **1/8 de volta (45°)**, e as faces dele ficam alinhadas com as da culatra.
+- **Folgas para o pistão e os projéteis que você já imprimiu:** o pistão corre com **0,45 mm por lado** e a quilha com 0,35. Os projéteis correm com **0,35 mm por lado**.
+  A cremalheira está na mesma altura da v11.
+- **Peças da v11 que servem de novo:**
+  - A `tampa`, o `amortecedor`, o `pino_gatilho`, os `ponteiro_az`/`ponteiro_el` e o `pino_pivo` são **idênticos aos da v11**.
+  - A culatra tem os assentos da tampa e do amortecedor com as medidas da v11. A orelha do gatilho também está na mesma altura.
+- **Eixos 0,25 mm mais finos (desde a v12):** entram nas roscas e engrenagens que você já imprimiu.
 
-**O que reimprimir:**
-- **Culatra e lançador:** `culatra`, `cano`, `soquete`, `tampa`, `amortecedor`, `gatilho`.
-- **Eixos:** os 5 (`eixo_az`, `eixo_el`, `eixo_munhao`, `eixo_pinhao` e `eixo_armar`).
-- **Pinos:** `ponteiro_az`, `ponteiro_el` e `pino_pivo`.
-- **Atalho:** tudo isso está no `reimprimir_v13.zip`.
+**O que reimprimir:** `culatra`, `cano`, `gatilho` e os 5 eixos (`eixo_az`, `eixo_el`, `eixo_munhao`, `eixo_pinhao` e `eixo_armar`).
+O gatilho da v11 raspava no cilindro, então ele precisa ser o novo. Tudo isso está no `reimprimir_v14.zip`.
 
-![culatra v13](culatra_v13.png)
+**O que vale como está:** pistão, projéteis, tampa, amortecedor, pino do gatilho, ponteiros, pino pivô, soquete, engrenagens, roscas, travas, manivelas, volante e punhos.
 
-**O que vale como está:** o **pistão**, os **projéteis** e o **pino do gatilho** que você já imprimiu, e também a base, a mesa, o carro, os anéis, as roscas, as coroas, o pinhão, as manivelas, o volante, os punhos, as travas e a coroa de elevação.
+**Impressão:**
+- **Culatra:** 4 paredes e 20%, com suporte em árvore só tocando a peça por fora.
+- **Cano:** 4 paredes e 20%, sem suporte.
+- **Borda nas duas:** são altas e finas, então ligue `brim_type = outer_only` e `brim_width = 8`. Sem isso, elas soltam da mesa e viram espaguete.
+
+![culatra v14](culatra_v14.png)
 
 ## Tamanho (v11)
 Tudo foi reduzido para **77%** (fator 150/194), para a **base ficar com 15 cm**.
@@ -265,7 +260,7 @@ Ative a **compensação de "pé de elefante"** no fatiador (Creality Print: ~0,1
   240–250 °C e ventoinha em 30–50% para a camada colar bem.
 - **Dentes da coroa de elevação (módulo 0,77 na v11):** aguentam ~95 N (eram ~160 N com módulo 1). Os batentes limitam o esforço, mas **não force a manivela quando ela parar**.
 - **Lingueta do gatilho com o canhão armado por muito tempo:** o PETG flui sob carga constante. Não deixe armado por dias. Arme, atire e desarme.
-- **Culatra (v13):** sai deitada sobre a face direita e **sem suporte**. Use 4 paredes e 20%. O teto do vão do pinhão é uma ponte: deixe a ventoinha a 100% nas pontes (`enable_overhang_speed = 1`).
+- **Culatra (v14):** em pé, com a traseira na mesa, borda de 8 mm e suporte em árvore só por fora. Use 4 paredes e 20%.
 - **PETG em PEI liso** pode arrancar o revestimento da placa. Use cola bastão ou PEI texturizado.
 - **Na v11, os pontos mais fracos são os eixos e o pino do punho.** Peças menores com a mesma mão forçando: quando a manivela parar no batente, pare.
 - Os outros pontos (rolamento, mesa e eixos sob carga de pontaria) trabalham com tensões baixas, abaixo de 5 MPa.
@@ -448,7 +443,7 @@ Cada peça já sai na orientação de impressão.
 | Base e mesa | `base`, `mesa`, `anel_interno`, `anel_externo_baixo`, `anel_externo_cima`, `pino_pivo` |
 | Carro | `carro`, `roda_el`, `ponteiro_el`, `ponteiro_az` (encaixa no pilar da base) |
 | Pontaria | `rosca_az`, `rosca_el`, `manivela_az`, `manivela_el`, `eixo_az`, `eixo_el`, `eixo_munhao` |
-| Lançador | `culatra` (inteira, deitada sobre a face direita, sem suporte), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `porta_projeteis` |
+| Lançador | `culatra` (em pé, traseira na mesa, suporte só por fora), `tampa`, `amortecedor` (TPU), `pistao`, `cano`, `pinhao_armar`, `coroa_armar`, `rosca_armar`, `volante_armar`, `eixo_pinhao`, `eixo_armar`, `gatilho`, `pino_gatilho`, `soquete`, `porta_projeteis` |
 | Projéteis (×10) | `projetil_corpo` e `projetil_meio` na cor principal; `projetil_anel` e `projetil_ponta` na cor 2 (o `projetil` inteiro continua disponível, numa cor só) |
 | Pequenas | `punho` ×2 e `punho_armar` ×1 (capas de encaixe), `trava_4` ×1, `trava_6` ×11, `trava_8` ×2 (imprima algumas a mais de cada) |
 
@@ -530,15 +525,13 @@ A rosca de azimute entra **depois** da mesa. Assim a mesa ainda gira solta na ho
 1. **Amortecedor:** empurre o `amortecedor` pela boca de trás da culatra até o fundo do cilindro, encostado no degrau da frente.
 2. **Cano:** encaixe o `cano` no soquete da frente, alinhando os ressaltos com as entradas laterais.
    Empurre até a ponta bater no fundo do soquete e gire **45°** (1/8 de volta).
-3. **Pistão e mola** (depois do pinhão, passo 5): coloque o `pistao` **por trás**, com a quilha (a cremalheira) no rasgo de cima, e a mola dentro dele.
+3. **Pistão e mola:** coloque o `pistao` **por trás**, com a quilha (a cremalheira) no rasgo de cima, e a mola dentro dele.
 4. **Tampa:** encaixe os ressaltos da `tampa` nas entradas, empurre (comprimindo a mola), gire 30° e solte.
    A mola puxa a tampa para o entalhe e ela trava.
-5. **Pinhão e coroa (v13; faça ANTES do pistão, passo 3):**
-   - **Pinhão:** antes de pôr o pistão, deslize o `pinhao_armar` **pela passagem da frente** da caixa até o vão redondo.
-     A **parte lisa** tem que ficar **para baixo**, virada para a cremalheira.
-   - **Eixo:** passe o `eixo_pinhao` **pela direita**, atravessando a caixa, o pinhão e a placa esquerda, e ponha a `coroa_armar` do lado de fora.
-     Escolha a posição no sextavado em que a **faixa PRONTO gravada fica bem embaixo da seta** do mancal.
-   - **Travas:** uma `trava_6` vai do lado de fora da coroa. A outra vai no **bolso do lado direito** da caixa: ela desce por cima e estala no canal.
+5. **Pinhão e coroa:**
+   - com o **pistão todo para a frente**, ponha o `pinhao_armar` entre as duas placas, por cima, com a **parte lisa virada para a cremalheira**;
+   - passe o `eixo_pinhao` e ponha a `coroa_armar` do lado de fora da placa esquerda. Escolha a posição no sextavado em que a **faixa PRONTO gravada fica bem embaixo da seta** do mancal;
+   - prenda com as 2 travas.
 6. **Rosca de armar e volante:**
    - ponha a `rosca_armar` entre os dois mancais de trás, passe o `eixo_armar` e encaixe as travas;
    - coloque o `volante_armar` atrás, com a última trava, e estale a `punho_armar` no pino.
