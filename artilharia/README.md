@@ -9,6 +9,18 @@ Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `ca
 - **~40 BBs de airsoft de 6 mm** (compre um pacote; sobram muitas): são as esferas do rolamento da mesa.
 - **1 mola de compressão 0,8 × 9 × 75 mm** (fio de 0,8 mm, Ø externo 9 mm, 75 mm de comprimento).
 
+## Travessas entre as bochechas do carro
+
+As 2 bochechas do carro só se ligam embaixo, e a de cima pode quebrar ao passar o eixo do munhão.
+A peça `travessa_carro` (imprima **3**) é uma barrinha quadrada de 3,5 × 3,5 mm, da largura das barras da grade, com 19,2 mm, que é o vão entre as bochechas menos 0,1 mm para a cola.
+
+**Onde colar:** nos 3 nós marcados em vermelho, que são os mesmos nas 2 bochechas.
+- Cole cada travessa **girada 45°**, casando com o losango do cruzamento. Assim ela não fica maior que a grade.
+- Esses nós ficam a 18 mm ou mais da culatra e do cano em qualquer elevação (de −22° a 87°).
+- **Não cole mais alto:** perto do munhão a culatra gira no meio do vão.
+
+![travessas](travessas.png)
+
 ## v15: cano virado para o outro lado
 
 O carro agora vai na mesa **virado 180°**. O cano aponta para o lado **oposto** da manivela de azimute, e as **duas manivelas ficam do mesmo lado**, atrás do canhão, fáceis de mexer juntas.
