@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4, travessa_carro]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -1337,6 +1337,16 @@ module roda_el() {
 function fases_batente() = [el_batente[1] + 5 - 264, el_batente[0] - 5 - 276];
 
 // ---- Pino pivo (ou use parafuso M8)
+// ---- TRAVESSA entre as bochechas do carro (colada num no da grade, dos 2 lados): deixa o carro rigido.
+//      Secao quadrada igual a largura das barras da grade (4,5 de desenho = 3,5 mm), comprimento igual
+//      ao vao entre as bochechas menos 0,1 mm (cabe a cola). Cole girada 45 graus, casando com o losango do no.
+lado_trav = 4.5;
+L_trav    = 2*y_boch_in - mm_real(0.1);
+nos_trav  = [[-11.97, 25], [21.97, 25], [5, 41.94]];   // nos da grade fora do caminho da culatra e do cano
+module travessa() cube([lado_trav, lado_trav, L_trav]);
+module travessas_montadas() for (p = nos_trav) translate([p[0], 0, p[1]]) rotate([90, 0, 0]) rotate(45)
+    translate([-lado_trav/2, -lado_trav/2, -L_trav/2]) travessa();
+
 module pino_pivo() {
     cylinder(d = 8, h = (h_mesa + espiga[2] - 3.3 - 0.5) + folga_mb + 13);   // v14: igual ao da v11   // a ponta fica 0,5 mm acima do fundo do furo da base
     cylinder(d = 14, h = 3);
@@ -1429,7 +1439,7 @@ module montagem() {
         color("SandyBrown") translate([0, 0, z_esf]) anel_interno();
         color("Silver") translate([0, 0, z_deck + espiga[2]]) rotate([180, 0, 0]) pino_pivo();
         rotate(giro_carro) {   // o carro e tudo que vai nele (cano virado para o lado oposto da manivela de azimute)
-            color("DarkKhaki") translate([0, 0, z_deck]) carro();
+            color("DarkKhaki") translate([0, 0, z_deck]) { carro(); travessas_montadas(); }
             translate([0, 0, z_deck]) {
                 acion_el(rot_rel);
                 color("Red") translate([x_pont_el, y_boch_out, H_t]) rotate([-90, 0, 0])
@@ -1482,6 +1492,7 @@ else if (PARTE == "eixo_munhao") eixo_deitado(f_munhao, mu_z0, mu_z1, [mu_g1, mu
 else if (PARTE == "ponteiro_el") translate([0, 0, h_pont_el]) rotate([180, 0, 0]) ponteiro(h_pont_el, c_pont_el);   // agulha deitada na mesa, pino para cima
 else if (PARTE == "ponteiro_az") translate([0, 0, 1.5]) rotate([180, 0, 0]) ponteiro(1.5, c_pont_az);   // agulha deitada na mesa, pino para cima
 else if (PARTE == "pino_pivo")   pino_pivo();
+else if (PARTE == "travessa_carro") rotate([0, 90, 0]) translate([-lado_trav, 0, 0]) travessa();   // deitada
 else if (PARTE == "anel_interno")  translate([0, 0, h_rol/2]) anel_interno();                     // dentes para cima
 else if (PARTE == "anel_externo_baixo") translate([0, 0, h_rol/2]) anel_externo_baixo();      // fundo plano na mesa da impressora
 else if (PARTE == "anel_externo_cima")  translate([0, 0, h_rol/2]) rotate([180, 0, 0]) anel_externo_cima();   // topo na mesa: o flanco fica para cima
