@@ -14,7 +14,8 @@ Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `ca
 As abas da frente da culatra, que seguravam o cano, eram finas (~1,2 mm), cortadas pelos rasgos da baioneta e presas de um lado só. Elas quebraram.
 O `anel_reparo` é uma luva octogonal que se **cola por fora** da culatra já impressa e substitui essas abas.
 - **Medidas, em mm reais:**
-  - parede de **3 mm** e **12 mm** de colagem em volta da culatra;
+  - parede de **3 mm** (2,75 mm no ponto mais fino, nos alívios dos cantos) e **12 mm** de colagem em volta da culatra;
+  - folga de **0,25 mm por lado**: entra justa, na mão, sem forçar. Tem alívio nos 8 cantos de dentro e chanfro na boca;
   - flange da frente de **3 mm**, presa pela borda de fora em toda a volta, sem nenhuma aba solta.
 - **Baioneta:** igual à de antes. Os ressaltos do cano entram pelos 2 entalhes, giram 45° (as setas gravadas na frente mostram o sentido) e travam atrás da flange.
   Os rasgos que sobraram na culatra continuam guiando e fazem o batente do giro.

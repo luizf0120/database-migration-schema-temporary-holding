@@ -1049,7 +1049,7 @@ module culatra() {
 x_corte_rep = x_soq + 6.2;                 // linha da frente dos ressaltos do cano (= onde a culatra e lixada)
 x_luva_rep  = x_s - 3;                     // inicio da luva (logo a frente do friso)
 t_flange    = mm_real(3);                  // flange da frente
-folga_cola_rep = mm_real(0.15);            // por lado, entre a luva e a culatra
+folga_cola_rep = mm_real(0.25);            // por lado, entre a luva e a culatra (entra na mao, justa; cabe a cola)
 ap_rep      = r_corpo + folga_cola_rep + mm_real(3);   // apotema de fora da luva (parede de 3 mm)
 module anel_reparo() {
     x0 = x_luva_rep;  x1 = x_corte_rep + mm_real(0.1);  x2 = x1 + t_flange;   // a flange fica 0,1 mm a frente do ressalto
@@ -1068,8 +1068,17 @@ module anel_reparo() {
                     translate([0, 0, mm_real(0.6)]) cube([mm_real(1.2), mm_real(1.2), 0.02], center = true);
                 }
         }
-        // abraca a culatra (octogono com folga para a cola)
-        translate([x0 - 1, 0, z_b]) rotate([0, 90, 0]) linear_extrude(x1 - x0 + 1) oct2d(r_corpo + folga_cola_rep);
+        // abraca a culatra (octogono com folga para a cola), alivio redondo nos 8 cantos e chanfro de entrada
+        translate([x0 - 1, 0, z_b]) rotate([0, 90, 0]) {
+            linear_extrude(x1 - x0 + 1) {
+                oct2d(r_corpo + folga_cola_rep);
+                for (k = [0:7]) rotate(22.5 + 45*k) translate([(r_corpo + folga_cola_rep)/cos(22.5), 0]) circle(d = mm_real(1.0), $fn = 16);
+            }
+            hull() {
+                translate([0, 0, 1 - 0.01]) linear_extrude(0.01) oct2d(r_corpo + folga_cola_rep + mm_real(0.8));
+                translate([0, 0, 1 + mm_real(0.8)]) linear_extrude(0.01) oct2d(r_corpo + folga_cola_rep);
+            }
+        }
         // canal raso por dentro da luva no caminho dos ressaltos (eles passam 0,4 mm do octogono da culatra)
         em_eixo() for (a = ang_baioneta) let(rm = 11.3, d = 1.9/rm*180/PI)
             setor(10, 13, a - d, a + giro_cano + d, x_soq + 2.3, x1 + 0.01);
