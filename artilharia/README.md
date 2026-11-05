@@ -9,6 +9,26 @@ Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `ca
 - **~40 BBs de airsoft de 6 mm** (compre um pacote; sobram muitas): são as esferas do rolamento da mesa.
 - **1 mola de compressão 0,8 × 9 × 75 mm** (fio de 0,8 mm, Ø externo 9 mm, 75 mm de comprimento).
 
+## Anel de reparo da baioneta do cano (`anel_reparo`)
+
+As abas da frente da culatra, que seguravam o cano, eram finas (~1,2 mm), cortadas pelos rasgos da baioneta e presas de um lado só. Elas quebraram.
+O `anel_reparo` é uma luva octogonal que se **cola por fora** da culatra já impressa e substitui essas abas.
+- **Medidas, em mm reais:**
+  - parede de **3 mm** e **12 mm** de colagem em volta da culatra;
+  - flange da frente de **3 mm**, presa pela borda de fora em toda a volta, sem nenhuma aba solta.
+- **Baioneta:** igual à de antes. Os ressaltos do cano entram pelos 2 entalhes, giram 45° (as setas gravadas na frente mostram o sentido) e travam atrás da flange.
+  Os rasgos que sobraram na culatra continuam guiando e fazem o batente do giro.
+- **Acabamento:** chanfros e 8 rebites, um por face.
+- **Impressão:** em pé, com a flange na mesa, sem suporte. Use 100% de preenchimento e 4 paredes.
+- **Como colar:**
+  1. Lixe a frente da culatra **reta**, até a linha da frente dos rasgos (~3 mm atrás da frente original). Assim some o que sobrou das abas quebradas.
+  2. Teste a seco: a luva entra até a flange encostar na frente lixada, e o cano entra e gira 45°.
+  3. Cole com epóxi ou cola instantânea em gel, só na parte de dentro da luva. Não ponha cola na flange nem nos entalhes.
+     Encaixe com os entalhes nas laterais (alinhados com as entradas dos rasgos da culatra) e deixe curar.
+- **Conferido:** a luva só encosta na culatra lixada. O cano entra, gira e trava sem prender, e em toda a elevação (−22° a 87°) a luva não bate no carro, nas travessas nem na manivela de elevação.
+
+![anel de reparo](anel_reparo.png)
+
 ## Travessas entre as bochechas do carro
 
 As 2 bochechas do carro só se ligam embaixo, e a de cima pode quebrar ao passar o eixo do munhão.

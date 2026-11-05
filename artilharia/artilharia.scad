@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4, travessa_carro]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4, travessa_carro, anel_reparo]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -1039,6 +1039,50 @@ module culatra() {
     }
 }
 
+// ---- ANEL DE REPARO da baioneta do cano (colado por FORA da culatra ja impressa).
+//  Substitui as abas da frente da culatra (que quebraram na linha dos rasgos). Antes de colar, lixe a
+//  frente da culatra reta ate a linha da frente dos rasgos (~3 mm atras da frente original).
+//  Sem nenhuma aba solta: a flange da frente (3 mm) e presa pela borda de fora em TODA a volta e so tem
+//  os 2 entalhes de entrada; os ressaltos do cano entram, giram 45 graus e travam atras dela, no mesmo
+//  lugar de antes (os rasgos que sobraram na culatra continuam guiando e servem de batente do giro).
+//  Luva octogonal com parede de 3 mm e 12 mm de colagem; acabamento militar: chanfros e rebites.
+x_corte_rep = x_soq + 6.2;                 // linha da frente dos ressaltos do cano (= onde a culatra e lixada)
+x_luva_rep  = x_s - 3;                     // inicio da luva (logo a frente do friso)
+t_flange    = mm_real(3);                  // flange da frente
+folga_cola_rep = mm_real(0.15);            // por lado, entre a luva e a culatra
+ap_rep      = r_corpo + folga_cola_rep + mm_real(3);   // apotema de fora da luva (parede de 3 mm)
+module anel_reparo() {
+    x0 = x_luva_rep;  x1 = x_corte_rep + mm_real(0.1);  x2 = x1 + t_flange;   // a flange fica 0,1 mm a frente do ressalto
+    ch = mm_real(0.8);
+    difference() {
+        union() {
+            translate([x0, 0, z_b]) rotate([0, 90, 0]) hull() {                  // corpo octogonal chanfrado
+                linear_extrude(0.01) oct2d(ap_rep - ch);
+                translate([0, 0, ch]) linear_extrude(x2 - x0 - 2*ch) oct2d(ap_rep);
+                translate([0, 0, x2 - x0 - 0.01]) linear_extrude(0.01) oct2d(ap_rep - ch);
+            }
+            // rebites: tronco de piramide (45 graus) no meio de cada face
+            for (a = [0:45:315]) translate([(x0 + x1)/2, 0, z_b]) rotate([a, 0, 0])
+                translate([0, 0, ap_rep - 0.01]) hull() {
+                    cube([mm_real(2.4), mm_real(2.4), 0.02], center = true);
+                    translate([0, 0, mm_real(0.6)]) cube([mm_real(1.2), mm_real(1.2), 0.02], center = true);
+                }
+        }
+        // abraca a culatra (octogono com folga para a cola)
+        translate([x0 - 1, 0, z_b]) rotate([0, 90, 0]) linear_extrude(x1 - x0 + 1) oct2d(r_corpo + folga_cola_rep);
+        // canal raso por dentro da luva no caminho dos ressaltos (eles passam 0,4 mm do octogono da culatra)
+        em_eixo() for (a = ang_baioneta) let(rm = 11.3, d = 1.9/rm*180/PI)
+            setor(10, 13, a - d, a + giro_cano + d, x_soq + 2.3, x1 + 0.01);
+        // furo do cano (gira 45 graus nele) + 2 entalhes de entrada dos ressaltos (em 90 e 270 graus)
+        translate([x1 - 1, 0, z_b]) rotate([0, 90, 0]) cylinder(d = 20 + mm_real(0.6), h = t_flange + 2, $fn = 72);
+        em_eixo() for (a = ang_baioneta) let(rm = 11.3, d = 1.9/rm*180/PI)
+            setor(10, 12.5 + mm_real(0.4), a - d, a + d, x1 - 1, x2 + 1);
+        // marca do giro: seta gravada na frente, de cada entalhe ate a posicao travada
+        em_eixo() for (a = ang_baioneta) translate([0, 0, x2 - prof_grav]) linear_extrude(1)
+            arco(ap_rep - mm_real(1.6), ap_rep - mm_real(1.0), a + 12, a + giro_cano);
+    }
+}
+
 // ---- TAMPA traseira: espigao + guia da mola, presa por BAIONETA (2 ressaltos).
 //      Montagem: encaixe os ressaltos nos rasgos, empurre (comprime a mola), gire 30 graus
 //      e solte: a mola puxa os ressaltos para o entalhe e a tampa nao gira mais sozinha.
@@ -1492,6 +1536,7 @@ else if (PARTE == "eixo_munhao") eixo_deitado(f_munhao, mu_z0, mu_z1, [mu_g1, mu
 else if (PARTE == "ponteiro_el") translate([0, 0, h_pont_el]) rotate([180, 0, 0]) ponteiro(h_pont_el, c_pont_el);   // agulha deitada na mesa, pino para cima
 else if (PARTE == "ponteiro_az") translate([0, 0, 1.5]) rotate([180, 0, 0]) ponteiro(1.5, c_pont_az);   // agulha deitada na mesa, pino para cima
 else if (PARTE == "pino_pivo")   pino_pivo();
+else if (PARTE == "anel_reparo") translate([0, 0, x_corte_rep + mm_real(0.1) + t_flange]) rotate([0, 90, 0]) anel_reparo();   // em pe, flange na mesa
 else if (PARTE == "travessa_carro") rotate([0, 90, 0]) translate([-lado_trav, 0, 0]) travessa();   // deitada
 else if (PARTE == "anel_interno")  translate([0, 0, h_rol/2]) anel_interno();                     // dentes para cima
 else if (PARTE == "anel_externo_baixo") translate([0, 0, h_rol/2]) anel_externo_baixo();      // fundo plano na mesa da impressora
