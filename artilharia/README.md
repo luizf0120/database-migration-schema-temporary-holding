@@ -15,16 +15,20 @@ Os números gravados das escalas (2,2 mm e 2,5 mm de altura, traço de ~0,3 mm) 
 Nada precisa ser reimpresso.
 - **Réguas** (`regua_az` para a mesa, `regua_el` para a coroa de elevação):
   - **vazadas**, sem placa de fundo: só a linha do arco, os traços de 5° e 10° e os pontos de 5° da gravação, com 1,2 mm de altura (igual aos números);
-  - cada ponto fica preso na linha por uma hastezinha de 0,62 mm, para a régua sair numa peça só (sem ela, os pontos seriam pecinhas soltas de 0,9 mm);
-  - a linha do arco foi engrossada de 0,46 para 0,62 mm, para imprimir inteira. Os traços também têm 0,62 mm;
-  - é frágil (traços de 0,62 × 1,2 mm): tire da mesa com cuidado, flexionando a chapa ou com uma espátula fina, e só depois de esfriar.
+  - cada ponto (Ø 1,3 mm) fica preso na linha por uma hastezinha, para a régua sair numa peça só (sem ela, os pontos seriam pecinhas soltas);
+  - linha, traços e hastes têm **0,85 mm** na base, a mesma largura do traço dos números. A gravação tem 0,46–0,62 mm, mas um traço tão fino não comporta o abaulado; o mais largo ainda cobre a gravação por inteiro;
+  - é frágil: tire da mesa com cuidado, flexionando a chapa ou com uma espátula fina, e só depois de esfriar.
 - **Números** (`numeros_az`: −50 a 50; `numeros_el`: −20 a 80): 11 peças em cada arquivo, uma por número.
   - Os números de mais de um dígito são **uma peça só**, vazada no contorno dos algarismos. No "−10", uma pontezinha liga o sinal ao "1".
-  - Mesma fonte, posição e orientação da gravação. Ficam **maiores**: 3,9 mm de altura na mesa e 4,2 mm na elevação, com traço de ~0,85 mm e 1,2 mm de espessura.
+  - Mesma fonte, posição e orientação da gravação. Ficam **maiores**: 3,9 mm de altura na mesa e 4,2 mm na elevação, com traço de ~0,85 mm na base e 1,2 mm de altura no centro.
     No tamanho original o traço teria 0,3 mm, menos que o bico de 0,4, e não imprime.
+- **Acabamento abaulado** (números e réguas): o centro de cada traço é mais alto e as bordas mais baixas, o que deixa os números mais fáceis de identificar.
+  - Os primeiros **0,6 mm** têm a largura cheia (é a área que gruda na mesa e na cola).
+  - Depois vêm 3 camadas de 0,2 mm, cada uma mais estreita: as bordas recuam 0,04, 0,09 e 0,15 mm de cada lado. O topo fica com **0,55 mm**, um filete do bico de 0,4.
+  - Recuar mais fecharia os furos do 6, do 8 e do 9. Os degraus coincidem com as camadas de 0,2 mm, então **use camada de 0,2 mm** para o abaulado sair certo.
 - **Calço do ponteiro** (`calco_ponteiro`, imprima **2**): sem calço, a agulha bateria na régua. Por isso vai 1 calço de 1,2 mm no pino de cada ponteiro, embaixo dele.
   Os ponteiros já impressos continuam servindo.
-- **Impressão:** tudo deitado na mesa, sem suporte, com 100% de preenchimento e camada de 0,2 mm. Para as réguas, deixe o gerador de paredes em **Arachne**, que é o padrão do Creality Print; assim os traços de 0,62 mm saem cheios. Os números ficam bonitos numa cor que contraste com a régua.
+- **Impressão:** tudo deitado na mesa, sem suporte, com 100% de preenchimento e camada de 0,2 mm. Deixe o gerador de paredes em **Arachne**, que é o padrão do Creality Print; assim o topo de 0,55 mm e os degraus saem cheios. Os números ficam bonitos numa cor que contraste com a régua.
 - **Como colar:**
   1. Cole a régua com cada traço sobre o traço gravado, começando pelo 0. Ponha a cola na peça já impressa, um fio fino ao longo da gravação, e não na régua.
   2. Cole cada número com a face lisa para baixo, centrado sobre o número gravado. Use cola instantânea em gel, em pouca quantidade.
@@ -32,6 +36,7 @@ Nada precisa ser reimpresso.
 ![réguas da mesa](reguas_az.png)
 ![réguas da elevação](reguas_el.png)
 ![calço do ponteiro](calco_ponteiro.png)
+![acabamento abaulado](abaulado.png)
 
 ## Anel de reparo da baioneta do cano (`anel_reparo`)
 
