@@ -14,18 +14,19 @@ Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `ca
 Os números gravados das escalas (2,2 mm e 2,5 mm de altura, traço de ~0,3 mm) saíram ilegíveis. Estas peças se **colam por cima** da mesa e da coroa de elevação já impressas.
 Nada precisa ser reimpresso.
 - **Réguas** (`regua_az` para a mesa, `regua_el` para a coroa de elevação):
-  - mesmo arco, mesmos traços de 5° e 10° e mesmos pontos de 5° da gravação;
-  - base de 0,6 mm com os traços em relevo de mais 0,6 mm (1,2 mm no total);
-  - a linha do arco foi engrossada de 0,46 para 0,62 mm, para imprimir inteira.
+  - **vazadas**, sem placa de fundo: só a linha do arco, os traços de 5° e 10° e os pontos de 5° da gravação, com 1,2 mm de altura (igual aos números);
+  - cada ponto fica preso na linha por uma hastezinha de 0,62 mm, para a régua sair numa peça só (sem ela, os pontos seriam pecinhas soltas de 0,9 mm);
+  - a linha do arco foi engrossada de 0,46 para 0,62 mm, para imprimir inteira. Os traços também têm 0,62 mm;
+  - é frágil (traços de 0,62 × 1,2 mm): tire da mesa com cuidado, flexionando a chapa ou com uma espátula fina, e só depois de esfriar.
 - **Números** (`numeros_az`: −50 a 50; `numeros_el`: −20 a 80): 11 peças em cada arquivo, uma por número.
   - Os números de mais de um dígito são **uma peça só**, vazada no contorno dos algarismos. No "−10", uma pontezinha liga o sinal ao "1".
   - Mesma fonte, posição e orientação da gravação. Ficam **maiores**: 3,9 mm de altura na mesa e 4,2 mm na elevação, com traço de ~0,85 mm e 1,2 mm de espessura.
     No tamanho original o traço teria 0,3 mm, menos que o bico de 0,4, e não imprime.
 - **Calço do ponteiro** (`calco_ponteiro`, imprima **2**): sem calço, a agulha bateria na régua. Por isso vai 1 calço de 1,2 mm no pino de cada ponteiro, embaixo dele.
   Os ponteiros já impressos continuam servindo.
-- **Impressão:** tudo deitado na mesa, sem suporte, com 100% de preenchimento e camada de 0,2 mm. Os números ficam bonitos numa cor que contraste com a régua.
+- **Impressão:** tudo deitado na mesa, sem suporte, com 100% de preenchimento e camada de 0,2 mm. Para as réguas, deixe o gerador de paredes em **Arachne**, que é o padrão do Creality Print; assim os traços de 0,62 mm saem cheios. Os números ficam bonitos numa cor que contraste com a régua.
 - **Como colar:**
-  1. Cole a régua com o traço do 0 sobre o 0 gravado.
+  1. Cole a régua com cada traço sobre o traço gravado, começando pelo 0. Ponha a cola na peça já impressa, um fio fino ao longo da gravação, e não na régua.
   2. Cole cada número com a face lisa para baixo, centrado sobre o número gravado. Use cola instantânea em gel, em pouca quantidade.
 
 ![réguas da mesa](reguas_az.png)

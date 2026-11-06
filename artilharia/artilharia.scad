@@ -580,7 +580,7 @@ module escala_az_2d() {
 
 // Elevacao: valor v no angulo local v - 180 (vira 180 - v depois de montada)
 // ---- REGUAS E NUMEROS DE COLAR (por cima das escalas gravadas que sairam ruins)
-//  Reguas: os mesmos tracos, pontos e linha da gravacao, em relevo de 0,6 mm sobre uma base de 0,6 mm.
+//  Reguas: vazadas, so os tracos, pontos e linha da gravacao (1,2 mm de altura); cada ponto ligado a linha por uma haste.
 //  Numeros: mesma fonte, mesma posicao e direcao, mas no maior tamanho que cabe no lugar (a gravacao
 //  original, de 2,2 a 2,5 mm de altura, tem traco de ~0,3 mm: nao imprime). O contorno e engrossado
 //  0,2 mm: os digitos de um numero se fundem numa peca so, sem placa de fundo.
@@ -593,7 +593,10 @@ module marcas_az_2d() {   // a escala_az_2d sem os numeros (linha engrossada par
     arco(re - 0.8, re, 180 - az_curso, 180 + az_curso);
     for (v = [-az_curso:5:az_curso]) rotate(180 - v)
         translate([re - (v % 10 == 0 ? 5 : 3.5), -0.4]) square([v % 10 == 0 ? 5 : 3.5, 0.8]);
-    for (v = [-az_curso + 2.5:5:az_curso]) rotate(180 - v) translate([re - 1.8, 0]) circle(d = 1.1, $fn = 16);
+    for (v = [-az_curso + 2.5:5:az_curso]) rotate(180 - v) {
+        translate([re - 1.8, 0]) circle(d = 1.1, $fn = 16);
+        translate([re - 1.8, -0.4]) square([1.4, 0.8]);   // haste: liga o ponto a linha (regua vazada = uma peca so)
+    }
 }
 module marcas_el_2d() {   // a escala_el_2d sem os numeros (linha engrossada para 0,62 mm)
     re = r_esc_el;
@@ -602,18 +605,14 @@ module marcas_el_2d() {   // a escala_el_2d sem os numeros (linha engrossada par
         r0 = v % 10 == 0 ? re - 7 : re - 4.5;
         translate([r0, -0.4]) square([re - r0, 0.8]);
     }
-    for (v = [el_min + 2.5:5:el_max]) rotate(v - 180) translate([re - 2, 0]) circle(d = 1.2, $fn = 16);
+    for (v = [el_min + 2.5:5:el_max]) rotate(v - 180) {
+        translate([re - 2, 0]) circle(d = 1.2, $fn = 16);
+        translate([re - 2, -0.4]) square([1.6, 0.8]);       // haste ate a linha
+    }
 }
-module regua_az() {   // na posicao da mesa (origem no centro, face de cima em z = 0)
-    re = r_faixa_az[1] - 0.4;
-    linear_extrude(t_base_reg) arco(re - 5.6, re + 0.3, 180 - az_curso - 2, 180 + az_curso + 2);
-    translate([0, 0, t_base_reg - 0.01]) linear_extrude(t_rel_reg + 0.01) marcas_az_2d();
-}
-module regua_el() {   // na posicao da face de fora da coroa de elevacao (z = 0)
-    re = r_esc_el;
-    linear_extrude(t_base_reg) arco(re - 7.6, re + 0.3, el_min - 180 - 2, el_max - 180 + 2);
-    translate([0, 0, t_base_reg - 0.01]) linear_extrude(t_rel_reg + 0.01) marcas_el_2d();
-}
+// reguas VAZADAS (sem base): so a linha, os tracos e os pontos, 1,2 mm de altura (mesma dos numeros e do calco)
+module regua_az() linear_extrude(t_base_reg + t_rel_reg) marcas_az_2d();   // na posicao da mesa (z = 0 na face de cima)
+module regua_el() linear_extrude(t_base_reg + t_rel_reg) marcas_el_2d();   // na posicao da face de fora da coroa
 // digitos encostados (spacing) + no "-10" uma ponte na altura do menos (o "1" tem muito espaco a esquerda): cada numero e UMA peca
 module num_az_2d(v) offset(r = eng_num) {
     text(str(v), size = tam_num_az, font = fonte, spacing = 0.86, halign = "center", valign = "center", $fn = 40);
