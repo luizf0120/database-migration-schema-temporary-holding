@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4, travessa_carro, anel_reparo]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4, travessa_carro, anel_reparo, regua_az, regua_el, numeros_az, numeros_el, calco_ponteiro]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -579,6 +579,64 @@ module escala_az_2d() {
 }
 
 // Elevacao: valor v no angulo local v - 180 (vira 180 - v depois de montada)
+// ---- REGUAS E NUMEROS DE COLAR (por cima das escalas gravadas que sairam ruins)
+//  Reguas: os mesmos tracos, pontos e linha da gravacao, em relevo de 0,6 mm sobre uma base de 0,6 mm.
+//  Numeros: mesma fonte, mesma posicao e direcao, mas no maior tamanho que cabe no lugar (a gravacao
+//  original, de 2,2 a 2,5 mm de altura, tem traco de ~0,3 mm: nao imprime). O contorno e engrossado
+//  0,2 mm: os digitos de um numero se fundem numa peca so, sem placa de fundo.
+//  Como as reguas sobem 1,2 mm, os ponteiros sobem junto: um calco de 1,2 mm no pino de cada ponteiro.
+t_base_reg = mm_real(0.6);  t_rel_reg = mm_real(0.6);  t_num = mm_real(1.2);  eng_num = mm_real(0.2);
+tam_num_az = 4.6;
+tam_num_el = 5.0;
+module marcas_az_2d() {   // a escala_az_2d sem os numeros (linha engrossada para 0,62 mm: imprime inteira)
+    re = r_faixa_az[1] - 0.4;
+    arco(re - 0.8, re, 180 - az_curso, 180 + az_curso);
+    for (v = [-az_curso:5:az_curso]) rotate(180 - v)
+        translate([re - (v % 10 == 0 ? 5 : 3.5), -0.4]) square([v % 10 == 0 ? 5 : 3.5, 0.8]);
+    for (v = [-az_curso + 2.5:5:az_curso]) rotate(180 - v) translate([re - 1.8, 0]) circle(d = 1.1, $fn = 16);
+}
+module marcas_el_2d() {   // a escala_el_2d sem os numeros (linha engrossada para 0,62 mm)
+    re = r_esc_el;
+    arco(re - 0.8, re, el_min - 180, el_max - 180);
+    for (v = [el_min:5:el_max]) rotate(v - 180) {
+        r0 = v % 10 == 0 ? re - 7 : re - 4.5;
+        translate([r0, -0.4]) square([re - r0, 0.8]);
+    }
+    for (v = [el_min + 2.5:5:el_max]) rotate(v - 180) translate([re - 2, 0]) circle(d = 1.2, $fn = 16);
+}
+module regua_az() {   // na posicao da mesa (origem no centro, face de cima em z = 0)
+    re = r_faixa_az[1] - 0.4;
+    linear_extrude(t_base_reg) arco(re - 5.6, re + 0.3, 180 - az_curso - 2, 180 + az_curso + 2);
+    translate([0, 0, t_base_reg - 0.01]) linear_extrude(t_rel_reg + 0.01) marcas_az_2d();
+}
+module regua_el() {   // na posicao da face de fora da coroa de elevacao (z = 0)
+    re = r_esc_el;
+    linear_extrude(t_base_reg) arco(re - 7.6, re + 0.3, el_min - 180 - 2, el_max - 180 + 2);
+    translate([0, 0, t_base_reg - 0.01]) linear_extrude(t_rel_reg + 0.01) marcas_el_2d();
+}
+// digitos encostados (spacing) + no "-10" uma ponte na altura do menos (o "1" tem muito espaco a esquerda): cada numero e UMA peca
+module num_az_2d(v) offset(r = eng_num) {
+    text(str(v), size = tam_num_az, font = fonte, spacing = 0.86, halign = "center", valign = "center", $fn = 40);
+    if (v == -10) translate([-0.5*tam_num_az, -0.13*tam_num_az]) square([0.4*tam_num_az, 0.12*tam_num_az]);
+}
+module num_el_2d(v) offset(r = eng_num) {
+    text(str(v), size = tam_num_el, font = fonte, spacing = 0.86, halign = "right", valign = "center", $fn = 40);
+    if (v == -10) translate([-1.27*tam_num_el, -0.13*tam_num_el]) square([0.4*tam_num_el, 0.12*tam_num_el]);
+}
+module numeros_az_montados() for (v = [-az_curso:10:az_curso]) let(a = 180 - v, r_num_az = r_faixa_az[1] - 0.4 - 8.0)   // 0,4 mais para dentro que a gravacao
+    translate(polar(r_num_az, a)) rotate(a + 90) linear_extrude(t_num) num_az_2d(v);
+module numeros_el_montados() for (v = [el_min:10:el_max]) rotate(v - 180)
+    translate([r_esc_el - 8.2, 0]) linear_extrude(t_num) num_el_2d(v);
+// para imprimir: os numeros deitados numa grade, cada um uma peca
+module numeros_az_impressao() for (i = [0:2*az_curso/10]) let(v = -az_curso + 10*i)
+    translate([(i % 4)*12, -floor(i/4)*8, 0]) linear_extrude(t_num) num_az_2d(v);
+module numeros_el_impressao() for (i = [0:floor((el_max - el_min)/10)]) let(v = el_min + 10*i)
+    translate([(i % 4)*13 + 10, -floor(i/4)*9, 0]) linear_extrude(t_num) num_el_2d(v);
+module calco_ponteiro() difference() {   // calco de 1,2 mm no pino do ponteiro (sobe a agulha acima da regua)
+    translate([-3, -3, 0]) cube([6, 6, t_base_reg + t_rel_reg]);
+    translate([-1.5 - mm_real(0.15), -1.5 - mm_real(0.15), -1]) cube([3 + mm_real(0.3), 3 + mm_real(0.3), 5]);
+}
+
 module escala_el_2d() {
     re = r_esc_el;
     arco(re - 0.6, re, el_min - 180, el_max - 180);
@@ -1546,6 +1604,11 @@ else if (PARTE == "ponteiro_el") translate([0, 0, h_pont_el]) rotate([180, 0, 0]
 else if (PARTE == "ponteiro_az") translate([0, 0, 1.5]) rotate([180, 0, 0]) ponteiro(1.5, c_pont_az);   // agulha deitada na mesa, pino para cima
 else if (PARTE == "pino_pivo")   pino_pivo();
 else if (PARTE == "anel_reparo") translate([0, 0, x_corte_rep + mm_real(0.1) + t_flange]) rotate([0, 90, 0]) anel_reparo();   // em pe, flange na mesa
+else if (PARTE == "regua_az")    regua_az();
+else if (PARTE == "regua_el")    regua_el();
+else if (PARTE == "numeros_az")  numeros_az_impressao();
+else if (PARTE == "numeros_el")  numeros_el_impressao();
+else if (PARTE == "calco_ponteiro") calco_ponteiro();
 else if (PARTE == "travessa_carro") rotate([0, 90, 0]) translate([-lado_trav, 0, 0]) travessa();   // deitada
 else if (PARTE == "anel_interno")  translate([0, 0, h_rol/2]) anel_interno();                     // dentes para cima
 else if (PARTE == "anel_externo_baixo") translate([0, 0, h_rol/2]) anel_externo_baixo();      // fundo plano na mesa da impressora

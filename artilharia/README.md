@@ -9,6 +9,29 @@ Os STLs prontos de todas as peças estão em [`stl/`](stl/), e tudo junto em `ca
 - **~40 BBs de airsoft de 6 mm** (compre um pacote; sobram muitas): são as esferas do rolamento da mesa.
 - **1 mola de compressão 0,8 × 9 × 75 mm** (fio de 0,8 mm, Ø externo 9 mm, 75 mm de comprimento).
 
+## Réguas e números para colar por cima das escalas (`regua_az`, `regua_el`, `numeros_az`, `numeros_el`, `calco_ponteiro`)
+
+Os números gravados das escalas (2,2 mm e 2,5 mm de altura, traço de ~0,3 mm) saíram ilegíveis. Estas peças se **colam por cima** da mesa e da coroa de elevação já impressas.
+Nada precisa ser reimpresso.
+- **Réguas** (`regua_az` para a mesa, `regua_el` para a coroa de elevação):
+  - mesmo arco, mesmos traços de 5° e 10° e mesmos pontos de 5° da gravação;
+  - base de 0,6 mm com os traços em relevo de mais 0,6 mm (1,2 mm no total);
+  - a linha do arco foi engrossada de 0,46 para 0,62 mm, para imprimir inteira.
+- **Números** (`numeros_az`: −50 a 50; `numeros_el`: −20 a 80): 11 peças em cada arquivo, uma por número.
+  - Os números de mais de um dígito são **uma peça só**, vazada no contorno dos algarismos. No "−10", uma pontezinha liga o sinal ao "1".
+  - Mesma fonte, posição e orientação da gravação. Ficam **maiores**: 3,9 mm de altura na mesa e 4,2 mm na elevação, com traço de ~0,85 mm e 1,2 mm de espessura.
+    No tamanho original o traço teria 0,3 mm, menos que o bico de 0,4, e não imprime.
+- **Calço do ponteiro** (`calco_ponteiro`, imprima **2**): sem calço, a agulha bateria na régua. Por isso vai 1 calço de 1,2 mm no pino de cada ponteiro, embaixo dele.
+  Os ponteiros já impressos continuam servindo.
+- **Impressão:** tudo deitado na mesa, sem suporte, com 100% de preenchimento e camada de 0,2 mm. Os números ficam bonitos numa cor que contraste com a régua.
+- **Como colar:**
+  1. Cole a régua com o traço do 0 sobre o 0 gravado.
+  2. Cole cada número com a face lisa para baixo, centrado sobre o número gravado. Use cola instantânea em gel, em pouca quantidade.
+
+![réguas da mesa](reguas_az.png)
+![réguas da elevação](reguas_el.png)
+![calço do ponteiro](calco_ponteiro.png)
+
 ## Anel de reparo da baioneta do cano (`anel_reparo`)
 
 As abas da frente da culatra, que seguravam o cano, eram finas (~1,2 mm), cortadas pelos rasgos da baioneta e presas de um lado só. Elas quebraram.

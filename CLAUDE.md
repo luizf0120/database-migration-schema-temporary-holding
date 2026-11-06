@@ -12,6 +12,14 @@ O usuário fala português e imprime em PLA (às vezes PETG), numa Creality, com
   Baioneta só se o colar em volta for grosso (≥ 3 mm reais depois do rasgo).
 - Levar em conta que FDM é fraco entre camadas: nada fino em pé que leve flexão.
 
+## Qualidade: avaliar ANTES de entregar qualquer .scad / STL
+- Antes de criar ou mudar algo no OpenSCAD, avaliar se vai **ficar bom impresso**, não só se a geometria fecha.
+  Renderizar e olhar a peça; medir em mm reais os detalhes finos.
+- Texto e gravação: altura das letras ≥ **3,5 mm** reais; traço ≥ **0,6 mm** (1,5× o bico de 0,4); relevo ou gravação ≥ 0,6 mm.
+  Exemplo do que deu errado: os números das escalas gravados com 2,2 mm de altura (traço ~0,3 mm) saíram ilegíveis.
+- Traços, pontos e nervuras: largura ≥ 0,6 mm; peças soltas pequenas: espessura ≥ 1 mm.
+- Se o pedido do usuário levar a algo que não imprime bem (ex.: "mesmo tamanho"), dizer isso com os números e propor o mais próximo que funcione.
+
 ## Jeito de trabalhar
 - Sempre enviar os arquivos gerados (STL, zip, imagens) ao terminar, sem esperar o usuário pedir.
 - Reaproveitar ao máximo as peças que o usuário já imprimiu. Dizer claramente o que precisa e o que não precisa reimprimir.
