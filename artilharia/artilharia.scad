@@ -26,7 +26,7 @@
 
 /* [Visualizacao] */
 // O que gerar: "montagem" ou o nome de uma peca para imprimir
-PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4, travessa_carro, anel_reparo, regua_az, regua_el, numeros_az, numeros_el, calco_ponteiro]
+PARTE = "montagem"; // [montagem, base, mesa, carro, culatra, tampa, amortecedor, pistao, cano, pinhao_armar, coroa_armar, rosca_armar, volante_armar, gatilho, soquete, projetil, projetil_corpo, projetil_anel, projetil_meio, projetil_ponta, porta_projeteis, eixo_pinhao, eixo_armar, roda_el, rosca_az, rosca_el, manivela_az, manivela_el, punho, trava_6, trava_8, eixo_az, eixo_el, eixo_munhao, ponteiro_el, ponteiro_az, punho_armar, pino_pivo, anel_interno, anel_externo_baixo, anel_externo_cima, pino_gatilho, trava_4, travessa_carro, anel_reparo, regua_az, regua_el, numeros_az, numeros_el, calco_ponteiro, numeros_avulsos]
 // Angulo horizontal mostrado na montagem (graus)
 AZIMUTE  = 30;
 // Angulo vertical mostrado na montagem (graus)
@@ -642,6 +642,13 @@ module numeros_az_impressao() for (i = [0:2*az_curso/10]) let(v = -az_curso + 10
     translate([(i % 4)*12, -floor(i/4)*8, 0]) relevo_abaulado() num_az_2d(v);
 module numeros_el_impressao() for (i = [0:floor((el_max - el_min)/10)]) let(v = el_min + 10*i)
     translate([(i % 4)*13 + 10, -floor(i/4)*9, 0]) relevo_abaulado() num_el_2d(v);
+// numeros avulsos para reimprimir (troque as listas): az = mesa (horizontal), el = coroa de elevacao (vertical)
+nums_avulsos_az = [-40, -10];
+nums_avulsos_el = [40];
+module numeros_avulsos() {
+    for (i = [0:len(nums_avulsos_az) - 1]) translate([i*12, 0, 0]) relevo_abaulado() num_az_2d(nums_avulsos_az[i]);
+    for (i = [0:len(nums_avulsos_el) - 1]) translate([i*13 + 10, -9, 0]) relevo_abaulado() num_el_2d(nums_avulsos_el[i]);
+}
 module calco_ponteiro() difference() {   // calco de 1,2 mm no pino do ponteiro (sobe a agulha acima da regua)
     translate([-3, -3, 0]) cube([6, 6, t_base_reg + t_rel_reg]);
     translate([-1.5 - mm_real(0.15), -1.5 - mm_real(0.15), -1]) cube([3 + mm_real(0.3), 3 + mm_real(0.3), 5]);
@@ -1619,6 +1626,7 @@ else if (PARTE == "regua_el")    regua_el();
 else if (PARTE == "numeros_az")  numeros_az_impressao();
 else if (PARTE == "numeros_el")  numeros_el_impressao();
 else if (PARTE == "calco_ponteiro") calco_ponteiro();
+else if (PARTE == "numeros_avulsos") numeros_avulsos();
 else if (PARTE == "travessa_carro") rotate([0, 90, 0]) translate([-lado_trav, 0, 0]) travessa();   // deitada
 else if (PARTE == "anel_interno")  translate([0, 0, h_rol/2]) anel_interno();                     // dentes para cima
 else if (PARTE == "anel_externo_baixo") translate([0, 0, h_rol/2]) anel_externo_baixo();      // fundo plano na mesa da impressora
